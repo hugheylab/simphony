@@ -1,4 +1,5 @@
 #' @importFrom data.table ":="
+#' @importFrom foreach "%do%"
 
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
@@ -150,6 +151,13 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
   return(nonRhyExprs)
 }
 
+
+#' Generate simulated gene expresion time courses.
+#'
+#' \code{nGenes} is the integer number of total genes to simulate.
+#' \code{nCond} is the integer number of conditions to simulate.
+#' \code{nReps} is the integer number of replicates per time point.
+#' \code{interval} is the integer number of hours between simulated time points.
 #' @export
 getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
                             period = 24, errSd = 1, rhyFrac = 0.25, nSims = 1,

@@ -1,4 +1,6 @@
 context('simulation')
+library(data.table)
+library(foreach)
 
 test_that('Simulated GSE classes are correct', {
   simGse = getSimulatedExpr(nGenes = 100)

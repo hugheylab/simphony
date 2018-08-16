@@ -2,3 +2,4 @@
 
 export(getSimulatedExpr)
 importFrom(data.table,":=")
+importFrom(foreach,"%do%")
