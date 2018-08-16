@@ -1,5 +1,4 @@
-library(testthat)
-source(file.path('analyze', 'sim_setup.R'))
+context('simulation')
 
 test_that('Simulated GSE classes are correct', {
   simGse = getSimulatedExpr(nGenes = 100)
@@ -209,8 +208,4 @@ test_that('Prepared variables are created correctly', {
   expect_equal(length(unique(preparedVariables$featureMetadata$simIndex)),
                nSims)
   expect_equal(preparedVariables$featureMetadata$geneId, geneNames)
-})
-
-test_that('getRhyExprMatrix yields expected outputs', {
-  
 })

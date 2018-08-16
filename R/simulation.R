@@ -1,4 +1,4 @@
-library(data.table)
+#' @importFrom data.table ":="
 
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
@@ -150,7 +150,7 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
   return(nonRhyExprs)
 }
 
-
+#' @export
 getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
                             period = 24, errSd = 1, rhyFrac = 0.25, nSims = 1,
                             drFrac = 0.25, rhythmicGroups = data.frame()) {
