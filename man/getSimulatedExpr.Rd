@@ -6,11 +6,33 @@
 \usage{
 getSimulatedExpr(nGenes = 10000L, nCond = 2, nReps = 2,
   interval = 4, period = 24, errSd = 1, rhyFrac = 0.25,
-  nSims = 1, drFrac = 0.25, rhythmicGroups = data.frame())
+  nSims = 1, drFrac = 0.25,
+  rhythmicGroups = data.table::data.table())
+}
+\arguments{
+\item{nGenes}{is the integer number of total genes to simulate.}
+
+\item{nCond}{is the integer number of conditions to simulate.}
+
+\item{nReps}{is the integer number of replicates per time point.}
+
+\item{interval}{is the integer number of hours between simulated time points.}
+
+\item{period}{is the integer number of hours in one rhythmic cycle.}
+
+\item{errSd}{is the standard deviation of the Gaussian sample error.}
+
+\item{rhyFrac}{is the proportion of genes that are generated as rhythmic.
+Must be a float between 0 and 1.}
+
+\item{nSims}{is the integer number of simulations to generate.}
+
+\item{drFrac}{is the proportion of rhythmic genes that are generated as
+differentially rhythmic.}
+
+\item{rhythmicGroups}{is a dataframe of metadata describing the properties of
+rhythmic or differentially rhythmic genes.}
 }
 \description{
-\code{nGenes} is the integer number of total genes to simulate.
-\code{nCond} is the integer number of conditions to simulate.
-\code{nReps} is the integer number of replicates per time point.
-\code{interval} is the integer number of hours between simulated time points.
+Generate simulated gene expresion time courses.
 }

@@ -3,3 +3,5 @@
 export(getSimulatedExpr)
 importFrom(data.table,":=")
 importFrom(foreach,"%do%")
+importFrom(stats,rnorm)
+importFrom(stats,time)

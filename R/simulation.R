@@ -1,6 +1,7 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
-
+#' @importFrom stats rnorm time
+NULL
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
                            verticalShift = 0) {
@@ -30,13 +31,13 @@ getPreparedVariables = function(conditions, interval, period, nCond, nReps,
                                 nRhyGenes, nGenes, nSims, nDrGenes, sampleNames,
                                 geneNames) {
 
-  sampleMetadata = data.table(cond = conditions,
+  sampleMetadata = data.table::data.table(cond = conditions,
                               time = rep(interval * 0:(period / interval - 1),
                                          each = nCond * nReps))
   sampleMetadata = sampleMetadata[order(cond, time)]
   sampleMetadata[, sample := sampleNames]
 
-  featureMetadata = data.table(geneId = geneNames,
+  featureMetadata = data.table::data.table(geneId = geneNames,
                                rhy = rep(c(rep(1, nRhyGenes),
                                            rep(0, nGenes - nRhyGenes)), nSims),
                                dRhy = rep(c(rep(0, nRhyGenes - nDrGenes),
@@ -154,14 +155,23 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
 
 #' Generate simulated gene expresion time courses.
 #'
-#' \code{nGenes} is the integer number of total genes to simulate.
-#' \code{nCond} is the integer number of conditions to simulate.
-#' \code{nReps} is the integer number of replicates per time point.
-#' \code{interval} is the integer number of hours between simulated time points.
+#' @param nGenes is the integer number of total genes to simulate.
+#' @param nCond is the integer number of conditions to simulate.
+#' @param nReps is the integer number of replicates per time point.
+#' @param interval is the integer number of hours between simulated time points.
+#' @param period is the integer number of hours in one rhythmic cycle.
+#' @param errSd is the standard deviation of the Gaussian sample error.
+#' @param rhyFrac is the proportion of genes that are generated as rhythmic.
+#'   Must be a float between 0 and 1.
+#' @param nSims is the integer number of simulations to generate.
+#' @param drFrac is the proportion of rhythmic genes that are generated as
+#'   differentially rhythmic.
+#' @param rhythmicGroups is a dataframe of metadata describing the properties of
+#'   rhythmic or differentially rhythmic genes.
 #' @export
 getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
                             period = 24, errSd = 1, rhyFrac = 0.25, nSims = 1,
-                            drFrac = 0.25, rhythmicGroups = data.frame()) {
+                            drFrac = 0.25, rhythmicGroups = data.table::data.table()) {
 
   if(period %% interval != 0) stop('period must be divisible by interval')
   if(rhyFrac < 0 | rhyFrac > 1) stop('rhyFrac must be between 0 and 1')
@@ -171,11 +181,11 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
   if(!discreteAmps & ncol(rhythmicGroups) > 0) {
     stop('must include meanAmp column in rhythmicGroups')}
   if(!'dAmp' %in% colnames(rhythmicGroups)) {
-    rhythmicGroups['dAmp'] = rep(0, nrow(rhythmicGroups))}
+    rhythmicGroups$dAmp = rep(0, nrow(rhythmicGroups))}
   if(!'dPhase' %in% colnames(rhythmicGroups)) {
-    rhythmicGroups['dPhase'] = rep(0, nrow(rhythmicGroups))}
+    rhythmicGroups$dPhase = rep(0, nrow(rhythmicGroups))}
 
-  rhythmicGroups = data.table(rhythmicGroups)
+  rhythmicGroups = data.table::data.table(rhythmicGroups)
 
   nRhyGenes = as.integer(nGenes * rhyFrac)
   nDrGenes = as.integer(nRhyGenes * drFrac)
@@ -188,7 +198,8 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
     stop('number of rows in rhythmicGroups must be divisible by number of DR genes')}
 
   if(nrow(rhythmicGroups) > 0) {
-    onlyRhythmicGroups = data.table(meanAmp = unique(rhythmicGroups$meanAmp),
+    onlyRhythmicGroups = data.table::data.table(
+                                    meanAmp = unique(rhythmicGroups$meanAmp),
                                     dAmp = 0,
                                     dPhase = 0)
     rhythmicGroups = rbind(rhythmicGroups, onlyRhythmicGroups)
@@ -232,8 +243,6 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
     return(rbind(rhyExprs, dRhyExprs, nonRhyExprs) +
            matrix(rnorm(nGenes * nSamples, sd = errSd), nGenes, nSamples))
   }
-
-  rhythmicGroups = data.frame(rhythmicGroups)
 
   colnames(expressionMatrix) = sampleNames
   rownames(expressionMatrix) = geneNames
