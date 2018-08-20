@@ -43,8 +43,8 @@ getPreparedVariables = function(conditions, interval, period, nCond, nReps,
                                dRhy = rep(c(rep(0, nRhyGenes - nDrGenes),
                                             rep(1, nDrGenes),
                                             rep(0, nGenes - nRhyGenes)), nSims),
-                               rhyIndex = rep(rep(as.integer(NA), nGenes),
-                                              nSims),
+                               geneIndex = rep(rep(as.integer(NA), nGenes),
+                                               nSims),
                                simIndex = rep(1:nSims, each = nGenes))
 
   timeSteps = rep((2 * pi / period) * interval * 0:(period / interval - 1),
@@ -74,8 +74,8 @@ getRhyExprMatrix = function(nGenes, simGroup, nRhyOnlyGenes, nDrGenes, nSamples,
       rhyExprs[ii, ] = rep(condExprs, nCond)
       if(discreteAmps) {
         groupIndex = nDrGroups + (ii - 1) %% nRhyGroups + 1
-        set(featureMetadata, i = ii + (simGroup - 1L) * nGenes, j = 'rhyIndex',
-            value = rhythmicGroups[groupIndex, rhyIndex])
+        set(featureMetadata, i = ii + (simGroup - 1L) * nGenes, j = 'geneIndex',
+            value = rhythmicGroups[groupIndex, geneIndex])
       }
     }
   } else {
@@ -118,7 +118,7 @@ getDrExprMatrix = function(simGroup, nDrGenes, rhythmicGroups, nSamples,
 
           set(featureMetadata,
               i = rowIndex + nRhyOnlyGenes + (simGroup - 1L) * nGenes,
-              j = 'rhyIndex', value = rhythmicGroups[row, rhyIndex])
+              j = 'geneIndex', value = rhythmicGroups[row, geneIndex])
         }
       }
     } else {
@@ -206,7 +206,7 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
   }
 
   if(discreteAmps) {
-    rhythmicGroups[, rhyIndex := 1:nrow(rhythmicGroups)]}
+    rhythmicGroups[, geneIndex := 1:nrow(rhythmicGroups)]}
 
   sampleNames = paste('sample', 1:nSamples, sep = '_')
   geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
