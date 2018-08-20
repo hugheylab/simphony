@@ -153,6 +153,25 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
 }
 
 
+#' Generate differentially rhythmic groups from a set of rhythmic conditions.
+#'
+#' Groups will be generated via a cross product of the supplied condition
+#' vectors.
+#'
+#' @param meanAmps is a list of floats representing the mean amplitudes of
+#'   rhythmic groups.
+#' @param dAmps is a list of floats representing the difference in amplitude
+#'   for a differentially rhythmic group.
+#' @param dPhases is a list of floats representing the difference in phase for a
+#'   differentially rhythmic group.
+getRhythmicGroups = function(meanAmps, dAmps, dPhases) {
+  groups = data.table::CJ(meanAmps, dAmps, dPhases)
+  colnames(groups) = c('meanAmp', 'dAmp', 'dPhase')
+  return(groups[(dAmp > 0 | dPhase > 0) &
+                ((dAmp < meanAmp * 2) | (dAmp == meanAmp * 2 & dPhase == 0))])
+}
+
+
 #' Generate simulated gene expresion time courses.
 #'
 #' @param nGenes is the integer number of total genes to simulate.

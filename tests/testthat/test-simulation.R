@@ -2,6 +2,21 @@ context('simulation')
 library(data.table)
 library(foreach)
 
+test_that('Rhythmic groups created correctly', {
+  meanAmps = c(0, 1, 2, 3)
+  dAmps = c(0, 0.5, 1, 1.5, 2)
+  dPhases = c(0, 1, 2, 3, 4, 5)
+  rhythmicGroups = getRhythmicGroups(meanAmps, dAmps, dPhases)
+
+  expect_equal(nrow(rhythmicGroups), 82)
+
+  expect_equal(nrow(rhythmicGroups[meanAmp == 0]), 0)
+  expect_equal(nrow(rhythmicGroups[meanAmp == 1]), 23 + 1)
+  expect_equal(nrow(rhythmicGroups[meanAmp == 2]), 29)
+
+  expect_equal(nrow(rhythmicGroups[dAmp == 0 & dPhase == 0]), 0)
+})
+
 test_that('Simulated GSE classes are correct', {
   simGse = getSimulatedExpr(nGenes = 100)
 
