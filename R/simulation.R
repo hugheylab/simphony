@@ -37,7 +37,7 @@ getPreparedVariables = function(conditions, interval, period, nCond, nReps,
   sampleMetadata = sampleMetadata[order(cond, time)]
   sampleMetadata[, sample := sampleNames]
 
-  featureMetadata = data.table::data.table(geneId = geneNames,
+  featureMetadata = data.table::data.table(gene = geneNames,
                                rhy = rep(c(rep(1, nRhyGenes),
                                            rep(0, nGenes - nRhyGenes)), nSims),
                                dRhy = rep(c(rep(0, nRhyGenes - nDrGenes),
