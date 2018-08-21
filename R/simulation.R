@@ -1,8 +1,9 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
 #' @importFrom stats rnorm time
-library(data.table)
-library(foreach)
+globalVariables(c('cond', 'dAmp', 'dPhase', 'foreach', 'geneIndex', 'meanAmp',
+                  'simGroup'))
+
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
                            verticalShift = 0) {
