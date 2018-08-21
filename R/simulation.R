@@ -1,7 +1,8 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
 #' @importFrom stats rnorm time
-NULL
+library(data.table)
+library(foreach)
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
                            verticalShift = 0) {
@@ -74,7 +75,8 @@ getRhyExprMatrix = function(nGenes, simGroup, nRhyOnlyGenes, nDrGenes, nSamples,
       rhyExprs[ii, ] = rep(condExprs, nCond)
       if(discreteAmps) {
         groupIndex = nDrGroups + (ii - 1) %% nRhyGroups + 1
-        set(featureMetadata, i = ii + (simGroup - 1L) * nGenes, j = 'geneIndex',
+        data.table::set(featureMetadata, i = ii + (simGroup - 1L) * nGenes,
+            j = 'geneIndex',
             value = rhythmicGroups[groupIndex, geneIndex])
       }
     }
@@ -116,7 +118,7 @@ getDrExprMatrix = function(simGroup, nDrGenes, rhythmicGroups, nSamples,
           dRhyExprs[rowIndex, ] = baseExpr
           gene = geneNames[rowIndex + nRhyOnlyGenes + (simGroup - 1) * nSims]
 
-          set(featureMetadata,
+          data.table::set(featureMetadata,
               i = rowIndex + nRhyOnlyGenes + (simGroup - 1L) * nGenes,
               j = 'geneIndex', value = rhythmicGroups[row, geneIndex])
         }
@@ -190,7 +192,8 @@ getRhythmicGroups = function(meanAmps, dAmps, dPhases) {
 #' @export
 getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
                             period = 24, errSd = 1, rhyFrac = 0.25, nSims = 1,
-                            drFrac = 0.25, rhythmicGroups = data.table::data.table()) {
+                            drFrac = 0.25,
+                            rhythmicGroups = data.table::data.table()) {
 
   if(period %% interval != 0) stop('period must be divisible by interval')
   if(rhyFrac < 0 | rhyFrac > 1) stop('rhyFrac must be between 0 and 1')
@@ -200,9 +203,13 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
   if(!discreteAmps & ncol(rhythmicGroups) > 0) {
     stop('must include meanAmp column in rhythmicGroups')}
   if(!'dAmp' %in% colnames(rhythmicGroups)) {
-    rhythmicGroups$dAmp = rep(0, nrow(rhythmicGroups))}
+    if(ncol(rhythmicGroups) == 0){
+      rhythmicGroups = data.table::data.table(dAmp = integer())
+    } else {
+      rhythmicGroups[, dAmp := integer()]}
+  }
   if(!'dPhase' %in% colnames(rhythmicGroups)) {
-    rhythmicGroups$dPhase = rep(0, nrow(rhythmicGroups))}
+    rhythmicGroups[, dPhase := integer()]}
 
   rhythmicGroups = data.table::data.table(rhythmicGroups)
 

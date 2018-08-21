@@ -112,7 +112,7 @@ test_that('Correct number of simulations are created', {
 
   expect_equal(length(unique(simGse$fm$simIndex)), 5)
   expect_equal(nrow(simGse$fm), nrow(simGse$exprs))
-  expect_equal(simGse$fm$geneId, rownames(simGse$exprs))
+  expect_equal(simGse$fm$gene, rownames(simGse$exprs))
   expect_equal(nrow(simGse$fm), 500)
 
   rm(simGse)
@@ -121,7 +121,7 @@ test_that('Correct number of simulations are created', {
 test_that('Order of genes is consistent for emat/fm', {
   simGse = getSimulatedExpr(nGenes = 100)
 
-  expect_equal(simGse$fm$geneId, rownames(simGse$exprs))
+  expect_equal(simGse$fm$gene, rownames(simGse$exprs))
 
   rm(simGse)
 })
@@ -183,9 +183,6 @@ test_that('Simuation errors are thrown', {
   expect_error(getSimulatedExpr(nGenes = 100,
                                 rhythmicGroups = data.frame(a = c(1))),
                'must include meanAmp column in rhythmicGroups')
-  expect_error(getSimulatedExpr(nGenes = 100, rhyFrac = 0.5, drFrac = 0.5,
-                                rhythmicGroups = data.frame(meanAmp = c(1,2))),
-               'number of rows in rhythmicGroups must be divisible by number of DR genes')
 })
 
 test_that('Prepared variables are created correctly', {
@@ -224,5 +221,5 @@ test_that('Prepared variables are created correctly', {
                nDrGenes * nSims)
   expect_equal(length(unique(preparedVariables$featureMetadata$simIndex)),
                nSims)
-  expect_equal(preparedVariables$featureMetadata$geneId, geneNames)
+  expect_equal(preparedVariables$featureMetadata$gene, geneNames)
 })
