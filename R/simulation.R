@@ -6,9 +6,9 @@ globalVariables(c('cond', 'dAmp', 'dPhase', 'foreach', 'geneIndex', 'meanAmp',
 
 
 getRhythmicExpr = function(timeSteps, phase = 0, amplitude = 1,
-                           verticalShift = 0) {
+                           verticalShift = 0, rhyFunc = sin) {
 
-  exprs = amplitude * sin(timeSteps + phase) + verticalShift
+  exprs = amplitude * rhyFunc(timeSteps + phase) + verticalShift
   return(exprs)
 }
 
@@ -107,12 +107,15 @@ getDrExprMatrix = function(simGroup, nDrGenes, rhythmicGroups, nSamples,
                      rhythmicGroups[row, dAmp] / 2,
                      rhythmicGroups[row, meanAmp] +
                      rhythmicGroups[row, dAmp] / 2)
-        condPhases = c(0, (2 * pi / period) * rhythmicGroups[row, dPhase])
+        
+        phaseDelta = (2 * pi / period) * rhythmicGroups[row, dPhase] / 2
+        condPhases = c(rhythmicGroups[row, meanPhase] + phaseDelta,
+                       rhythmicGroups[row, meanPhase] - phaseDelta)
 
         baseExpr = c(getRhythmicExpr(timeSteps, phase = condPhases[1],
-                                      amplitude = condAmps[1]),
-                      getRhythmicExpr(timeSteps, phase = condPhases[2],
-                                      amplitude = condAmps[2]))
+                                     amplitude = condAmps[1]),
+                     getRhythmicExpr(timeSteps, phase = condPhases[2],
+                                     amplitude = condAmps[2]))
 
         for(ii in 1L:nGenesPerGroup) {
           rowIndex = (row - 1L) * nGenesPerGroup + ii
@@ -165,13 +168,17 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
 #'   rhythmic groups.
 #' @param dAmps is a list of floats representing the difference in amplitude
 #'   for a differentially rhythmic group.
+#' @param meanPhases is a list of floats representing the mean phases of
+#'   rhythmic groups.
 #' @param dPhases is a list of floats representing the difference in phase for a
 #'   differentially rhythmic group.
-getRhythmicGroups = function(meanAmps, dAmps, dPhases) {
-  groups = data.table::CJ(meanAmps, dAmps, dPhases)
-  colnames(groups) = c('meanAmp', 'dAmp', 'dPhase')
+getRhythmicGroups = function(meanAmps = 0, dAmps = 0, meanPhases = 0,
+                             dPhases = 0) {
+  groups = data.table::CJ(meanAmps, dAmps, meanPhases, dPhases)
+  colnames(groups) = c('meanAmp', 'dAmp', 'meanPhase', 'dPhase')
   return(groups[(dAmp > 0 | dPhase > 0) &
-                ((dAmp < meanAmp * 2) | (dAmp == meanAmp * 2 & dPhase == 0))])
+                ((dAmp < meanAmp * 2) |
+                 (dAmp == meanAmp * 2 & dPhase == 0))])
 }
 
 
@@ -232,7 +239,7 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
     rhythmicGroups = rbind(rhythmicGroups, onlyRhythmicGroups)
   }
 
-  if(discreteAmps) {
+  if(nrow(rhythmicGroups) > 0) {
     rhythmicGroups[, geneIndex := 1:nrow(rhythmicGroups)]}
 
   sampleNames = paste('sample', 1:nSamples, sep = '_')

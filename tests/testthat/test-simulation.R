@@ -6,7 +6,8 @@ test_that('Rhythmic groups created correctly', {
   meanAmps = c(0, 1, 2, 3)
   dAmps = c(0, 0.5, 1, 1.5, 2)
   dPhases = c(0, 1, 2, 3, 4, 5)
-  rhythmicGroups = getRhythmicGroups(meanAmps, dAmps, dPhases)
+  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, dAmps = dAmps,
+                                     dPhases = dPhases)
 
   expect_equal(nrow(rhythmicGroups), 82)
 
@@ -15,6 +16,43 @@ test_that('Rhythmic groups created correctly', {
   expect_equal(nrow(rhythmicGroups[meanAmp == 2]), 29)
 
   expect_equal(nrow(rhythmicGroups[dAmp == 0 & dPhase == 0]), 0)
+
+  rm(meanAmps, dAmps, dPhases, rhythmicGroups)
+})
+
+test_that('Rhythmic groups created correctly with meanPhases enabled', {
+  meanAmps = c(0, 1, 2, 3)
+  dAmps = c(0, 0.5, 1, 1.5, 2)
+  meanPhases = c(1, 2, 3)
+  dPhases = c(0, 1, 2, 3, 4, 5)
+  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, dAmps = dAmps,
+                                     meanPhases = meanPhases, dPhases = dPhases)
+
+  expect_equal(nrow(rhythmicGroups), 82 * 3)
+
+  expect_equal(nrow(rhythmicGroups[meanAmp == 0]), 0)
+  expect_equal(nrow(rhythmicGroups[meanAmp == 1]), (23 + 1) * 3)
+  expect_equal(nrow(rhythmicGroups[meanAmp == 2]), 29 * 3)
+
+  expect_equal(nrow(rhythmicGroups[dAmp == 0 & dPhase == 0]), 0)
+
+  rm(meanAmps, dAmps, meanPhases, dPhases, rhythmicGroups)
+})
+
+test_that('Rhythmic groups created correctly wihtout dAmps', {
+  meanAmps = c(0, 1, 2, 3)
+  meanPhases = c(1, 2, 3)
+  dPhases = c(0, 1, 2, 3, 4, 5)
+  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, meanPhases = meanPhases,
+                                     dPhases = dPhases)
+
+  expect_equal(nrow(rhythmicGroups), 45)
+
+  expect_equal(nrow(rhythmicGroups[meanAmp == 0]), 0)
+  expect_equal(nrow(rhythmicGroups[meanPhase == 1]), 15)
+  expect_equal(nrow(rhythmicGroups[meanPhase == 1 & dPhase == 1]), 3)
+
+  rm(meanAmps, meanPhases, dPhases, rhythmicGroups)
 })
 
 test_that('Simulated GSE classes are correct', {
