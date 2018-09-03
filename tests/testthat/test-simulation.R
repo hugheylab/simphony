@@ -6,7 +6,7 @@ test_that('Rhythmic groups created correctly', {
   meanAmps = c(0, 1, 2, 3)
   dAmps = c(0, 0.5, 1, 1.5, 2)
   dPhases = c(0, 1, 2, 3, 4, 5)
-  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, dAmps = dAmps,
+  rhythmicGroups = getExprGroups(meanAmps = meanAmps, dAmps = dAmps,
                                      dPhases = dPhases)
 
   expect_equal(nrow(rhythmicGroups), 82)
@@ -25,34 +25,34 @@ test_that('Rhythmic groups created correctly with meanPhases enabled', {
   dAmps = c(0, 0.5, 1, 1.5, 2)
   meanPhases = c(1, 2, 3)
   dPhases = c(0, 1, 2, 3, 4, 5)
-  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, dAmps = dAmps,
+  exprGroups = getExprGroups(meanAmps = meanAmps, dAmps = dAmps,
                                      meanPhases = meanPhases, dPhases = dPhases)
 
-  expect_equal(nrow(rhythmicGroups), 82 * 3)
+  expect_equal(nrow(exprGroups), 82 * 3)
 
-  expect_equal(nrow(rhythmicGroups[meanAmp == 0]), 0)
-  expect_equal(nrow(rhythmicGroups[meanAmp == 1]), (23 + 1) * 3)
-  expect_equal(nrow(rhythmicGroups[meanAmp == 2]), 29 * 3)
+  expect_equal(nrow(exprGroups[meanAmp == 0]), 0)
+  expect_equal(nrow(exprGroups[meanAmp == 1]), (23 + 1) * 3)
+  expect_equal(nrow(exprGroups[meanAmp == 2]), 29 * 3)
 
-  expect_equal(nrow(rhythmicGroups[dAmp == 0 & dPhase == 0]), 0)
+  expect_equal(nrow(exprGroups[dAmp == 0 & dPhase == 0]), 0)
 
-  rm(meanAmps, dAmps, meanPhases, dPhases, rhythmicGroups)
+  rm(meanAmps, dAmps, meanPhases, dPhases, exprGroups)
 })
 
 test_that('Rhythmic groups created correctly wihtout dAmps', {
   meanAmps = c(0, 1, 2, 3)
   meanPhases = c(1, 2, 3)
   dPhases = c(0, 1, 2, 3, 4, 5)
-  rhythmicGroups = getRhythmicGroups(meanAmps = meanAmps, meanPhases = meanPhases,
+  exprGroups = getExprGroups(meanAmps = meanAmps, meanPhases = meanPhases,
                                      dPhases = dPhases)
 
-  expect_equal(nrow(rhythmicGroups), 45)
+  expect_equal(nrow(exprGroups), 45)
 
-  expect_equal(nrow(rhythmicGroups[meanAmp == 0]), 0)
-  expect_equal(nrow(rhythmicGroups[meanPhase == 1]), 15)
-  expect_equal(nrow(rhythmicGroups[meanPhase == 1 & dPhase == 1]), 3)
+  expect_equal(nrow(exprGroups[meanAmp == 0]), 0)
+  expect_equal(nrow(exprGroups[meanPhase == 1]), 15)
+  expect_equal(nrow(exprGroups[meanPhase == 1 & dPhase == 1]), 3)
 
-  rm(meanAmps, meanPhases, dPhases, rhythmicGroups)
+  rm(meanAmps, meanPhases, dPhases, exprGroups)
 })
 
 test_that('Simulated GSE classes are correct', {
@@ -219,8 +219,8 @@ test_that('Simuation errors are thrown', {
   expect_error(getSimulatedExpr(nGenes = 100, drFrac = 1.5),
                'drFrac must be between 0 and 1')
   expect_error(getSimulatedExpr(nGenes = 100,
-                                rhythmicGroups = data.frame(a = c(1))),
-               'must include meanAmp column in rhythmicGroups')
+                                exprGroups = data.frame(a = c(1))),
+               'must include meanAmp column in exprGroups')
 })
 
 test_that('Prepared variables are created correctly', {

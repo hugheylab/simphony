@@ -60,17 +60,17 @@ getPreparedVariables = function(conditions, interval, period, nCond, nReps,
 
 
 getRhyExprMatrix = function(nGenes, simGroup, nRhyOnlyGenes, nDrGenes, nSamples,
-                            discreteAmps, rhythmicGroups, timeSteps, nCond,
+                            discreteAmps, exprGroups, timeSteps, nCond,
                             geneNames, conditions, nSims, featureMetadata) {
 
   nRhyGenesPerSim = nRhyOnlyGenes + nDrGenes
   if(nRhyOnlyGenes > 0) {
-    nDrGroups = nrow(rhythmicGroups[dAmp != 0 | dPhase != 0, ])
-    nRhyGroups = nrow(rhythmicGroups[dAmp == 0 & dPhase == 0, ])
+    nDrGroups = nrow(exprGroups[dAmp != 0 | dPhase != 0, ])
+    nRhyGroups = nrow(exprGroups[dAmp == 0 & dPhase == 0, ])
 
     rhyExprs = matrix(ncol = nSamples, nrow = nRhyOnlyGenes)
     amplitudes = getExprAmplitudes(nRhyOnlyGenes, discrete = discreteAmps,
-                                   amps = t(rhythmicGroups[dAmp == 0 & dPhase == 0, meanAmp]))
+                                   amps = t(exprGroups[dAmp == 0 & dPhase == 0, meanAmp]))
     for(ii in 1L:nRhyOnlyGenes) {
       condExprs = getRhythmicExpr(timeSteps, amplitude = amplitudes[ii])
       rhyExprs[ii, ] = rep(condExprs, nCond)
@@ -78,7 +78,7 @@ getRhyExprMatrix = function(nGenes, simGroup, nRhyOnlyGenes, nDrGenes, nSamples,
         groupIndex = nDrGroups + (ii - 1) %% nRhyGroups + 1
         data.table::set(featureMetadata, i = ii + (simGroup - 1L) * nGenes,
             j = 'geneIndex',
-            value = rhythmicGroups[groupIndex, geneIndex])
+            value = exprGroups[groupIndex, geneIndex])
       }
     }
   } else {
@@ -91,26 +91,26 @@ getRhyExprMatrix = function(nGenes, simGroup, nRhyOnlyGenes, nDrGenes, nSamples,
 }
 
 
-getDrExprMatrix = function(simGroup, nDrGenes, rhythmicGroups, nSamples,
+getDrExprMatrix = function(simGroup, nDrGenes, exprGroups, nSamples,
                            discreteAmps, period, timeSteps, geneNames,
                            nRhyOnlyGenes, nSims, featureMetadata,
                            nSamplesPerCond, conditions, nGenes) {
 
   nRhyGenesPerSim = nRhyOnlyGenes + nDrGenes
   if(nDrGenes > 0) {
-    nGenesPerGroup = nDrGenes / as.integer(nrow(rhythmicGroups[dAmp != 0 | dPhase != 0, ]))
+    nGenesPerGroup = nDrGenes / as.integer(nrow(exprGroups[dAmp != 0 | dPhase != 0, ]))
     dRhyExprs = matrix(nrow = nDrGenes, ncol = nSamples)
 
     if(discreteAmps) {
-      for(row in 1L:nrow(rhythmicGroups[dAmp != 0 | dPhase != 0, ])) {
-        condAmps = c(rhythmicGroups[row, meanAmp] -
-                     rhythmicGroups[row, dAmp] / 2,
-                     rhythmicGroups[row, meanAmp] +
-                     rhythmicGroups[row, dAmp] / 2)
-        
-        phaseDelta = (2 * pi / period) * rhythmicGroups[row, dPhase] / 2
-        condPhases = c(rhythmicGroups[row, meanPhase] + phaseDelta,
-                       rhythmicGroups[row, meanPhase] - phaseDelta)
+      for(row in 1L:nrow(exprGroups[dAmp != 0 | dPhase != 0, ])) {
+        condAmps = c(exprGroups[row, meanAmp] -
+                     exprGroups[row, dAmp] / 2,
+                     exprGroups[row, meanAmp] +
+                     exprGroups[row, dAmp] / 2)
+
+        phaseDelta = (2 * pi / period) * exprGroups[row, dPhase] / 2
+        condPhases = c(exprGroups[row, meanPhase] + phaseDelta,
+                       exprGroups[row, meanPhase] - phaseDelta)
 
         baseExpr = c(getRhythmicExpr(timeSteps, phase = condPhases[1],
                                      amplitude = condAmps[1]),
@@ -124,7 +124,7 @@ getDrExprMatrix = function(simGroup, nDrGenes, rhythmicGroups, nSamples,
 
           data.table::set(featureMetadata,
               i = rowIndex + nRhyOnlyGenes + (simGroup - 1L) * nGenes,
-              j = 'geneIndex', value = rhythmicGroups[row, geneIndex])
+              j = 'geneIndex', value = exprGroups[row, geneIndex])
         }
       }
     } else {
@@ -172,7 +172,7 @@ getNonRhyExprMatrix = function(nNonRhyGenes, nSamplesPerCond, nCond, nGenes,
 #'   rhythmic groups.
 #' @param dPhases is a list of floats representing the difference in phase for a
 #'   differentially rhythmic group.
-getRhythmicGroups = function(meanAmps = 0, dAmps = 0, meanPhases = 0,
+getExprGroups = function(meanAmps = 0, dAmps = 0, meanPhases = 0,
                              dPhases = 0) {
   groups = data.table::CJ(meanAmps, dAmps, meanPhases, dPhases)
   colnames(groups) = c('meanAmp', 'dAmp', 'meanPhase', 'dPhase')
@@ -195,31 +195,31 @@ getRhythmicGroups = function(meanAmps = 0, dAmps = 0, meanPhases = 0,
 #' @param nSims is the integer number of simulations to generate.
 #' @param drFrac is the proportion of rhythmic genes that are generated as
 #'   differentially rhythmic.
-#' @param rhythmicGroups is a dataframe of metadata describing the properties of
+#' @param exprGroups is a dataframe of metadata describing the properties of
 #'   rhythmic or differentially rhythmic genes.
 #' @export
 getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
                             period = 24, errSd = 1, rhyFrac = 0.25, nSims = 1,
                             drFrac = 0.25,
-                            rhythmicGroups = data.table::data.table()) {
+                            exprGroups = data.table::data.table()) {
 
   if(period %% interval != 0) stop('period must be divisible by interval')
   if(rhyFrac < 0 | rhyFrac > 1) stop('rhyFrac must be between 0 and 1')
   if(drFrac < 0 | drFrac > 1) stop('drFrac must be between 0 and 1')
 
-  discreteAmps = ('meanAmp' %in% colnames(rhythmicGroups))
-  if(!discreteAmps & ncol(rhythmicGroups) > 0) {
-    stop('must include meanAmp column in rhythmicGroups')}
-  if(!'dAmp' %in% colnames(rhythmicGroups)) {
-    if(ncol(rhythmicGroups) == 0){
-      rhythmicGroups = data.table::data.table(dAmp = integer())
+  discreteAmps = ('meanAmp' %in% colnames(exprGroups))
+  if(!discreteAmps & ncol(exprGroups) > 0) {
+    stop('must include meanAmp column in exprGroups')}
+  if(!'dAmp' %in% colnames(exprGroups)) {
+    if(ncol(exprGroups) == 0){
+      exprGroups = data.table::data.table(dAmp = integer())
     } else {
-      rhythmicGroups[, dAmp := integer()]}
+      exprGroups[, dAmp := integer()]}
   }
-  if(!'dPhase' %in% colnames(rhythmicGroups)) {
-    rhythmicGroups[, dPhase := integer()]}
+  if(!'dPhase' %in% colnames(exprGroups)) {
+    exprGroups[, dPhase := integer()]}
 
-  rhythmicGroups = data.table::data.table(rhythmicGroups)
+  exprGroups = data.table::data.table(exprGroups)
 
   nRhyGenes = as.integer(nGenes * rhyFrac)
   nDrGenes = as.integer(nRhyGenes * drFrac)
@@ -228,19 +228,16 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
   nSamples = as.integer(nCond * nReps * period %/% interval)
   nSamplesPerCond = nSamples %/% nCond
 
-  if(discreteAmps & nDrGenes %% nrow(rhythmicGroups) != 0) {
-    stop('number of rows in rhythmicGroups must be divisible by number of DR genes')}
-
-  if(nrow(rhythmicGroups) > 0) {
+  if(nrow(exprGroups) > 0) {
     onlyRhythmicGroups = data.table::data.table(
-                                    meanAmp = unique(rhythmicGroups$meanAmp),
+                                    meanAmp = unique(exprGroups$meanAmp),
                                     dAmp = 0,
                                     dPhase = 0)
-    rhythmicGroups = rbind(rhythmicGroups, onlyRhythmicGroups)
+    exprGroups = rbind(exprGroups, onlyRhythmicGroups)
   }
 
-  if(nrow(rhythmicGroups) > 0) {
-    rhythmicGroups[, geneIndex := 1:nrow(rhythmicGroups)]}
+  if(nrow(exprGroups) > 0) {
+    exprGroups[, geneIndex := 1:nrow(exprGroups)]}
 
   sampleNames = paste('sample', 1:nSamples, sep = '_')
   geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
@@ -256,14 +253,14 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
 
   expressionMatrix = foreach(simGroup = 1L:nSims, .combine = rbind) %do% {
     rhyResults = getRhyExprMatrix(nGenes, simGroup, nRhyOnlyGenes, nDrGenes,
-                                  nSamples, discreteAmps, rhythmicGroups,
+                                  nSamples, discreteAmps, exprGroups,
                                   timeSteps, nCond, geneNames, conditions,
                                   nSims, featureMetadata)
     rhyExprs = rhyResults$rhyExprs
     featureMetadata = rhyResults$featureMetadata
     rm(rhyResults)
 
-    drResults = getDrExprMatrix(simGroup, nDrGenes, rhythmicGroups, nSamples,
+    drResults = getDrExprMatrix(simGroup, nDrGenes, exprGroups, nSamples,
                            discreteAmps, period, timeSteps, geneNames,
                            nRhyOnlyGenes, nSims, featureMetadata,
                            nSamplesPerCond, conditions, nGenes)
@@ -285,7 +282,7 @@ getSimulatedExpr = function(nGenes = 10000L, nCond = 2, nReps = 2, interval = 4,
     exprs = expressionMatrix,
     sm = sampleMetadata,
     fm = featureMetadata,
-    rhythmicGroups = rhythmicGroups
+    exprGroups = exprGroups
   )
 
   return(values)
