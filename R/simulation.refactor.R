@@ -2,10 +2,14 @@ library(data.table)
 library(foreach)
 
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
-                            nReps = 2, errSd = 1, nSims = 1) {
+                            nReps = 2, errSd = 1, nSims = 1,
+                            randomTimepoints = FALSE, nSamples = 0) {
 
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
+
+  if(randomTimepoints & nSamples == 0) {
+    stop('Number of random timepoint samples not specified (nSamples).') }
 
   if(!('geneFrac' %in% colnames(exprGroups)) & !('geneCount' %in% colnames(exprGroups))) {
     exprGroups[, geneFrac := 1/nrow(exprGroups)] }
@@ -33,27 +37,31 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
   # Compute a number of genes per group that sum to nGenes.
   if(!'geneCount' %in% colnames(exprGroups)) {
     exprGroups[, geneCount := as.integer(geneFrac * nGenes)]
-    if(sum(exprGroups[, geneCount] != nGenes)) {
+    if(sum(exprGroups[, geneCount]) != nGenes) {
       exprGroups[1L:(nGenes - sum(exprGroups[, geneCount])), geneCount := geneCount + 1]
     }
   }
 
-  nSamples = nReps * period %/% interval
+  if(!randomTimepoints) {
+    timePoints = (2 * pi / period) * interval * 0:(period / interval - 1)
+    nSamples = nReps * period %/% interval
+  } else {
+    timePoints = sort(runif(nSamples, min = 0, max = 2 * pi))
+    nSamples = nSamples * nReps
+  }
+  timePoints = rep(timePoints, each = nReps)
 
   sampleNames = paste('sample', 1:(2 * nSamples), sep = '_')
   geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
 
   sampleMetadata = data.table::data.table(cond = rep(1:2, each = nSamples),
-                                          time = rep(rep(interval * 0:(period / interval - 1),
-                                                         each = nReps), 2),
+                                          time = rep(timePoints * period / (2 * pi), 2),
                                           sample = sampleNames)
 
   geneMetadata = data.table::data.table(gene = geneNames,
                                         index = rep(1:nrow(exprGroups),
                                                     times = exprGroups[, geneCount]))
-
-  timePoints = rep((2 * pi / period) * interval * 0:(period / interval - 1),
-                   each = nReps)
+  
 
   emat = foreach(sim = 1L:nSims, .combine = rbind) %do% {
     foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
