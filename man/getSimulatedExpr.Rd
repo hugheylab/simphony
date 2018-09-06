@@ -30,7 +30,7 @@ Must be a float between 0 and 1.}
 differentially rhythmic.}
 
 \item{exprGroups}{is a dataframe of metadata describing the properties of
-genes across conditions.}
+rhythmic or differentially rhythmic genes.}
 }
 \description{
 Generate simulated gene expresion time courses.

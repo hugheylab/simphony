@@ -5,6 +5,24 @@
 globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
                   'geneCount', 'ii'))
 
+#' Generate simulated gene expresion time courses.
+#'
+#' @param exprGroups is a dataframe of metadata describing the properties of
+#'   rhythmic or differentially rhythmic genes.
+#' @param nGenes is the integer number of total genes to simulate.
+#' @param period is the integer number of hours in one rhythmic cycle.
+#' @param interval is the integer number of hours between simulated time points.
+#' @param nReps is the integer number of replicates per time point.
+#' @param errSd is the standard deviation of the Gaussian sample error.
+#' @param nSims is the integer number of simulations to generate.
+#' @param randomTimepoints is a boolean determining whether to simulate an
+#'   experiment with random sample times. Defaults to FALSE.
+#' @param nSamples is the integer number of time points to sample, if
+#'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
+#'   TRUE.
+#' @param rhyFunc is the function defining the rhythmic component of the
+#'   simulated gene expression time course. Defaults to sin.
+#' @export
 getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                     interval = 4, nReps = 2, errSd = 1,
                                     nSims = 1, randomTimepoints = FALSE,
