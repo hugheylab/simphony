@@ -1,6 +1,6 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
-globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
+globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
                   'geneCount', 'ii'))
 
 #' Generate simulated gene expresion time courses.
@@ -55,9 +55,10 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
   if(!'dPhase' %in% colnames(exprGroups)) {
     exprGroups[, dPhase := 0] }
 
-  exprGroups[, index := 1:nrow(exprGroups)]
+  exprGroups[, group := 1:nrow(exprGroups)]
 
   # Compute a number of genes per group that sum to nGenes.
+  exprGroups[, geneFrac := geneFrac / sum(geneFrac)]
   if(!'geneCount' %in% colnames(exprGroups)) {
     exprGroups[, geneCount := as.integer(geneFrac * nGenes)]
     if(sum(exprGroups[, geneCount]) != nGenes) {
@@ -82,7 +83,7 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                           sample = sampleNames)
 
   geneMetadata = data.table::data.table(gene = geneNames,
-                                        index = rep(1:nrow(exprGroups),
+                                        group = rep(1:nrow(exprGroups),
                                                     times = exprGroups[, geneCount]))
   
   emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {

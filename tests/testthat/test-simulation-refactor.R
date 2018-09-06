@@ -14,7 +14,7 @@ test_that('Outputs are of correct type', {
 
 test_that('All expected columns are accounted for in exprGroups output', {
   expected_columns = c('geneCount', 'meanExpr', 'dExpr', 'meanAmp', 'dAmp',
-                       'meanPhase', 'dPhase', 'index')
+                       'meanPhase', 'dPhase', 'group')
   exprGroups = data.table::data.table(meanAmp = c(1, 2), dAmp = c(1, 1))
   simGse = getSimulatedExprRefactor(exprGroups)
 
@@ -23,11 +23,11 @@ test_that('All expected columns are accounted for in exprGroups output', {
   rm(expected_columns, exprGroups, simGse)
 })
 
-test_that('exprGroups output has correct index column', {
+test_that('exprGroups output has correct group column', {
   exprGroups = data.table::data.table(meanAmp = c(1, 2, 3), dAmp = c(1, 1, 2))
   simGse = getSimulatedExprRefactor(exprGroups)
 
-  expect_equal(simGse$exprGroups$index, c(1, 2, 3))
+  expect_equal(simGse$exprGroups$group, c(1, 2, 3))
 
   rm(exprGroups, simGse)
 })
