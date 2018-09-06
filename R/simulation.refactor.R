@@ -66,8 +66,8 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
   }
 
   if(!randomTimepoints) {
-    timePoints = (2 * pi / period) * interval * 0:(period / interval - 1)
-    nSamples = nReps * period %/% interval
+    timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
+    nSamples = nReps * length(timePoints)
   } else {
     timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
     nSamples = nSamples * nReps
