@@ -1,7 +1,5 @@
-#' @import foreach
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
-#' @importFrom stats rnorm runif
 globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
                   'geneCount', 'ii'))
 
@@ -26,14 +24,14 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
 getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                     interval = 4, nReps = 2, errSd = 1,
                                     nSims = 1, randomTimepoints = FALSE,
-                                    nSamples = 0, rhyFunc = sin) {
+                                    nSamples = NULL, rhyFunc = sin) {
 
   exprGroups = data.table::data.table(exprGroups)
 
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
 
-  if(randomTimepoints & nSamples == 0) {
+  if(randomTimepoints & is.null(nSamples)) {
     stop('Number of random timepoint samples not specified.') }
 
   if(!('geneFrac' %in% colnames(exprGroups)) & !('geneCount' %in% colnames(exprGroups))) {
@@ -71,7 +69,7 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
     timePoints = (2 * pi / period) * interval * 0:(period / interval - 1)
     nSamples = nReps * period %/% interval
   } else {
-    timePoints = sort(runif(nSamples, min = 0, max = 2 * pi))
+    timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
     nSamples = nSamples * nReps
   }
   timePoints = rep(timePoints, each = nReps)
@@ -87,8 +85,8 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                         index = rep(1:nrow(exprGroups),
                                                     times = exprGroups[, geneCount]))
   
-  emat = foreach(sim = 1L:nSims, .combine = rbind) %do% {
-    foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
+  emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {
+    foreach::foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
       expr1 = exprGroups[ii, meanExpr] + exprGroups[ii, dExpr] / 2
       expr2 = exprGroups[ii, meanExpr] - exprGroups[ii, dExpr] / 2
 
@@ -99,7 +97,7 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
       phase2 = exprGroups[ii, meanPhase] - exprGroups[ii, dPhase] / 2
 
       # Compute the expression matrix for this exprGroup
-      ematNow = foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
+      ematNow = foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
         timeCourse1 = amp1 * rhyFunc(timePoints + 2 * pi * phase1 / period) + expr1
         timeCourse2 = amp2 * rhyFunc(timePoints + 2 * pi * phase2 / period) + expr2
         c(timeCourse1, timeCourse2)
@@ -107,7 +105,7 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
     }
   }
 
-  error = matrix(rnorm(nGenes * nSamples, sd = errSd), nGenes * nSims, nSamples * 2)
+  error = matrix(stats::rnorm(nGenes * nSamples, sd = errSd), nGenes * nSims, nSamples * 2)
   emat = emat + error
 
   colnames(emat) = sampleNames
