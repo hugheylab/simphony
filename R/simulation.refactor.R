@@ -1,15 +1,18 @@
 library(data.table)
 library(foreach)
 
-getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
-                            nReps = 2, errSd = 1, nSims = 1,
-                            randomTimepoints = FALSE, nSamples = 0) {
+getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
+                                    interval = 4, nReps = 2, errSd = 1,
+                                    nSims = 1, randomTimepoints = FALSE,
+                                    nSamples = 0) {
+
+  exprGroups = data.table::data.table(exprGroups)
 
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
 
   if(randomTimepoints & nSamples == 0) {
-    stop('Number of random timepoint samples not specified (nSamples).') }
+    stop('Number of random timepoint samples not specified.') }
 
   if(!('geneFrac' %in% colnames(exprGroups)) & !('geneCount' %in% colnames(exprGroups))) {
     exprGroups[, geneFrac := 1/nrow(exprGroups)] }
@@ -62,7 +65,6 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                                         index = rep(1:nrow(exprGroups),
                                                     times = exprGroups[, geneCount]))
   
-
   emat = foreach(sim = 1L:nSims, .combine = rbind) %do% {
     foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
       expr1 = exprGroups[ii, meanExpr] + exprGroups[ii, dExpr] / 2
@@ -83,7 +85,7 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
     }
   }
 
-  error = matrix(rnorm(nGenes * nSamples, sd = errSd), nGenes, nSamples * 2)
+  error = matrix(rnorm(nGenes * nSamples, sd = errSd), nGenes * nSims, nSamples * 2)
   emat = emat + error
 
   colnames(emat) = sampleNames
