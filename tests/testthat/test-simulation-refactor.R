@@ -74,6 +74,16 @@ test_that('Changing nSims yields expected results', {
 test_that('Rhythmic function can be changed', {
   exprGroups = data.table::data.table(meanPhase = c(3, 6))
   expect_silent(getSimulatedExprRefactor(exprGroups, rhyFunc = cos))
+
+  rm(exprGroups)
+})
+
+test_that('Random timepoints can be used', {
+  exprGroups = data.table::data.table(meanExpr = c(1,2,3))
+  expect_silent(getSimulatedExprRefactor(exprGroups, randomTimepoints = TRUE,
+                                         nSamples = 10))
+
+  rm(exprGroups)
 })
 
 test_that('Appropriate errors are thrown', {

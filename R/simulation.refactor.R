@@ -68,18 +68,19 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
 
   if(!randomTimepoints) {
     timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
-    nSamples = nReps * length(timePoints)
+    timePoints = rep(timePoints, each = nReps)
+    nSamples = length(timePoints)
+    timePoints = rep(timePoints, 2)
   } else {
     timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
-    nSamples = nSamples * nReps
+    timePoints = c(timePoints, sort(stats::runif(nSamples, min = 0, max = 2 * pi)))
   }
-  timePoints = rep(timePoints, each = nReps)
 
-  sampleNames = paste('sample', 1:(2 * nSamples), sep = '_')
+  sampleNames = paste('sample', 1:(nSamples * 2), sep = '_')
   geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
 
   sampleMetadata = data.table::data.table(cond = rep(1:2, each = nSamples),
-                                          time = rep(timePoints * period / (2 * pi), 2),
+                                          time = timePoints * period / (2 * pi),
                                           sample = sampleNames)
 
   geneMetadata = data.table::data.table(gene = geneNames,
@@ -99,8 +100,8 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
 
       # Compute the expression matrix for this exprGroup
       ematNow = foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
-        timeCourse1 = amp1 * rhyFunc(timePoints + 2 * pi * phase1 / period) + expr1
-        timeCourse2 = amp2 * rhyFunc(timePoints + 2 * pi * phase2 / period) + expr2
+        timeCourse1 = amp1 * rhyFunc(timePoints[1:(length(timePoints)/2)] + 2 * pi * phase1 / period) + expr1
+        timeCourse2 = amp2 * rhyFunc(timePoints[(length(timePoints)/2 + 1):length(timePoints)] + 2 * pi * phase2 / period) + expr2
         c(timeCourse1, timeCourse2)
       }
     }
