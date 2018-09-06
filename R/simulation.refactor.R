@@ -8,7 +8,7 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
 getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                     interval = 4, nReps = 2, errSd = 1,
                                     nSims = 1, randomTimepoints = FALSE,
-                                    nSamples = 0) {
+                                    nSamples = 0, rhyFunc = sin) {
 
   exprGroups = data.table::data.table(exprGroups)
 
@@ -82,8 +82,8 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
 
       # Compute the expression matrix for this exprGroup
       ematNow = foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
-        timeCourse1 = amp1 * sin(timePoints + 2 * pi * phase1 / period) + expr1
-        timeCourse2 = amp2 * sin(timePoints + 2 * pi * phase2 / period) + expr2
+        timeCourse1 = amp1 * rhyFunc(timePoints + 2 * pi * phase1 / period) + expr1
+        timeCourse2 = amp2 * rhyFunc(timePoints + 2 * pi * phase2 / period) + expr2
         c(timeCourse1, timeCourse2)
       }
     }

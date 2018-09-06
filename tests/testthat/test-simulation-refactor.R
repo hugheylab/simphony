@@ -71,6 +71,11 @@ test_that('Changing nSims yields expected results', {
   rm(exprGroups, simGse)
 })
 
+test_that('Rhythmic function can be changed', {
+  exprGroups = data.table::data.table(meanPhase = c(3, 6))
+  expect_silent(getSimulatedExprRefactor(exprGroups, rhyFunc = cos))
+})
+
 test_that('Appropriate errors are thrown', {
   expect_error(getSimulatedExprRefactor(data.table::data.table()),
                'No rows in exprGroups. Cannot simulate genes.')
