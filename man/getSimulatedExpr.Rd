@@ -6,8 +6,7 @@
 \usage{
 getSimulatedExpr(nGenes = 10000L, nCond = 2, nReps = 2,
   interval = 4, period = 24, errSd = 1, rhyFrac = 0.25,
-  nSims = 1, drFrac = 0.25,
-  rhythmicGroups = data.table::data.table())
+  nSims = 1, drFrac = 0.25, exprGroups = data.table::data.table())
 }
 \arguments{
 \item{nGenes}{is the integer number of total genes to simulate.}
@@ -30,8 +29,8 @@ Must be a float between 0 and 1.}
 \item{drFrac}{is the proportion of rhythmic genes that are generated as
 differentially rhythmic.}
 
-\item{rhythmicGroups}{is a dataframe of metadata describing the properties of
-rhythmic or differentially rhythmic genes.}
+\item{exprGroups}{is a dataframe of metadata describing the properties of
+genes across conditions.}
 }
 \description{
 Generate simulated gene expresion time courses.

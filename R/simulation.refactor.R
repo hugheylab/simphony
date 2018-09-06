@@ -1,5 +1,9 @@
-library(data.table)
-library(foreach)
+#' @import foreach
+#' @importFrom data.table ":="
+#' @importFrom foreach "%do%"
+#' @importFrom stats rnorm runif
+globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'index',
+                  'geneCount', 'ii'))
 
 getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
                                     interval = 4, nReps = 2, errSd = 1,
@@ -15,7 +19,7 @@ getSimulatedExprRefactor = function(exprGroups, nGenes = 100, period = 24,
     stop('Number of random timepoint samples not specified.') }
 
   if(!('geneFrac' %in% colnames(exprGroups)) & !('geneCount' %in% colnames(exprGroups))) {
-    exprGroups[, geneFrac := 1/nrow(exprGroups)] }
+    exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
 
   if(!'meanExpr' %in% colnames(exprGroups)) {
     exprGroups[, meanExpr := 0] }
