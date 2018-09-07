@@ -66,7 +66,7 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
 
-  if(randomTimepoints & is.null(nSamples)) {
+  if(randomTimepoints && is.null(nSamples)) {
     stop('Number of random timepoint samples not specified.') }
 
   if(!'geneFrac' %in% colnames(exprGroups)) {
@@ -95,6 +95,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
 
   if(!'dSd' %in% colnames(exprGroups)) {
     exprGroups[, dSd := 0] }
+
+  if(any(exprGroups[, meanSd] - exprGroups[, dSd] / 2 < 0)) {
+    stop('Groups cannot have negative standard deviation of sample error.') }
 
   exprGroups[, group := 1:nrow(exprGroups)]
 
