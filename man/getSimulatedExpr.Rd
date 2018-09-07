@@ -32,8 +32,43 @@ randomTimepoints is enabled. This must be supplied if randomTimepoints is
 TRUE.}
 
 \item{rhyFunc}{is the function defining the rhythmic component of the
-simulated gene expression time course. Defaults to sin.}
+simulated gene expression time course. Defaults to sin. If supplied, this
+function must have a period of 2*pi.}
+}
+\value{
+The simulated expression matrix emat, simulated sample metadata sm,
+  metadata describing the expression group each gene came from gm, and an
+  updated exprGroups including missing property columns and an index; group.
 }
 \description{
 Generate simulated gene expresion time courses.
+}
+\details{
+exprGroups must be a data.frame or data.table object, with the
+  following optional columns:
+  \itemize{
+    \item{geneFrac}: {The fraction of all simulated genes which fall into
+                      this group. Defaults to 1/nrow(exprGroups) if not
+                      supplied.}
+    \item{meanExpr}: {The mean baseline expression for this group. Defaults 
+                      to 0 if not supplied.}
+    \item{dExpr}: {The difference in baseline expression across conditions
+                   for this group. Defaults to 0 if not supplied.}
+    \item{meanAmp}: {The mean amplitude of the rhythmic component of 
+                     expression for this group. Defaults to 0 if not
+                     supplied.}
+    \item{dAmp}: {The difference in amplitude of the rhythmic component of 
+                  expression across conditions for this group. Defaults to 0
+                  if not supplied.}
+    \item{meanPhase}: {The mean phase of the rhythmic component of expression
+                       for this group. Defaults to 0 if not supplied.}
+    \item{dPhase}: {The difference in phase of the rhythmic component of 
+                    expression across conditions for this group. Defaults to
+                    0 if not supplied.}
+  }
+}
+\examples{
+  exprGroups = data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+  gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
+                         nSamples = 10, rhyFunc = cos)
 }
