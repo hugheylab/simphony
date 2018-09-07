@@ -65,10 +65,14 @@ exprGroups must be a data.frame or data.table object, with the
     \item{dPhase}: {The difference in phase of the rhythmic component of 
                     expression across conditions for this group. Defaults to
                     0 if not supplied.}
+    \item{meanSd}: {The mean standard deviation of the sample error for this
+                    group. Defaults to 1 if not supplied.}
+    \item{dSd}: {The difference in standard deviation of the sample error for
+                 this group. Defaults to 0 if not supplied.}
   }
 }
 \examples{
-  exprGroups = data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+  exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
                          nSamples = 10, rhyFunc = cos)
 }

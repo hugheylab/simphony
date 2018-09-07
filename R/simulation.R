@@ -1,7 +1,8 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
 globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
-                  'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp'))
+                  'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp', 'meanSd',
+                  'dSd'))
 
 #' Generate simulated gene expresion time courses.
 #'
@@ -45,9 +46,13 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
 #'     \item{dPhase}: {The difference in phase of the rhythmic component of 
 #'                     expression across conditions for this group. Defaults to
 #'                     0 if not supplied.}
+#'     \item{meanSd}: {The mean standard deviation of the sample error for this
+#'                     group. Defaults to 1 if not supplied.}
+#'     \item{dSd}: {The difference in standard deviation of the sample error for
+#'                  this group. Defaults to 0 if not supplied.}
 #'   }
 #' @examples
-#'   exprGroups = data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+#'   exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
 #'   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
 #'                          nSamples = 10, rhyFunc = cos)
 #' @export
@@ -84,6 +89,12 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
 
   if(!'dPhase' %in% colnames(exprGroups)) {
     exprGroups[, dPhase := 0] }
+
+  if(!'meanSd' %in% colnames(exprGroups)) {
+    exprGroups[, meanSd := 1] }
+
+  if(!'dSd' %in% colnames(exprGroups)) {
+    exprGroups[, dSd := 0] }
 
   exprGroups[, group := 1:nrow(exprGroups)]
 
@@ -126,17 +137,19 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
       phase1 = exprGroups[ii, meanPhase] + exprGroups[ii, dPhase] / 2
       phase2 = exprGroups[ii, meanPhase] - exprGroups[ii, dPhase] / 2
 
+      sd1 = exprGroups[ii, meanSd] + exprGroups[ii, dSd] / 2
+      sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
+
       # Compute the expression matrix for this exprGroup
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
         timeCourse1 = amp1 * rhyFunc(timePoints[1:(length(timePoints)/2)] + 2 * pi * phase1 / period) + expr1
         timeCourse2 = amp2 * rhyFunc(timePoints[(length(timePoints)/2 + 1):length(timePoints)] + 2 * pi * phase2 / period) + expr2
+        timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
+        timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         c(timeCourse1, timeCourse2)
       }
     }
   }
-
-  error = matrix(stats::rnorm(nGenes * nSamples, sd = errSd), nGenes * nSims, nSamples * 2)
-  emat = emat + error
 
   colnames(emat) = sampleNames
   rownames(emat) = geneNames
