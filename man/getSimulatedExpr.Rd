@@ -4,33 +4,35 @@
 \alias{getSimulatedExpr}
 \title{Generate simulated gene expresion time courses.}
 \usage{
-getSimulatedExpr(nGenes = 10000L, nCond = 2, nReps = 2,
-  interval = 4, period = 24, errSd = 1, rhyFrac = 0.25,
-  nSims = 1, drFrac = 0.25, exprGroups = data.table::data.table())
+getSimulatedExpr(exprGroups, nGenes = 100, period = 24, interval = 4,
+  nReps = 2, errSd = 1, nSims = 1, randomTimepoints = FALSE,
+  nSamples = NULL, rhyFunc = sin)
 }
 \arguments{
+\item{exprGroups}{is a dataframe of metadata describing the properties of
+rhythmic or differentially rhythmic genes.}
+
 \item{nGenes}{is the integer number of total genes to simulate.}
-
-\item{nCond}{is the integer number of conditions to simulate.}
-
-\item{nReps}{is the integer number of replicates per time point.}
-
-\item{interval}{is the integer number of hours between simulated time points.}
 
 \item{period}{is the integer number of hours in one rhythmic cycle.}
 
-\item{errSd}{is the standard deviation of the Gaussian sample error.}
+\item{interval}{is the integer number of hours between simulated time points.}
 
-\item{rhyFrac}{is the proportion of genes that are generated as rhythmic.
-Must be a float between 0 and 1.}
+\item{nReps}{is the integer number of replicates per time point.}
+
+\item{errSd}{is the standard deviation of the Gaussian sample error.}
 
 \item{nSims}{is the integer number of simulations to generate.}
 
-\item{drFrac}{is the proportion of rhythmic genes that are generated as
-differentially rhythmic.}
+\item{randomTimepoints}{is a boolean determining whether to simulate an
+experiment with random sample times. Defaults to FALSE.}
 
-\item{exprGroups}{is a dataframe of metadata describing the properties of
-rhythmic or differentially rhythmic genes.}
+\item{nSamples}{is the integer number of time points to sample, if
+randomTimepoints is enabled. This must be supplied if randomTimepoints is
+TRUE.}
+
+\item{rhyFunc}{is the function defining the rhythmic component of the
+simulated gene expression time course. Defaults to sin.}
 }
 \description{
 Generate simulated gene expresion time courses.
