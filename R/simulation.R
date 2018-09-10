@@ -4,7 +4,7 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
                   'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp', 'meanSd',
                   'dSd'))
 
-checkExprGroups = function(exprGroups, randomTimepoints, nSamples) {
+checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 
   exprGroups = data.table::data.table(exprGroups)
 
@@ -48,6 +48,13 @@ checkExprGroups = function(exprGroups, randomTimepoints, nSamples) {
     stop('All groups in exprGroups must have geneFrac > 0.') }
 
   exprGroups[, group := 1:nrow(exprGroups)]
+
+  # Compute a number of genes per group that sum to nGenes.
+  exprGroups[, geneFrac := geneFrac / sum(geneFrac)]
+  exprGroups[, geneCount := as.integer(geneFrac * nGenes)]
+  if(sum(exprGroups[, geneCount]) != nGenes) {
+    exprGroups[1L:(nGenes - sum(exprGroups[, geneCount])), geneCount := geneCount + 1]
+  }
 
   return(exprGroups)
 }
@@ -108,14 +115,7 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
                             randomTimepoints = FALSE, rhyFunc = sin) {
 
-  exprGroups = checkExprGroups(exprGroups, randomTimepoints, nSamples)
-
-  # Compute a number of genes per group that sum to nGenes.
-  exprGroups[, geneFrac := geneFrac / sum(geneFrac)]
-  exprGroups[, geneCount := as.integer(geneFrac * nGenes)]
-  if(sum(exprGroups[, geneCount]) != nGenes) {
-    exprGroups[1L:(nGenes - sum(exprGroups[, geneCount])), geneCount := geneCount + 1]
-  }
+  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
 
   if(!randomTimepoints) {
     timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
