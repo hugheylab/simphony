@@ -4,6 +4,54 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
                   'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp', 'meanSd',
                   'dSd'))
 
+checkExprGroups = function(exprGroups, randomTimepoints, nSamples) {
+
+  exprGroups = data.table::data.table(exprGroups)
+
+  if(nrow(exprGroups) == 0) {
+    stop('No rows in exprGroups. Cannot simulate genes.') }
+
+  if(randomTimepoints && is.null(nSamples)) {
+    stop('Number of random timepoint samples not specified.') }
+
+  if(!'geneFrac' %in% colnames(exprGroups)) {
+    exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
+
+  if(!'meanExpr' %in% colnames(exprGroups)) {
+    exprGroups[, meanExpr := 0] }
+
+  if(!'dExpr' %in% colnames(exprGroups)) {
+    exprGroups[, dExpr := 0] }
+
+  if(!'meanAmp' %in% colnames(exprGroups)) {
+    exprGroups[, meanAmp := 0] }
+
+  if(!'dAmp' %in% colnames(exprGroups)) {
+    exprGroups[, dAmp := 0] }
+
+  if(!'meanPhase' %in% colnames(exprGroups)) {
+    exprGroups[, meanPhase := 0] }
+
+  if(!'dPhase' %in% colnames(exprGroups)) {
+    exprGroups[, dPhase := 0] }
+
+  if(!'meanSd' %in% colnames(exprGroups)) {
+    exprGroups[, meanSd := 1] }
+
+  if(!'dSd' %in% colnames(exprGroups)) {
+    exprGroups[, dSd := 0] }
+
+  if(any(exprGroups[, meanSd] - exprGroups[, dSd] / 2 < 0)) {
+    stop('Groups cannot have negative standard deviation of sample error.') }
+
+  if(any(exprGroups[, geneFrac] <= 0)) {
+    stop('All groups in exprGroups must have geneFrac > 0.') }
+
+  exprGroups[, group := 1:nrow(exprGroups)]
+
+  return(exprGroups)
+}
+
 #' Generate simulated gene expresion time courses.
 #'
 #' @param exprGroups is a dataframe of metadata describing the properties of
@@ -56,53 +104,11 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
 #'   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
 #'                          nSamples = 10, rhyFunc = cos)
 #' @export
-getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
-                                    interval = 4, nReps = 2, errSd = 1,
-                                    nSims = 1, randomTimepoints = FALSE,
-                                    nSamples = NULL, rhyFunc = sin) {
+getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
+                            nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
+                            randomTimepoints = FALSE, rhyFunc = sin) {
 
-  exprGroups = data.table::data.table(exprGroups)
-
-  if(nrow(exprGroups) == 0) {
-    stop('No rows in exprGroups. Cannot simulate genes.') }
-
-  if(randomTimepoints && is.null(nSamples)) {
-    stop('Number of random timepoint samples not specified.') }
-
-  if(!'geneFrac' %in% colnames(exprGroups)) {
-    exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
-
-  if(!'meanExpr' %in% colnames(exprGroups)) {
-    exprGroups[, meanExpr := 0] }
-
-  if(!'dExpr' %in% colnames(exprGroups)) {
-    exprGroups[, dExpr := 0] }
-
-  if(!'meanAmp' %in% colnames(exprGroups)) {
-    exprGroups[, meanAmp := 0] }
-
-  if(!'dAmp' %in% colnames(exprGroups)) {
-    exprGroups[, dAmp := 0] }
-
-  if(!'meanPhase' %in% colnames(exprGroups)) {
-    exprGroups[, meanPhase := 0] }
-
-  if(!'dPhase' %in% colnames(exprGroups)) {
-    exprGroups[, dPhase := 0] }
-
-  if(!'meanSd' %in% colnames(exprGroups)) {
-    exprGroups[, meanSd := 1] }
-
-  if(!'dSd' %in% colnames(exprGroups)) {
-    exprGroups[, dSd := 0] }
-
-  if(any(exprGroups[, meanSd] - exprGroups[, dSd] / 2 < 0)) {
-    stop('Groups cannot have negative standard deviation of sample error.') }
-
-  if(any(exprGroups[, geneFrac] <= 0)) {
-    stop('All groups in exprGroups must have geneFrac > 0.') }
-
-  exprGroups[, group := 1:nrow(exprGroups)]
+  exprGroups = checkExprGroups(exprGroups, randomTimepoints, nSamples)
 
   # Compute a number of genes per group that sum to nGenes.
   exprGroups[, geneFrac := geneFrac / sum(geneFrac)]
