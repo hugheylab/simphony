@@ -92,4 +92,6 @@ test_that('Appropriate errors are thrown', {
   expect_error(getSimulatedExpr(data.table::data.table(meanAmp = c(1,2)),
                                         randomTimepoints = TRUE),
                'Number of random timepoint samples not specified.')
+  expect_error(getSimulatedExpr(data.table::data.table(geneFrac = (c(0.5, 0)))),
+               'All groups in exprGroups must have geneFrac > 0.')
 })

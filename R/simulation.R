@@ -99,6 +99,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
   if(any(exprGroups[, meanSd] - exprGroups[, dSd] / 2 < 0)) {
     stop('Groups cannot have negative standard deviation of sample error.') }
 
+  if(any(exprGroups[, geneFrac] <= 0)) {
+    stop('All groups in exprGroups must have geneFrac > 0.') }
+
   exprGroups[, group := 1:nrow(exprGroups)]
 
   # Compute a number of genes per group that sum to nGenes.
