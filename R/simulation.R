@@ -118,6 +118,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
     timePoints = c(timePoints, sort(stats::runif(nSamples, min = 0, max = 2 * pi)))
   }
 
+  timePoints1 = timePoints[1:(length(timePoints)/2)]
+  timePoints2 = timePoints[(length(timePoints)/2 + 1):length(timePoints)]
+
   sampleNames = paste('sample', 1:(nSamples * 2), sep = '_')
   geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
 
@@ -145,8 +148,8 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24,
 
       # Compute the expression matrix for this exprGroup
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
-        timeCourse1 = amp1 * rhyFunc(timePoints[1:(length(timePoints)/2)] + 2 * pi * phase1 / period) + expr1
-        timeCourse2 = amp2 * rhyFunc(timePoints[(length(timePoints)/2 + 1):length(timePoints)] + 2 * pi * phase2 / period) + expr2
+        timeCourse1 = amp1 * rhyFunc(timePoints1 + 2 * pi * phase1 / period) + expr1
+        timeCourse2 = amp2 * rhyFunc(timePoints2 + 2 * pi * phase2 / period) + expr2
         timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
         timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         c(timeCourse1, timeCourse2)
