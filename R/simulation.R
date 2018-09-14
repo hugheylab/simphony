@@ -77,6 +77,10 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @param rhyFunc is the function defining the rhythmic component of the
 #'   simulated gene expression time course. Defaults to sin. If supplied, this
 #'   function must have a period of 2*pi.
+#' @param useNegBinom is a boolean determining whether to simulate expression values
+#'   using a negative binomial distribution. Defaults to FALSE.
+#' @param outputCounts is a boolean determining whether to output
+#'   read counts as opposed to log-transformed expression levels. Defaults to FALSE.
 #' @return The simulated expression matrix emat, simulated sample metadata sm,
 #'   metadata describing the expression group each gene came from gm, and an
 #'   updated exprGroups including missing property columns and an index; group.
@@ -113,15 +117,19 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, rhyFunc = sin) {
+                            randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
+                            outputCounts = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
+
+  if(useNegBinom == FALSE && outputCounts == TRUE) {
+  stop('Read count output is only supported with useNegBinom = TRUE') }
 
   if(!randomTimepoints) {
     timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
     timePoints = rep(timePoints, each = nReps)
     nSamples = length(timePoints)
-    timePoints = rep(timePoints, 2)
+    timePoints = rep(timePoints, 2) # Number of conditions = 2
   } else {
     timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
     timePoints = c(timePoints, sort(stats::runif(nSamples, min = 0, max = 2 * pi)))
@@ -159,8 +167,24 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
         timeCourse1 = amp1 * rhyFunc(timePoints1 + 2 * pi * phase1 / period) + expr1
         timeCourse2 = amp2 * rhyFunc(timePoints2 + 2 * pi * phase2 / period) + expr2
-        timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
-        timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
+
+        if(!useNegBinom){
+          timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
+          timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
+        } else {
+          #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
+          timeCourse1 = foreach::foreach(time = timeCourse1, .combine='c') %do% {
+            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+          }
+          timeCourse2 = foreach::foreach(time = timeCourse2, .combine='c') %do% {
+            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+          }
+
+          if(!outputCounts){
+            timeCourse1 = log2(timeCourse1+1) #Prevent taking the log of zero
+            timeCourse2 = log2(timeCourse2+1)
+          }
+        }
         c(timeCourse1, timeCourse2)
       }
     }
