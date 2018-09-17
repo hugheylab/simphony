@@ -1,9 +1,10 @@
 context('simulation')
 
-test_that('Outputs are of correct type', {
-  exprGroups = data.table::data.table(meanAmp = c(1, 2), dAmp = c(1, 1))
+test_that('Outputs are of correct type and there are no NA values', {
+  exprGroups = data.table::data.table(meanAmp = c(1, 2), dAmp = c(1, 1), useNegBinom = TRUE)
   simGse = getSimulatedExpr(exprGroups)
 
+  expect_false(any(is.na(simGse)))
   expect_is(simGse$sm, 'data.table')
   expect_is(simGse$emat, 'matrix')
   expect_is(simGse$gm, 'data.table')
