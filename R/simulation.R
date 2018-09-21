@@ -175,16 +175,16 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         } else {
           #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
-          timeCourse1 = foreach::foreach(mean = timeCourse1, .combine='c') %do% {
-           stats::rnbinom(1, mu=2^mean-1, size=0.333*(2^mean-1))
+          timeCourse1 = foreach::foreach(mean = timeCourse1, .combine = c) %do% {
+            stats::rnbinom(1, mu = 2^mean - 1, size = (2^mean - 1) / 3)
           }
-          timeCourse2 = foreach::foreach(time = timeCourse2, .combine='c') %do% {
-            stats::rnbinom(1, mu=2^mean-1, size=0.333*(2^mean-1))
+          timeCourse2 = foreach::foreach(mean = timeCourse2, .combine = c) %do% {
+            stats::rnbinom(1, mu = 2^mean - 1, size = (2^mean - 1) / 3)
           }
 
           if(!outputCounts){
-            timeCourse1 = log2(timeCourse1+1) #Prevent taking the log of zero
-            timeCourse2 = log2(timeCourse2+1)
+            timeCourse1 = log2(timeCourse1 + 1) #Prevent taking the log of zero
+            timeCourse2 = log2(timeCourse2 + 1)
           }
         }
         c(timeCourse1, timeCourse2)
