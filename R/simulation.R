@@ -2,7 +2,7 @@
 #' @importFrom foreach "%do%"
 globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
                   'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp', 'meanSd',
-                  'dSd'))
+                  'dSd', 'mean'))
 
 checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 
@@ -74,9 +74,6 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @param nSamples is the integer number of time points to sample, if
 #'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
 #'   TRUE.
-#' @param rhyFunc is the function defining the rhythmic component of the
-#'   simulated gene expression time course. Defaults to sin. If supplied, this
-#'   function must have a period of 2*pi.
 #' @param useNegBinom is a boolean determining whether to simulate expression values
 #'   using a negative binomial distribution. Defaults to FALSE.
 #' @param outputCounts is a boolean determining whether to output
@@ -113,11 +110,11 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @examples
 #'   exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
 #'   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
-#'                          nSamples = 10, rhyFunc = cos)
+#'                          nSamples = 10)
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
+                            randomTimepoints = FALSE, useNegBinom = FALSE,
                             outputCounts = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
@@ -163,6 +160,11 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
       sd1 = exprGroups[ii, meanSd] + exprGroups[ii, dSd] / 2
       sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
 
+      if(!'rhyFunc' %in% colnames(exprGroups)) {
+        rhyFunc = sin }
+      else {
+        rhyFunc = exprGroups[ii, rhyFunc][[1]] }
+
       # Compute the expression matrix for this exprGroup
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
         timeCourse1 = amp1 * rhyFunc(timePoints1 + 2 * pi * phase1 / period) + expr1
@@ -173,11 +175,11 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         } else {
           #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
-          timeCourse1 = foreach::foreach(time = timeCourse1, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+          timeCourse1 = foreach::foreach(mean = timeCourse1, .combine='c') %do% {
+           stats::rnbinom(1, mu=2^mean-1, size=0.333*(2^mean-1))
           }
           timeCourse2 = foreach::foreach(time = timeCourse2, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+            stats::rnbinom(1, mu=2^mean-1, size=0.333*(2^mean-1))
           }
 
           if(!outputCounts){
