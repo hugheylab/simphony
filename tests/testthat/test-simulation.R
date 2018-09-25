@@ -73,8 +73,8 @@ test_that('Changing nSims yields expected results', {
 })
 
 test_that('Rhythmic function can be changed', {
-  exprGroups = data.table::data.table(meanPhase = c(3, 6))
-  expect_silent(getSimulatedExpr(exprGroups, rhyFunc = cos))
+  exprGroups = data.table::data.table(meanPhase = c(3, 6), rhyFunc = c(cos, cos))
+  expect_silent(getSimulatedExpr(exprGroups))
 
   rm(exprGroups)
 })

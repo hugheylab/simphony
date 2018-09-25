@@ -5,8 +5,9 @@
 \title{Generate simulated gene expresion time courses.}
 \usage{
 getSimulatedExpr(exprGroups, nGenes = 100, period = 24, interval = 4,
-  nReps = 2, errSd = 1, nSims = 1, randomTimepoints = FALSE,
-  nSamples = NULL, rhyFunc = sin)
+  nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
+  randomTimepoints = FALSE, useNegBinom = FALSE,
+  outputCounts = FALSE)
 }
 \arguments{
 \item{exprGroups}{is a dataframe of metadata describing the properties of
@@ -24,16 +25,18 @@ rhythmic or differentially rhythmic genes.}
 
 \item{nSims}{is the integer number of simulations to generate.}
 
-\item{randomTimepoints}{is a boolean determining whether to simulate an
-experiment with random sample times. Defaults to FALSE.}
-
 \item{nSamples}{is the integer number of time points to sample, if
 randomTimepoints is enabled. This must be supplied if randomTimepoints is
 TRUE.}
 
-\item{rhyFunc}{is the function defining the rhythmic component of the
-simulated gene expression time course. Defaults to sin. If supplied, this
-function must have a period of 2*pi.}
+\item{randomTimepoints}{is a boolean determining whether to simulate an
+experiment with random sample times. Defaults to FALSE.}
+
+\item{useNegBinom}{is a boolean determining whether to simulate expression values
+using a negative binomial distribution. Defaults to FALSE.}
+
+\item{outputCounts}{is a boolean determining whether to output
+read counts as opposed to log-transformed expression levels. Defaults to FALSE.}
 }
 \value{
 The simulated expression matrix emat, simulated sample metadata sm,
@@ -74,5 +77,5 @@ exprGroups must be a data.frame or data.table object, with the
 \examples{
   exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
-                         nSamples = 10, rhyFunc = cos)
+                         nSamples = 10)
 }
