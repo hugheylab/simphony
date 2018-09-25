@@ -118,7 +118,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
                             randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
-                            outputCounts = FALSE) {
+                            sizeNegBinom = 0.333, outputCounts = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
 
@@ -174,10 +174,10 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
         } else {
           #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
           timeCourse1 = foreach::foreach(time = timeCourse1, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+            rnbinom(1, mu=2^(time)-1, size=sizeNegBinom*(2^(time)-1))
           }
           timeCourse2 = foreach::foreach(time = timeCourse2, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=0.333*(2^(time)-1))
+            rnbinom(1, mu=2^(time)-1, size=sizeNegBinom*(2^(time)-1))
           }
 
           if(!outputCounts){
