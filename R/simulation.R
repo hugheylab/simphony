@@ -176,12 +176,12 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
           timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         } else {
-          #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
-          timeCourse1 = foreach::foreach(time = timeCourse1, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=sizeNegBinom*(2^(time)-1))
+          #Default size parameter is 0.333*mean hence variance = 4 * mean (Polyester based)
+          timeCourse1 = foreach::foreach(mean = timeCourse1, .combine='c') %do% {
+            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
           }
-          timeCourse2 = foreach::foreach(time = timeCourse2, .combine='c') %do% {
-            rnbinom(1, mu=2^(time)-1, size=sizeNegBinom*(2^(time)-1))
+          timeCourse2 = foreach::foreach(mean = timeCourse2, .combine='c') %do% {
+            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
           }
 
           if(logNegBinom){
