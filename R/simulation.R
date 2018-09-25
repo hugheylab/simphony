@@ -74,10 +74,12 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @param nSamples is the integer number of time points to sample, if
 #'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
 #'   TRUE.
-#' @param useNegBinom is a boolean determining whether to simulate expression values
+#' @param useNegBinom is a boolean determining whether to simulate read counts
 #'   using a negative binomial distribution. Defaults to FALSE.
-#' @param outputCounts is a boolean determining whether to output
-#'   read counts as opposed to log-transformed expression levels. Defaults to FALSE.
+#' @param sizeNegBinom is a positive number relating the mean and dispersion factor
+#'   of negative binomial with dipersion = sizeNegBinom * mean. Defaults to 0.333.
+#' @param logNegBinom is a boolean determining whether to log transform read counts
+#'   into expression levels. Defaults to FALSE.
 #' @return The simulated expression matrix emat, simulated sample metadata sm,
 #'   metadata describing the expression group each gene came from gm, and an
 #'   updated exprGroups including missing property columns and an index; group.
@@ -114,13 +116,13 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, useNegBinom = FALSE,
-                            outputCounts = FALSE) {
+                            randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
+                            sizeNegBinom = 0.333, logNegBinom = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
 
-  if(useNegBinom == FALSE && outputCounts == TRUE) {
-  stop('Read count output is only supported with useNegBinom = TRUE') }
+  if(useNegBinom == FALSE && logNegBinom == TRUE) {
+  stop('Log transformed read counts are only supported with useNegBinom = TRUE') }
 
   if(!randomTimepoints) {
     timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
@@ -174,15 +176,15 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
           timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         } else {
-          #Size parameter is mean/3 hence variance = 4 * mean (Polyester based)
+          #Default size parameter is 0.333*mean hence variance = 4 * mean (Polyester based)
           timeCourse1 = foreach::foreach(mean = timeCourse1, .combine = c) %do% {
-            stats::rnbinom(1, mu = 2^mean - 1, size = (2^mean - 1) / 3)
+            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
           }
           timeCourse2 = foreach::foreach(mean = timeCourse2, .combine = c) %do% {
-            stats::rnbinom(1, mu = 2^mean - 1, size = (2^mean - 1) / 3)
+            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
           }
 
-          if(!outputCounts){
+          if(logNegBinom){
             timeCourse1 = log2(timeCourse1 + 1) #Prevent taking the log of zero
             timeCourse2 = log2(timeCourse2 + 1)
           }
