@@ -176,6 +176,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
           timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
         } else {
+          if(sum(timeCourse1 < 0) > 0 || sum(timeCourse2 < 0) > 0) {
+          stop('Negative mean expression values are not supported with useNegBinom = True') }
+
           #Default size parameter is 0.333*mean hence variance = 4 * mean (Polyester based)
           timeCourse1 = foreach::foreach(mean = timeCourse1, .combine = c) %do% {
             stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
