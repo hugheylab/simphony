@@ -18,7 +18,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
     exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
 
   if(!'meanExpr' %in% colnames(exprGroups)) {
-    exprGroups[, meanExpr := 0] }
+    exprGroups[, meanExpr := 1] }
 
   if(!'dExpr' %in% colnames(exprGroups)) {
     exprGroups[, dExpr := 0] }
@@ -90,7 +90,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #'                       this group. Defaults to 1/nrow(exprGroups) if not
 #'                       supplied.}
 #'     \item{meanExpr}: {The mean baseline expression for this group. Defaults 
-#'                       to 0 if not supplied.}
+#'                       to 1 if not supplied.}
 #'     \item{dExpr}: {The difference in baseline expression across conditions
 #'                    for this group. Defaults to 0 if not supplied.}
 #'     \item{meanAmp}: {The mean amplitude of the rhythmic component of 
