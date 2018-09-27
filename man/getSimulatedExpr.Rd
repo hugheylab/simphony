@@ -6,8 +6,8 @@
 \usage{
 getSimulatedExpr(exprGroups, nGenes = 100, period = 24, interval = 4,
   nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-  randomTimepoints = FALSE, useNegBinom = FALSE,
-  outputCounts = FALSE)
+  randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
+  sizeNegBinom = 0.333, logNegBinom = FALSE)
 }
 \arguments{
 \item{exprGroups}{is a dataframe of metadata describing the properties of
@@ -32,11 +32,14 @@ TRUE.}
 \item{randomTimepoints}{is a boolean determining whether to simulate an
 experiment with random sample times. Defaults to FALSE.}
 
-\item{useNegBinom}{is a boolean determining whether to simulate expression values
+\item{useNegBinom}{is a boolean determining whether to simulate read counts
 using a negative binomial distribution. Defaults to FALSE.}
 
-\item{outputCounts}{is a boolean determining whether to output
-read counts as opposed to log-transformed expression levels. Defaults to FALSE.}
+\item{sizeNegBinom}{is a positive number relating the mean and dispersion factor
+of negative binomial with dipersion = sizeNegBinom * mean. Defaults to 0.333.}
+
+\item{logNegBinom}{is a boolean determining whether to log transform read counts
+into expression levels. Defaults to FALSE.}
 }
 \value{
 The simulated expression matrix emat, simulated sample metadata sm,
