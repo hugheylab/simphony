@@ -90,7 +90,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #'                       this group. Defaults to 1/nrow(exprGroups) if not
 #'                       supplied.}
 #'     \item{meanExpr}: {The mean baseline expression for this group. Defaults 
-#'                       to 1 if not supplied.}
+#'                       to 0 if not supplied.}
 #'     \item{dExpr}: {The difference in baseline expression across conditions
 #'                    for this group. Defaults to 0 if not supplied.}
 #'     \item{meanAmp}: {The mean amplitude of the rhythmic component of 
@@ -116,7 +116,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, rhyFunc = sin, useNegBinom = FALSE,
+                            randomTimepoints = FALSE, useNegBinom = FALSE,
                             sizeNegBinom = 0.333, logNegBinom = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
