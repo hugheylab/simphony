@@ -59,6 +59,40 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
   return(exprGroups)
 }
 
+
+getMetadata = function(exprGroups, randomTimepoints, period, interval, nReps, nSamples,
+                       nTotalGenes) {
+
+  if(!randomTimepoints) {
+    timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
+    timePoints = rep(timePoints, each = nReps)
+    nSamples = length(timePoints)
+    timePoints = rep(timePoints, 2) # Number of conditions = 2
+  } else {
+    timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
+    timePoints = c(timePoints, sort(stats::runif(nSamples, min = 0, max = 2 * pi)))
+  }
+
+  timePoints1 = timePoints[1:(length(timePoints)/2)]
+  timePoints2 = timePoints[(length(timePoints)/2 + 1):length(timePoints)]
+
+  sampleNames = paste('sample', 1:(nSamples * 2), sep = '_')
+  geneNames = paste('gene', 1:nTotalGenes, sep = '_')
+
+  sampleMetadata = data.table::data.table(cond = rep(1:2, each = nSamples),
+                                          time = timePoints * period / (2 * pi),
+                                          sample = sampleNames)
+
+  geneMetadata = data.table::data.table(gene = geneNames,
+                                        group = rep(1:nrow(exprGroups),
+                                                    times = exprGroups[, geneCount]))
+
+  return(list(timePoints1 = timePoints1, timePoints2 = timePoints2,
+              sampleNames = sampleNames, geneNames = geneNames,
+              sampleMetadata = sampleMetadata, geneMetadata = geneMetadata,
+              nSamples = nSamples))
+}
+
 #' Generate simulated gene expresion time courses.
 #'
 #' @param exprGroups is a dataframe of metadata describing the properties of
@@ -126,31 +160,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
   stop('Log transformed read counts are only supported with useNegBinom = TRUE') }
   ##
 
-  
-  if(!randomTimepoints) {
-    timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
-    timePoints = rep(timePoints, each = nReps)
-    nSamples = length(timePoints)
-    timePoints = rep(timePoints, 2) # Number of conditions = 2
-  } else {
-    timePoints = sort(stats::runif(nSamples, min = 0, max = 2 * pi))
-    timePoints = c(timePoints, sort(stats::runif(nSamples, min = 0, max = 2 * pi)))
-  }
+  metadata = getMetadata(exprGroups, randomTimepoints, period, interval, nReps,
+                         nSamples, nGenes * nSims)
 
-  timePoints1 = timePoints[1:(length(timePoints)/2)]
-  timePoints2 = timePoints[(length(timePoints)/2 + 1):length(timePoints)]
-
-  sampleNames = paste('sample', 1:(nSamples * 2), sep = '_')
-  geneNames = paste('gene', 1:(nGenes * nSims), sep = '_')
-
-  sampleMetadata = data.table::data.table(cond = rep(1:2, each = nSamples),
-                                          time = timePoints * period / (2 * pi),
-                                          sample = sampleNames)
-
-  geneMetadata = data.table::data.table(gene = geneNames,
-                                        group = rep(1:nrow(exprGroups),
-                                                    times = exprGroups[, geneCount]))
-  
   emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {
     foreach::foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
       expr1 = exprGroups[ii, meanExpr] + exprGroups[ii, dExpr] / 2
@@ -166,18 +178,18 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
       sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
 
       if(!'rhyFunc' %in% colnames(exprGroups)) {
-        rhyFunc = sin }
-      else {
+        rhyFunc = sin
+      } else {
         rhyFunc = exprGroups[ii, rhyFunc][[1]] }
 
       # Compute the expression matrix for this exprGroup
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
-        timeCourse1 = amp1 * rhyFunc(timePoints1 + 2 * pi * phase1 / period) + expr1
-        timeCourse2 = amp2 * rhyFunc(timePoints2 + 2 * pi * phase2 / period) + expr2
+        timeCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
+        timeCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
 
         if(!useNegBinom){
-          timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
-          timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
+          timeCourse1 = timeCourse1 + stats::rnorm(metadata$nSamples, sd = sd1)
+          timeCourse2 = timeCourse2 + stats::rnorm(metadata$nSamples, sd = sd2)
         } 
         #Begin negative binomial sampling
         else {
@@ -203,10 +215,10 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
     }
   }
 
-  colnames(emat) = sampleNames
-  rownames(emat) = geneNames
+  colnames(emat) = metadata$sampleNames
+  rownames(emat) = metadata$geneNames
 
-  results = list(emat = emat, sm = sampleMetadata, gm = geneMetadata,
-                 exprGroups = exprGroups)
+  results = list(emat = emat, sm = metadata$sampleMetadata,
+                 gm = metadata$geneMetadata, exprGroups = exprGroups)
   return(results)
 }
