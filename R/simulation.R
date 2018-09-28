@@ -121,9 +121,12 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
 
+  #Neg binomial input validation
   if(useNegBinom == FALSE && logNegBinom == TRUE) {
   stop('Log transformed read counts are only supported with useNegBinom = TRUE') }
+  ##
 
+  
   if(!randomTimepoints) {
     timePoints = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
     timePoints = rep(timePoints, each = nReps)
@@ -175,7 +178,9 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
         if(!useNegBinom){
           timeCourse1 = timeCourse1 + stats::rnorm(nSamples, sd = sd1)
           timeCourse2 = timeCourse2 + stats::rnorm(nSamples, sd = sd2)
-        } else {
+        } 
+        #Begin negative binomial sampling
+        else {
           if(sum(timeCourse1 < 0) > 0 || sum(timeCourse2 < 0) > 0) {
           stop('Negative mean expression values are not supported with useNegBinom = True') }
 
@@ -192,6 +197,7 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
             timeCourse2 = log2(timeCourse2 + 1)
           }
         }
+        #End neg binomial related sampling
         c(timeCourse1, timeCourse2)
       }
     }
