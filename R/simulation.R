@@ -101,19 +101,12 @@ getMetadata = function(exprGroups, randomTimepoints, period, interval, nReps, nS
 #' @param period is the integer number of hours in one rhythmic cycle.
 #' @param interval is the integer number of hours between simulated time points.
 #' @param nReps is the integer number of replicates per time point.
-#' @param errSd is the standard deviation of the Gaussian sample error.
 #' @param nSims is the integer number of simulations to generate.
 #' @param randomTimepoints is a boolean determining whether to simulate an
 #'   experiment with random sample times. Defaults to FALSE.
 #' @param nSamples is the integer number of time points to sample, if
 #'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
 #'   TRUE.
-#' @param useNegBinom is a boolean determining whether to simulate read counts
-#'   using a negative binomial distribution. Defaults to FALSE.
-#' @param sizeNegBinom is a positive number relating the mean and dispersion factor
-#'   of negative binomial with dipersion = sizeNegBinom * mean. Defaults to 0.333.
-#' @param logNegBinom is a boolean determining whether to log transform read counts
-#'   into expression levels. Defaults to FALSE.
 #' @return The simulated expression matrix emat, simulated sample metadata sm,
 #'   metadata describing the expression group each gene came from gm, and an
 #'   updated exprGroups including missing property columns and an index; group.
@@ -142,23 +135,20 @@ getMetadata = function(exprGroups, randomTimepoints, period, interval, nReps, nS
 #'                     group. Defaults to 1 if not supplied.}
 #'     \item{dSd}: {The difference in standard deviation of the sample error for
 #'                  this group. Defaults to 0 if not supplied.}
+#'     \item{rhyFunc}: {The function used to generate the rhythmic component of
+#'                      this group's gene expression. rhyFunc must have a period
+#'                      of 2*pi. Defaults to sin if not supplied.}
 #'   }
 #' @examples
-#'   exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
-#'   gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
-#'                          nSamples = 10)
+#'  exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+#'  gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
+#'                         nSamples = 10)
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, useNegBinom = FALSE,
-                            sizeNegBinom = 0.333, logNegBinom = FALSE) {
+                            randomTimepoints = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
-
-  #Neg binomial input validation
-  if(useNegBinom == FALSE && logNegBinom == TRUE) {
-  stop('Log transformed read counts are only supported with useNegBinom = TRUE') }
-  ##
 
   metadata = getMetadata(exprGroups, randomTimepoints, period, interval, nReps,
                          nSamples, nGenes * nSims)
@@ -182,33 +172,133 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
       } else {
         rhyFunc = exprGroups[ii, rhyFunc][[1]] }
 
+      meanCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
+      meanCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
+
+      foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
+        timeCourse1 = meanCourse1 + stats::rnorm(metadata$nSamples, sd = sd1)
+        timeCourse2 = meanCourse2 + stats::rnorm(metadata$nSamples, sd = sd2)
+
+        c(timeCourse1, timeCourse2)
+      }
+    }
+  }
+
+  colnames(emat) = metadata$sampleNames
+  rownames(emat) = metadata$geneNames
+
+  results = list(emat = emat, sm = metadata$sampleMetadata,
+                 gm = metadata$geneMetadata, exprGroups = exprGroups)
+  return(results)
+}
+
+
+#' Generate simulated gene expresion time courses.
+#'
+#' @param exprGroups is a dataframe of metadata describing the properties of
+#'   rhythmic or differentially rhythmic genes.
+#' @param nGenes is the integer number of total genes to simulate.
+#' @param period is the integer number of hours in one rhythmic cycle.
+#' @param interval is the integer number of hours between simulated time points.
+#' @param nReps is the integer number of replicates per time point.
+#' @param nSims is the integer number of simulations to generate.
+#' @param randomTimepoints is a boolean determining whether to simulate an
+#'   experiment with random sample times. Defaults to FALSE.
+#' @param nSamples is the integer number of time points to sample, if
+#'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
+#'   TRUE.
+#' @param sizeNegBinom is a positive number relating the mean and dispersion
+#'   factor of negative binomial with dipersion = sizeNegBinom * mean. Defaults
+#'   to 0.333.
+#' @param logNegBinom is a boolean determining output the log2-transform of read
+#'   counts. Defaults to FALSE.
+#' @return The simulated expression matrix emat, simulated sample metadata sm,
+#'   metadata describing the expression group each gene came from gm, and an
+#'   updated exprGroups including missing property columns and an index; group.
+#' @details exprGroups must be a data.frame or data.table object, with the
+#'   following optional columns:
+#'   \itemize{
+#'     \item{geneFrac}: {The fraction of all simulated genes which fall into
+#'                       this group. Defaults to 1/nrow(exprGroups) if not
+#'                       supplied.}
+#'     \item{meanExpr}: {The mean baseline expression for this group. Defaults 
+#'                       to 0 if not supplied.}
+#'     \item{dExpr}: {The difference in baseline expression across conditions
+#'                    for this group. Defaults to 0 if not supplied.}
+#'     \item{meanAmp}: {The mean amplitude of the rhythmic component of 
+#'                      expression for this group. Defaults to 0 if not
+#'                      supplied.}
+#'     \item{dAmp}: {The difference in amplitude of the rhythmic component of 
+#'                   expression across conditions for this group. Defaults to 0
+#'                   if not supplied.}
+#'     \item{meanPhase}: {The mean phase of the rhythmic component of expression
+#'                        for this group. Defaults to 0 if not supplied.}
+#'     \item{dPhase}: {The difference in phase of the rhythmic component of 
+#'                     expression across conditions for this group. Defaults to
+#'                     0 if not supplied.}
+#'     \item{meanSd}: {The mean standard deviation of the sample error for this
+#'                     group. Defaults to 1 if not supplied.}
+#'     \item{dSd}: {The difference in standard deviation of the sample error for
+#'                  this group. Defaults to 0 if not supplied.}
+#'     \item{rhyFunc}: {The function used to generate the rhythmic component of
+#'                      this group's gene expression. rhyFunc must have a period
+#'                      of 2*pi. Defaults to sin if not supplied.}
+#'   }
+#' @examples
+#'  exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+#'  gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
+#'                         nSamples = 10)
+#' @export
+getSimulatedGeneCount = function(exprGroups, nGenes = 100, period = 24,
+                            interval = 4, nReps = 2, nSims = 1, nSamples = NULL,
+                            randomTimepoints = FALSE, sizeNegBinom = 0.333, 
+                            logNegBinom = FALSE) {
+
+  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
+
+  metadata = getMetadata(exprGroups, randomTimepoints, period, interval, nReps,
+                         nSamples, nGenes * nSims)
+
+  emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {
+    foreach::foreach(ii = 1L:nrow(exprGroups), .combine = rbind) %do% {
+      expr1 = exprGroups[ii, meanExpr] + exprGroups[ii, dExpr] / 2
+      expr2 = exprGroups[ii, meanExpr] - exprGroups[ii, dExpr] / 2
+
+      amp1 = exprGroups[ii, meanAmp] + exprGroups[ii, dAmp] / 2
+      amp2 = exprGroups[ii, meanAmp] - exprGroups[ii, dAmp] / 2
+
+      phase1 = exprGroups[ii, meanPhase] + exprGroups[ii, dPhase] / 2
+      phase2 = exprGroups[ii, meanPhase] - exprGroups[ii, dPhase] / 2
+
+      sd1 = exprGroups[ii, meanSd] + exprGroups[ii, dSd] / 2
+      sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
+
+      if(!'rhyFunc' %in% colnames(exprGroups)) {
+        rhyFunc = sin
+      } else {
+        rhyFunc = exprGroups[ii, rhyFunc][[1]] }
+
+      meanCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
+      meanCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
+
       # Compute the expression matrix for this exprGroup
       foreach::foreach(jj = 1L:exprGroups[ii, geneCount], .combine = rbind) %do% {
-        timeCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
-        timeCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
+        if(any(meanCourse1 < 0) || any(meanCourse2 < 0)) {
+        stop('Negative mean expression values are not supported by negative binomial distribution') }
 
-        if(!useNegBinom){
-          timeCourse1 = timeCourse1 + stats::rnorm(metadata$nSamples, sd = sd1)
-          timeCourse2 = timeCourse2 + stats::rnorm(metadata$nSamples, sd = sd2)
-        } 
-        #Begin negative binomial sampling
-        else {
-          if(sum(timeCourse1 < 0) > 0 || sum(timeCourse2 < 0) > 0) {
-          stop('Negative mean expression values are not supported with useNegBinom = True') }
-
-          #Default size parameter is 0.333*mean hence variance = 4 * mean (Polyester based)
-          timeCourse1 = foreach::foreach(mean = timeCourse1, .combine = c) %do% {
-            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
-          }
-          timeCourse2 = foreach::foreach(mean = timeCourse2, .combine = c) %do% {
-            stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
-          }
-
-          if(logNegBinom){
-            timeCourse1 = log2(timeCourse1 + 1) #Prevent taking the log of zero
-            timeCourse2 = log2(timeCourse2 + 1)
-          }
+        #Default size parameter is 0.333*mean hence variance = 4 * mean (Polyester based)
+        timeCourse1 = foreach::foreach(mean = meanCourse1, .combine = c) %do% {
+          stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
         }
+        timeCourse2 = foreach::foreach(mean = meanCourse2, .combine = c) %do% {
+          stats::rnbinom(1, mu = 2^mean - 1, size = sizeNegBinom * (2^mean - 1))
+        }
+
+        if(logNegBinom){
+          timeCourse1 = log2(timeCourse1 + 1) #Prevent taking the log of zero
+          timeCourse2 = log2(timeCourse2 + 1)
+        }
+        
         #End neg binomial related sampling
         c(timeCourse1, timeCourse2)
       }
