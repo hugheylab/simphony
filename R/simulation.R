@@ -146,7 +146,7 @@ getMetadata = function(exprGroups, randomTimepoints, period, interval, nReps, nS
 #'                         nSamples = 10)
 #' @export
 getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
-                            nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
+                            nReps = 2, nSims = 1, nSamples = NULL,
                             randomTimepoints = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples,
@@ -247,14 +247,15 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
 #'                      of 2*pi. Defaults to sin if not supplied.}
 #'   }
 #' @examples
-#'  exprGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
-#'  gse = getSimulatedExpr(exprGroups, nGenes = 10000, randomTimepoints = TRUE,
-#'                         nSamples = 10)
+#'  exprGroups = data.table::data.table(meanExpr = c(3,3,3,3),
+#'                                      meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+#'  gse = getSimulatedGeneCount(exprGroups, nGenes = 10000,
+#'                              randomTimepoints = TRUE, nSamples = 10)
 #' @export
 getSimulatedGeneCount = function(exprGroups, nGenes = 100, period = 24,
-                            interval = 4, nReps = 2, nSims = 1, nSamples = NULL,
-                            randomTimepoints = FALSE, sizeNegBinom = 0.333, 
-                            logNegBinom = FALSE) {
+                                 interval = 4, nReps = 2, nSims = 1,
+                                 nSamples = NULL, randomTimepoints = FALSE,
+                                 sizeNegBinom = 0.333, logNegBinom = FALSE) {
 
   exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples,
                                1)

@@ -1,13 +1,16 @@
 Package: simulation
 Title: Generation of simulated gene expression
-Version: 0.0.0.9005
-Authors@R: person("Jordan", "Singer", email = "jordan.m.singer@gmail.com", role = c("aut", "cre"))
+Version: 0.0.0.9006
+Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
+                    role = c("aut", "cre")),
+             person("Darwin", "Fu", email = "darwin.y.fu.1@vumc.org",
+                    role = c("ctb")))
 Description: A framework allowing for the simulation of rhythmic and
-    non-rhythmic gene expression.
+  non-rhythmic gene expression.
 License: GPL-2
 Encoding: UTF-8
 Suggests: testthat
 Imports:
-    data.table,
-    foreach
+  data.table,
+  foreach
 RoxygenNote: 6.1.0
