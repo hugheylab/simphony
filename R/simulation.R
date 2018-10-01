@@ -4,7 +4,8 @@ globalVariables(c('geneFrac', 'meanExpr', 'dExpr', 'meanPhase', 'group',
                   'geneCount', 'ii', 'dAmp', 'dPhase', 'meanAmp', 'meanSd',
                   'dSd', 'mean'))
 
-checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
+checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
+                           defaultExpr) {
 
   exprGroups = data.table::data.table(exprGroups)
 
@@ -18,7 +19,7 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples) {
     exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
 
   if(!'meanExpr' %in% colnames(exprGroups)) {
-    exprGroups[, meanExpr := 1] }
+    exprGroups[, meanExpr := defaultExpr] }
 
   if(!'dExpr' %in% colnames(exprGroups)) {
     exprGroups[, dExpr := 0] }
@@ -148,7 +149,8 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
                             nReps = 2, errSd = 1, nSims = 1, nSamples = NULL,
                             randomTimepoints = FALSE) {
 
-  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
+  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples,
+                               0)
 
   metadata = getMetadata(exprGroups, randomTimepoints, period, interval, nReps,
                          nSamples, nGenes * nSims)
@@ -254,7 +256,8 @@ getSimulatedGeneCount = function(exprGroups, nGenes = 100, period = 24,
                             randomTimepoints = FALSE, sizeNegBinom = 0.333, 
                             logNegBinom = FALSE) {
 
-  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples)
+  exprGroups = checkExprGroups(exprGroups, nGenes, randomTimepoints, nSamples,
+                               1)
 
   metadata = getMetadata(exprGroups, randomTimepoints, period, interval, nReps,
                          nSamples, nGenes * nSims)
