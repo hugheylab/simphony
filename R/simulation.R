@@ -42,6 +42,10 @@ checkExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
   if(!'dSd' %in% colnames(exprGroups)) {
     exprGroups[, dSd := 0] }
 
+  if(!'rhyFunc' %in% colnames(exprGroups)) {
+    exprGroups[, rhyFunc := data.table::data.table(sin)]
+  }
+
   if(any(exprGroups[, meanSd] - exprGroups[, dSd] / 2 < 0)) {
     stop('Groups cannot have negative standard deviation of sample error.') }
 
@@ -169,10 +173,7 @@ getSimulatedExpr = function(exprGroups, nGenes = 100, period = 24, interval = 4,
       sd1 = exprGroups[ii, meanSd] + exprGroups[ii, dSd] / 2
       sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
 
-      if(!'rhyFunc' %in% colnames(exprGroups)) {
-        rhyFunc = sin
-      } else {
-        rhyFunc = exprGroups[ii, rhyFunc][[1]] }
+      rhyFunc = exprGroups[ii, rhyFunc][[1]]
 
       meanCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
       meanCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
@@ -277,10 +278,7 @@ getSimulatedGeneCount = function(exprGroups, nGenes = 100, period = 24,
       sd1 = exprGroups[ii, meanSd] + exprGroups[ii, dSd] / 2
       sd2 = exprGroups[ii, meanSd] - exprGroups[ii, dSd] / 2
 
-      if(!'rhyFunc' %in% colnames(exprGroups)) {
-        rhyFunc = sin
-      } else {
-        rhyFunc = exprGroups[ii, rhyFunc][[1]] }
+      rhyFunc = exprGroups[ii, rhyFunc][[1]]
 
       meanCourse1 = amp1 * rhyFunc(metadata$timePoints1 + 2 * pi * phase1 / period) + expr1
       meanCourse2 = amp2 * rhyFunc(metadata$timePoints2 + 2 * pi * phase2 / period) + expr2
