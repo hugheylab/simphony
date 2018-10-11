@@ -22,7 +22,7 @@ getSingleCondSim = function(exprGroups, timePoints, method) {
       if(method == 'gaussian'){
         stats::rnorm(length(mu), mu, sd = sd) }
       else {
-        stats::rnbinom(length(mu), mu = mu, size = mu + sampleDispersion(mu) * mu ^ 2) }
+        stats::rnbinom(length(mu), mu = mu, size = 1/sampleDispersion(2^mu)) }
     }
   }
 }
