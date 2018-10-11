@@ -9,6 +9,19 @@ sampleDispersion = function(x) {
   return(rep(3, length(x)))
 }
 
+generateExprGroups = function(twoCondGroups) {
+  exprGroups = list(data.table::data.table(
+                      base = twoCondGroups[, meanBase] + twoCondGroups[, dBase],
+                      amp = twoCondGroups[, meanAmp] + twoCondGroups[, dAmp],
+                      phase = twoCondGroups[, meanPhase] + twoCondGroups[, dPhase],
+                      sd = twoCondGroups[, meanSd] + twoCondGroups[, dSd]),
+                    data.table::data.table(
+                      base = twoCondGroups[, meanBase] - twoCondGroups[, dBase],
+                      amp = twoCondGroups[, meanAmp] - twoCondGroups[, dAmp],
+                      phase = twoCondGroups[, meanPhase] - twoCondGroups[, dPhase],
+                      sd = twoCondGroups[, meanSd] - twoCondGroups[, dSd]))
+}
+
 getSingleCondSim = function(exprGroups, timePoints, method) {
   foreach::foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
     amp = exprGroups[group, amp]
@@ -28,7 +41,7 @@ getSingleCondSim = function(exprGroups, timePoints, method) {
 }
 
 setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
-                             defaultExpr) {
+                             defaultExpr, rhyFunc) {
 
   exprGroups = data.table::data.table(exprGroups)
 
@@ -54,7 +67,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
     exprGroups[, sd := 1] }
 
   if(!'rhyFunc' %in% colnames(exprGroups)) {
-    exprGroups[, rhyFunc := data.table::data.table(sin)] }
+    exprGroups[, rhyFunc := data.table::data.table(rhyFunc)] }
 
   if(any(exprGroups[, geneFrac] <= 0)) {
     stop('All groups in exprGroups must have geneFrac > 0.') }
@@ -74,13 +87,14 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 
 getMultipleCondSimulation = function(exprGroups, nGenes = 100, period = 24,
                                      interval = 4, nReps = 2, nSamples = NULL,
-                                     randomTimepoints = FALSE, method = 'gaussian') {
+                                     randomTimepoints = FALSE, rhyFunc = sin,
+                                     method = 'gaussian') {
 
   nCond = length(exprGroups)
 
   exprGroups = foreach::foreach(group = exprGroups, .combine = list) %do% {
     setOneCondDefault(group, nGenes, randomTimepoints, nSamples,
-                      ifelse(method == 'gaussian', 0, 1)) }
+                      ifelse(method == 'gaussian', 0, 1), rhyFunc) }
 
   geneData = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% {
     foreach::foreach(group = 1:nrow(exprGroups[[cond]]), .combine = rbind) %do% {
