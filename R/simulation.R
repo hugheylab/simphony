@@ -213,18 +213,16 @@ getTwoMetadata = function(exprGroups, randomTimepoints, period, interval, nReps,
 
 #' @export
 getSingleCond = function(exprGroups, nGenes = 100, period = 24, interval = 4,
-                         nReps = 2, nSims = 1, nSamples = NULL,
-                         randomTimepoints = FALSE, method = 'gaussian') {
+                         nReps = 2, nSamples = NULL, randomTimepoints = FALSE,
+                         method = 'gaussian') {
 
   exprGroups = setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples,
                                  ifelse(method == 'gaussian', 0, 1))
 
   metadata = getOneMetadata(exprGroups, randomTimepoints, period, interval, nReps,
-                            nSamples, nGenes * nSims)
+                            nSamples, nGenes)
 
-  emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {
-    getSingleCondSim(exprGroups, metadata$timePoints, method)
-  }
+  emat = getSingleCondSim(exprGroups, metadata$timePoints, method)
 
   colnames(emat) = metadata$sampleNames
   rownames(emat) = metadata$geneNames
@@ -235,21 +233,19 @@ getSingleCond = function(exprGroups, nGenes = 100, period = 24, interval = 4,
 }
 
 getTwoCond = function(exprGroups, nGenes = 100, period = 24, interval = 4,
-                      nReps = 2, nSims = 1, nSamples = NULL,
-                      randomTimepoints = FALSE, method = 'gaussian') {
+                      nReps = 2, nSamples = NULL, randomTimepoints = FALSE,
+                      method = 'gaussian') {
 
   exprGroups = setTwoCondDefault(exprGroups, nGenes, randomTimepoints, nSamples,
                                  ifelse(method == 'gaussian', 0, 1))
 
   metadata = getTwoMetadata(exprGroups, randomTimepoints, period, interval, nReps,
-                            nSamples, nGenes * nSims)
+                            nSamples, nGenes)
 
   groups = splitTwoCondExprGroups(exprGroups)
 
-  emat = foreach::foreach(sim = 1L:nSims, .combine = rbind) %do% {
-    cbind(getSingleCondSim(groups$exprGroups1, metadata$timePoints1, method),
+  emat = cbind(getSingleCondSim(groups$exprGroups1, metadata$timePoints1, method),
           getSingleCondSim(groups$exprGroups2, metadata$timePoints2, method))
-  }
 
   colnames(emat) = metadata$sampleNames
   rownames(emat) = metadata$geneNames
