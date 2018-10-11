@@ -103,7 +103,7 @@ getMultipleCondSimulation = function(exprGroups, nGenes = 100, period = 24,
   }
 
   sm = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% {
-    data.table::data.table(cond = cond, time = timePoints[cond, ],
+    data.table::data.table(cond = cond, time = timePoints[cond, ] * period / (2*pi),
                            sample = paste('sample', ((cond-1)*nSamples+1):(cond*nSamples), sep = '_'))
   }
   sampleNames = sm$sample
