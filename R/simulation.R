@@ -27,21 +27,24 @@ getSingleCondSim = function(exprGroups, timePoints, method) {
     amp = exprGroups[group, amp]
     phase = exprGroups[group, phase]
     base = exprGroups[group, base]
-    sd = exprGroups[group, sd]
     rhyFunc = exprGroups[group, rhyFunc][[1]]
     mu = amp * rhyFunc(timePoints + 2 * pi * phase) + base
 
-    foreach::foreach(gene = 1:exprGroups[group, geneCount], .combine = rbind) %do% {
-      if(method == 'gaussian'){
-        stats::rnorm(length(mu), mu, sd = sd) }
-      else {
-        stats::rnbinom(length(mu), mu = mu, size = 1/sampleDispersion(2^mu)) }
-    }
+    if(method == 'gaussian') {
+      samples = stats::rnorm(length(mu) * exprGroups[group, geneCount],
+                             rep(mu, exprGroups[group, geneCount]),
+                             sd = exprGroups[group, sd])
+    } else {
+      dispersionFunc = exprGroups[group, dispersionFunc][[1]]
+      samples = stats::rnbinom(length(mu) * exprGroups[group, geneCount],
+                               mu = rep(mu, exprGroups[group, geneCount]),
+                               size = 1/sampleDispersion(2^mu)) }
+    return(matrix(samples, nrow = exprGroups[group, geneCount]))
   }
 }
 
 setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
-                             defaultExpr, rhyFunc) {
+                             rhyFunc, method) {
 
   exprGroups = data.table::data.table(exprGroups)
 
@@ -55,7 +58,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
     exprGroups[, geneFrac := 1 / nrow(exprGroups)] }
 
   if(!'base' %in% colnames(exprGroups)) {
-    exprGroups[, base := defaultExpr] }
+    exprGroups[, base := 7] }
 
   if(!'amp' %in% colnames(exprGroups)) {
     exprGroups[, amp := 0] }
@@ -63,16 +66,18 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
   if(!'phase' %in% colnames(exprGroups)) {
     exprGroups[, phase := 0] }
 
-  if(!'sd' %in% colnames(exprGroups)) {
-    exprGroups[, sd := 1] }
-
   if(!'rhyFunc' %in% colnames(exprGroups)) {
     exprGroups[, rhyFunc := data.table::data.table(rhyFunc)] }
 
+  if(method == 'rnbinom') {
+    if(!'dispersionFunc' %in% colnames(exprGroups)) {
+      exprGroups[, dispersionFunc := data.table::data.table(sampleDispersion)] } }
+  else {
+    if(!'sd' %in% colnames(exprGroups)) {
+      exprGroups[, sd := 1] } }
+
   if(any(exprGroups[, geneFrac] <= 0)) {
     stop('All groups in exprGroups must have geneFrac > 0.') }
-
-  exprGroups[, group := 1:nrow(exprGroups)]
 
   # Compute a number of genes per group that sum to nGenes.
   exprGroups[, geneFrac := geneFrac / sum(geneFrac)]
@@ -85,46 +90,47 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 }
 
 
-getMultipleCondSimulation = function(exprGroups, nGenes = 100, period = 24,
+getMultipleCondSimulation = function(exprGroupsList, nGenes = 100, period = 24,
                                      interval = 4, nReps = 2, nSamples = NULL,
                                      randomTimepoints = FALSE, rhyFunc = sin,
                                      method = 'gaussian') {
 
-  nCond = length(exprGroups)
+  exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
+    setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
 
-  exprGroups = foreach::foreach(group = exprGroups, .combine = list) %do% {
-    setOneCondDefault(group, nGenes, randomTimepoints, nSamples,
-                      ifelse(method == 'gaussian', 0, 1), rhyFunc) }
-
-  geneData = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% {
-    foreach::foreach(group = 1:nrow(exprGroups[[cond]]), .combine = rbind) %do% {
-      foreach::foreach(gene = 1:exprGroups[[cond]][group, geneCount], .combine = rbind) %do% {
-        data.table::data.table(base = exprGroups[[cond]][group, base],
-                               amp = exprGroups[[cond]][group, amp],
-                               phase = exprGroups[[cond]][group, phase],
-                               sd = exprGroups[[cond]][group, sd],
-                               rhyFunc = exprGroups[[cond]][group, rhyFunc],
-                               group = group, cond = cond) } } }
+  geneData = foreach::foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
+    data.table::data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),
+                           amp = rep(exprGroups[, amp], times = exprGroups[, geneCount]),
+                           phase = rep(exprGroups[, phase], times = exprGroups[, geneCount]),
+                           sd = ifelse('sd' %in% colnames(exprGroups),
+                                       rep(exprGroups[, sd], times = exprGroups[, geneCount]),
+                                       NA),
+                           rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, geneCount]),
+                           group = rep(1:nrow(exprGroups), times = exprGroups[, geneCount]),
+                           cond = cond, gene = paste('gene', 1:nGenes, sep = '_'))
+  }
 
   if(!randomTimepoints) {
     tt = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
     tt = rep(tt, each = nReps)
     nSamples = length(tt)
-    timePoints = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% { tt }
+    timePoints = matrix(rep(tt, each = length(exprGroupsList)), ncol = nSamples)
   } else {
-    timePoints = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% {
+    timePoints = foreach::foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
       sort(stats::runif(nSamples, min = 0, max = 2 * pi)) }
   }
 
-  sm = foreach::foreach(cond = 1:nCond, .combine = rbind) %do% {
+  sm = foreach::foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
     data.table::data.table(cond = cond, time = timePoints[cond, ] * period / (2*pi),
                            sample = paste('sample', ((cond-1)*nSamples+1):(cond*nSamples), sep = '_'))
   }
-  sampleNames = sm$sample
 
-  emat = foreach::foreach(group = length(exprGroups), .combine = cbind) %do% {
-    getSingleCondSim(exprGroups[[group]], timePoints[group, ], method)
+  emat = foreach::foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = cbind) %do% {
+    getSingleCondSim(exprGroups, timePoints[cond, ], method)
   }
+
+  colnames(emat) = sm$sample
+  rownames(emat) = paste('gene', 1:nGenes, sep = '_')
 
   return(list(emat = emat, sm = sm, gm = geneData))
 }
