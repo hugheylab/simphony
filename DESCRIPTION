@@ -9,8 +9,11 @@ Description: A framework allowing for the simulation of rhythmic and
   non-rhythmic gene expression.
 License: GPL-2
 Encoding: UTF-8
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
 Imports:
   data.table,
   foreach
 RoxygenNote: 6.1.0
+VignetteBuilder: knitr
