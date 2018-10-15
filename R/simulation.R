@@ -81,7 +81,10 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 #' @param twoCondGroups is the differential exprGroup to convert into two
 #'   separate exprGroup data.table objects.
 #' @examples
-#'   dGroups = data.table::data.table(meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2))
+#'   dGroups = data.table::data.table(meanBase = c(0, 0, 1, 1), dBase = c(0, 0, 0.5, 0.5),
+#'                                    meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2),
+#'                                    meanPhase = c(0, 0, 3, 3), dPhase = c(0, 0, 3, 3),
+#'                                    meanSd = c(1, 1, 1, 1), dSd = c(0, 0, 0.5, 0.5))
 #'   exprGroups = generateExprGroups(dGroups)
 #' @export
 generateExprGroups = function(twoCondGroups) {
@@ -141,7 +144,7 @@ generateExprGroups = function(twoCondGroups) {
 #' @param method is the data generation method to use. Must be either 'gaussian'
 #'   or 'negbinom'.
 #' @export
-getMultipleCondSimulation = function(exprGroupsList, nGenes = 100, period = 24,
+getMultipleCondSimulation = function(exprGroupsList, nGenes = 10, period = 24,
                                      interval = 4, nReps = 2, nSamples = NULL,
                                      randomTimepoints = FALSE, rhyFunc = sin,
                                      method = 'gaussian') {
@@ -150,6 +153,8 @@ getMultipleCondSimulation = function(exprGroupsList, nGenes = 100, period = 24,
 
   exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
     setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
+
+  if(!is(exprGroupsList, 'list')) {exprGroupsList = list(exprGroupsList)}
 
   geneData = foreach::foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
     data.table::data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),

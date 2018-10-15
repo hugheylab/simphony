@@ -4,7 +4,7 @@
 \alias{getMultipleCondSimulation}
 \title{Generate simulated gene expression time courses}
 \usage{
-getMultipleCondSimulation(exprGroupsList, nGenes = 100, period = 24,
+getMultipleCondSimulation(exprGroupsList, nGenes = 10, period = 24,
   interval = 4, nReps = 2, nSamples = NULL,
   randomTimepoints = FALSE, rhyFunc = sin, method = "gaussian")
 }

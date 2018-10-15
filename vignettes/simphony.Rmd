@@ -1,0 +1,71 @@
+---
+title: "Vignette Title"
+author: "Jordan Singer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, message = FALSE}
+library(simulation)
+library(rain)
+library(precrec)
+library(foreach)
+library(tibble)
+library(dplyr)
+library(ggplot2)
+library(limma)
+```
+
+```{r, message = FALSE}
+exprGroupsList = list(data.table::data.table(amp = c(0, 1), geneFrac = c(0.5, 0.5)))
+```
+
+```{r, message = FALSE}
+simGse = getMultipleCondSimulation(exprGroupsList, nGenes = 1000)
+sm = data.table::data.table(simGse$sm)
+sm = data.table::setorder(sm, time)
+
+tt = sm$time
+emat = simGse$emat
+r = rle(sort(tt))
+deltat = min(diff(unique(tt)))
+msrSeq = tibble(tt = seq(min(tt), max(tt), deltat)) %>%
+  full_join(tibble(tt = r$values, n = r$lengths), by = 'tt') %>%
+  mutate(n = ifelse(is.na(n), 0, n))
+result = rain(t(emat), deltat = deltat, period = 24, measure.sequence = msrSeq$n)
+result$gene = rownames(emat)
+
+gm = data.table::data.table(simGse$gm)
+gm[, pRhy := result[, 'pVal']]
+```
+
+```{r, message = FALSE}
+ggplot(gm, aes(x = factor(ifelse(group == 1, 'Non Rhythmic', 'Rhythmic')), y = pRhy)) +
+  geom_violin() +
+  labs(x = NULL, y = expression(p[rhy]), title = 'RAIN p-values of rhythmicity')
+```
+
+```{r, message = FALSE}
+sm = data.table::data.table(simGse$sm)
+sm[, time_cos := cos(time * 2*pi / 24)]
+sm[, time_sin := sin(time * 2*pi / 24)]
+emat = simGse$emat
+design = model.matrix(~ time_cos + time_sin, data = sm)
+fit = lmFit(emat, design)
+fit = eBayes(fit, trend = TRUE)
+
+gm = data.table::data.table(simGse$gm)
+drLimma = topTable(fit, coef = 1:2, number = Inf)
+drLimma$gene = rownames(drLimma)
+gm = merge(gm, drLimma)
+```
+
+```{r, message = FALSE}
+ggplot(gm, aes(x = factor(ifelse(group == 1, 'Non Rhythmic', 'Rhythmic')), y = P.Value)) +
+  geom_violin() +
+  labs(x = NULL, y = expression(p[rhy]), title = 'limma p-values of rhythmicity')
+```
