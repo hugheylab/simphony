@@ -1,4 +1,4 @@
-context('simulation')
+context('simphony')
 
 
 test_that('Single condition simulation works', {
