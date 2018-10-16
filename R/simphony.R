@@ -160,8 +160,7 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
                                             randomTimepoints, nSamples, rhyFunc,
                                             method))
   } else {
-    nGroups = foreach::foreach(exprGroups = exprGroupsList, .combine = c) %do% {
-      nrow(exprGroups) }
+    nGroups = sapply(exprGroupsList, nrow)
     if(length(unique(nGroups)) != 1) {
       stop('Number of rows in each exprGroups must be the same for all conditions') }
     exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
