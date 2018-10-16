@@ -1,5 +1,5 @@
-Package: simulation
-Title: Generation of simulated gene expression
+Package: simphony
+Title: Simulating gene expression data
 Version: 0.0.0.9007
 Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
                     role = c("aut", "cre")),
@@ -9,11 +9,17 @@ Description: A framework allowing for the simulation of rhythmic and
   non-rhythmic gene expression.
 License: GPL-2
 Encoding: UTF-8
-Suggests: testthat,
-    knitr,
-    rmarkdown
+Suggests:
+  testthat,
+  knitr,
+  rmarkdown,
+  ggplot2,
+  limma,
+  precrec,
+  rain
 Imports:
   data.table,
-  foreach
+  foreach,
+  methods
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr

@@ -1,5 +1,5 @@
 ---
-title: "Vignette Title"
+title: "Using Simphony to Benchmark Rhythmic Detection Methods"
 author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,23 +9,25 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE, message = FALSE}
-library(simulation)
-library(rain)
-library(precrec)
-library(foreach)
-library(tibble)
-library(dplyr)
+```{r setup, message = FALSE}
 library(ggplot2)
+library(knitr)
 library(limma)
+library(precrec)
+library(rain)
+library(simphony)
 ```
 
 ```{r, message = FALSE}
-exprGroupsList = list(data.table::data.table(amp = c(0, 1), geneFrac = c(0.5, 0.5), sd = c(1, 1)))
-```
-
-```{r, message = FALSE}
+exprGroupsList = list(data.table::data.table(geneFrac = c(0.5, 0.5),
+                                             base = 0,
+                                             amp = c(0, 1),
+                                             phase = 0))
 simGse = simulateGeneData(exprGroupsList, nGenes = 1000)
+kable(exprGroupsList[[1]])
+```
+
+```{r, message = FALSE}
 sm = data.table::data.table(simGse$sm)
 sm = data.table::setorder(sm, time)
 
@@ -33,9 +35,7 @@ tt = sm$time
 emat = simGse$emat
 r = rle(sort(tt))
 deltat = min(diff(unique(tt)))
-msrSeq = tibble(tt = seq(min(tt), max(tt), deltat)) %>%
-  full_join(tibble(tt = r$values, n = r$lengths), by = 'tt') %>%
-  mutate(n = ifelse(is.na(n), 0, n))
+msrSeq = data.table::data.table(tt = r$values, n = r$lengths)
 result = rain(t(emat), deltat = deltat, period = 24, measure.sequence = msrSeq$n)
 result$gene = rownames(emat)
 
