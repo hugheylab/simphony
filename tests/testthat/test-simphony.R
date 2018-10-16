@@ -35,3 +35,15 @@ test_that('Number of genes and samples simulated are predictable', {
 
   rm(exprGroupsList, simGse)
 })
+
+test_that('Appropriate errors are thrown', {
+  badExprGroupsList = list(data.table::data.table(base = c(1, 2)),
+                           data.table::data.table(base = 1))
+  expect_error(simulateGeneData(badExprGroupsList),
+               'Number of rows in each exprGroups must be the same for all conditions')
+
+  goodExprGroupsList = list(data.table::data.table(base = c(2)),
+                           data.table::data.table(base = 1))
+  expect_error(simulateGeneData(goodExprGroupsList, method = 'socratic'),
+               'Sample method must be either gaussian or negbinom')
+})

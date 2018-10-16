@@ -153,13 +153,17 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
                             randomTimepoints = FALSE, rhyFunc = sin,
                             method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
-    stop('Sample method must be either Gaussian or Negative Binomial') }
+    stop('Sample method must be either gaussian or negbinom') }
 
   if(is.data.frame(exprGroupsList)) {
     exprGroupsList = list(setOneCondDefault(exprGroups, nGenes,
                                             randomTimepoints, nSamples, rhyFunc,
                                             method))
   } else {
+    nGroups = foreach::foreach(exprGroups = exprGroupsList, .combine = c) %do% {
+      nrow(exprGroups) }
+    if(length(unique(nGroups)) != 1) {
+      stop('Number of rows in each exprGroups must be the same for all conditions') }
     exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
       setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
   }
