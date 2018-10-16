@@ -14,7 +14,6 @@ library(ggplot2)
 library(knitr)
 library(limma)
 library(precrec)
-library(rain)
 library(simphony)
 ```
 
@@ -25,28 +24,6 @@ exprGroupsList = list(data.table::data.table(geneFrac = c(0.5, 0.5),
                                              phase = 0))
 simGse = simulateGeneData(exprGroupsList, nGenes = 1000)
 kable(exprGroupsList[[1]])
-```
-
-```{r, message = FALSE}
-sm = data.table::data.table(simGse$sm)
-sm = data.table::setorder(sm, time)
-
-tt = sm$time
-emat = simGse$emat
-r = rle(sort(tt))
-deltat = min(diff(unique(tt)))
-msrSeq = data.table::data.table(tt = r$values, n = r$lengths)
-result = rain(t(emat), deltat = deltat, period = 24, measure.sequence = msrSeq$n)
-result$gene = rownames(emat)
-
-gm = data.table::data.table(simGse$gm)
-gm[, pRhy := result[, 'pVal']]
-```
-
-```{r, message = FALSE}
-ggplot(gm, aes(x = factor(ifelse(group == 1, 'Non Rhythmic', 'Rhythmic')), y = pRhy)) +
-  geom_violin() +
-  labs(x = NULL, y = expression(p[rhy]), title = 'RAIN p-values of rhythmicity')
 ```
 
 ```{r, message = FALSE}
@@ -65,7 +42,24 @@ gm = merge(gm, drLimma)
 ```
 
 ```{r, message = FALSE}
+rocprc = evalmod(scores = -log10(gm$P.Value), labels = ifelse(gm$group == 1, FALSE, TRUE))
+autoplot(rocprc)
+```
+
+```{r, message = FALSE}
 ggplot(gm, aes(x = factor(ifelse(group == 1, 'Non Rhythmic', 'Rhythmic')), y = P.Value)) +
   geom_violin() +
   labs(x = NULL, y = expression(p[rhy]), title = 'limma p-values of rhythmicity')
+```
+
+```{r, message = FALSE}
+nonRhythmicGene = simGse$gm$gene[simGse$gm$group == 1][1]
+rhythmicGene = simGse$gm$gene[simGse$gm$group == 2][1]
+combinedExpr = data.table::data.table(expression = c(simGse$emat[nonRhythmicGene,], simGse$emat[rhythmicGene,]),
+                                      time = sm$time,
+                                      cond = c(rep('nonRhythmic', ncol(simGse$emat)), rep('rhythmic', ncol(simGse$emat))))
+
+ggplot(combinedExpr, aes(x = time, y = expression, color = cond)) +
+  geom_point() +
+  labs(x = 'time (h)', y = 'expression', title = 'Sample simulated time courses', color = 'rhythmic condition')
 ```

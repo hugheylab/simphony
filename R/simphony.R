@@ -27,7 +27,7 @@ getSingleCondSim = function(exprGroups, timePoints, method) {
       dispersionFunc = exprGroups[group, dispersionFunc][[1]]
       samples = stats::rnbinom(length(mu) * exprGroups[group, geneCount],
                                mu = 2^rep(mu, exprGroups[group, geneCount]),
-                               size = 1/sampleDispersion(2^mu)) }
+                               size = 1/dispersionFunc(2^mu)) }
     matrix(samples, nrow = exprGroups[group, geneCount], byrow = TRUE)
   }
 }
