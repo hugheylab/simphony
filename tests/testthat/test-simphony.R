@@ -2,7 +2,7 @@ context('simphony')
 
 
 test_that('Single condition simulation works', {
-  exprGroupsList = list(data.table::data.table(base = 1, amp = 3, phase = 2))
+  exprGroupsList = data.table::data.table(base = 1, amp = 3, phase = 2)
   expect_silent({simGse = simulateGeneData(exprGroupsList)})
 
   rm(exprGroupsList, simGse)

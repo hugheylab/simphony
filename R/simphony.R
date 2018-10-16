@@ -155,10 +155,14 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
   if (!method %in% c('gaussian', 'negbinom')) {
     stop('Sample method must be either Gaussian or Negative Binomial') }
 
-  exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
-    setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
-
-  if(!is(exprGroupsList, 'list')) {exprGroupsList = list(exprGroupsList)}
+  if(is.data.frame(exprGroupsList)) {
+    exprGroupsList = list(setOneCondDefault(exprGroups, nGenes,
+                                            randomTimepoints, nSamples, rhyFunc,
+                                            method))
+  } else {
+    exprGroupsList = foreach::foreach(exprGroups = exprGroupsList, .combine = list) %do% {
+      setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
+  }
 
   geneData = foreach::foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
     data.table::data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),
@@ -181,8 +185,6 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
     tt = stats::runif(nSamples * length(exprGroupsList), min = 0, max = 2 * pi)
     tt = matrix(tt, nrow = length(exprGroupsList), byrow = TRUE)
     timePoints = t(apply(tt, 1, sort))
-    #timePoints = foreach::foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
-    #  sort(stats::runif(nSamples, min = 0, max = 2 * pi)) }
   }
 
   sm = foreach::foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
