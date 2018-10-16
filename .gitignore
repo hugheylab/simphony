@@ -1,5 +1,5 @@
-simulation.Rcheck/
-simulation_*
+simphony.Rcheck/
+simphony_*
 .Rproj.user
 inst/doc
 .RData

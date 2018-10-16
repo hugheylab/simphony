@@ -1,6 +1,10 @@
 #' @importFrom data.table ":="
 #' @importFrom foreach "%do%"
-globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd'))
+#' @importFrom methods "is"
+globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
+                  'dAmp', 'dBase', 'dSd', 'dispersionFunc', 'exprGroups',
+                  'geneCount', 'geneFrac', 'meanAmp', 'meanBase', 'meanSd',
+                  'dPhase', 'meanPhase'))
 
 
 sampleDispersion = function(x) {
