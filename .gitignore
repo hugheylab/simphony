@@ -2,3 +2,5 @@ simulation.Rcheck/
 simulation_*
 .Rproj.user
 inst/doc
+.RData
+.Rhistory

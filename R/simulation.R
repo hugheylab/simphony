@@ -144,10 +144,10 @@ generateExprGroups = function(twoCondGroups) {
 #' @param method is the data generation method to use. Must be either 'gaussian'
 #'   or 'negbinom'.
 #' @export
-getMultipleCondSimulation = function(exprGroupsList, nGenes = 10, period = 24,
-                                     interval = 4, nReps = 2, nSamples = NULL,
-                                     randomTimepoints = FALSE, rhyFunc = sin,
-                                     method = 'gaussian') {
+simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
+                            interval = 4, nReps = 2, nSamples = NULL,
+                            randomTimepoints = FALSE, rhyFunc = sin,
+                            method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
     stop('Sample method must be either Gaussian or Negative Binomial') }
 
