@@ -205,5 +205,5 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   colnames(emat) = sm$sample
   rownames(emat) = geneNames
 
-  return(list(emat = emat, sm = sm, gm = gm))
+  return(list(exprData = emat, sampleMetadata = sm, geneMetadata = gm))
 }

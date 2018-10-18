@@ -27,11 +27,11 @@ kable(exprGroups)
 ```
 
 ```{r, message = FALSE, fig.width = 6}
-nonRhythmicGene = simGse$gm$gene[simGse$gm$group == 1][1]
-rhythmicGene = simGse$gm$gene[simGse$gm$group == 2][1]
-combinedExpr = data.table(expression = c(simGse$emat[nonRhythmicGene,], simGse$emat[rhythmicGene,]),
-                          time = simGse$sm$time,
-                          cond = c(rep('nonRhythmic', ncol(simGse$emat)), rep('rhythmic', ncol(simGse$emat))))
+nonRhythmicGene = simGse$geneMetadata$gene[simGse$geneMetadata$group == 1][1]
+rhythmicGene = simGse$geneMetadata$gene[simGse$geneMetadata$group == 2][1]
+combinedExpr = data.table(expression = c(simGse$exprData[nonRhythmicGene,], simGse$exprData[rhythmicGene,]),
+                          time = simGse$sampleMetadata$time,
+                          cond = c(rep('nonRhythmic', ncol(simGse$exprData)), rep('rhythmic', ncol(simGse$exprData))))
 
 ggplot(combinedExpr, aes(x = time, y = expression, color = cond)) +
   geom_point() +
@@ -40,15 +40,15 @@ ggplot(combinedExpr, aes(x = time, y = expression, color = cond)) +
 ```
 
 ```{r, message = FALSE}
-sm = data.table(simGse$sm)
+sm = data.table(simGse$sampleMetadata)
 sm[, time_cos := cos(time * 2*pi / 24)]
 sm[, time_sin := sin(time * 2*pi / 24)]
-emat = simGse$emat
+emat = simGse$exprData
 design = model.matrix(~ time_cos + time_sin, data = sm)
 fit = lmFit(emat, design)
 fit = eBayes(fit, trend = TRUE)
 
-gm = data.table(simGse$gm)
+gm = data.table(simGse$geneMetadata)
 drLimma = topTable(fit, coef = 2:3, number = Inf)
 drLimma$gene = rownames(drLimma)
 gm = merge(gm, drLimma)
