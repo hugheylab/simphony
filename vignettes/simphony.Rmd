@@ -30,8 +30,8 @@ kable(exprGroupsList[[1]])
 nonRhythmicGene = simGse$gm$gene[simGse$gm$group == 1][1]
 rhythmicGene = simGse$gm$gene[simGse$gm$group == 2][1]
 combinedExpr = data.table(expression = c(simGse$emat[nonRhythmicGene,], simGse$emat[rhythmicGene,]),
-                                      time = simGse$sm$time,
-                                      cond = c(rep('nonRhythmic', ncol(simGse$emat)), rep('rhythmic', ncol(simGse$emat))))
+                          time = simGse$sm$time,
+                          cond = c(rep('nonRhythmic', ncol(simGse$emat)), rep('rhythmic', ncol(simGse$emat))))
 
 ggplot(combinedExpr, aes(x = time, y = expression, color = cond)) +
   geom_point() +

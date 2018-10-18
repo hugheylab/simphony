@@ -59,7 +59,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
     if(!'dispersionFunc' %in% colnames(exprGroups)) {
       exprGroups[, dispersionFunc := data.table(sampleDispersion)] }
     if(!'base' %in% colnames(exprGroups)) {
-    exprGroups[, base := 7] } }
+      exprGroups[, base := 7] } }
   else {
     if(!'sd' %in% colnames(exprGroups)) {
       exprGroups[, sd := 1] }
@@ -93,15 +93,15 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 #' @export
 generateExprGroups = function(twoCondGroups) {
   exprGroups = list(data.table(
-                      base = twoCondGroups[, meanBase] + twoCondGroups[, dBase],
-                      amp = twoCondGroups[, meanAmp] + twoCondGroups[, dAmp],
-                      phase = twoCondGroups[, meanPhase] + twoCondGroups[, dPhase],
-                      sd = twoCondGroups[, meanSd] + twoCondGroups[, dSd]),
-                    data.table(
-                      base = twoCondGroups[, meanBase] - twoCondGroups[, dBase],
-                      amp = twoCondGroups[, meanAmp] - twoCondGroups[, dAmp],
-                      phase = twoCondGroups[, meanPhase] - twoCondGroups[, dPhase],
-                      sd = twoCondGroups[, meanSd] - twoCondGroups[, dSd]))
+    base = twoCondGroups[, meanBase] + twoCondGroups[, dBase],
+    amp = twoCondGroups[, meanAmp] + twoCondGroups[, dAmp],
+    phase = twoCondGroups[, meanPhase] + twoCondGroups[, dPhase],
+    sd = twoCondGroups[, meanSd] + twoCondGroups[, dSd]),
+    data.table(
+      base = twoCondGroups[, meanBase] - twoCondGroups[, dBase],
+      amp = twoCondGroups[, meanAmp] - twoCondGroups[, dAmp],
+      phase = twoCondGroups[, meanPhase] - twoCondGroups[, dPhase],
+      sd = twoCondGroups[, meanSd] - twoCondGroups[, dSd]))
 }
 
 #' Generate simulated gene expression time courses
@@ -171,14 +171,14 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
 
   geneData = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
     data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),
-                           amp = rep(exprGroups[, amp], times = exprGroups[, geneCount]),
-                           phase = rep(exprGroups[, phase], times = exprGroups[, geneCount]),
-                           sd = ifelse('sd' %in% colnames(exprGroups),
-                                       rep(exprGroups[, sd], times = exprGroups[, geneCount]),
-                                       NA),
-                           rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, geneCount]),
-                           group = rep(1:nrow(exprGroups), times = exprGroups[, geneCount]),
-                           cond = cond, gene = geneNames)
+               amp = rep(exprGroups[, amp], times = exprGroups[, geneCount]),
+               phase = rep(exprGroups[, phase], times = exprGroups[, geneCount]),
+               sd = ifelse('sd' %in% colnames(exprGroups),
+                           rep(exprGroups[, sd], times = exprGroups[, geneCount]),
+                           NA),
+               rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, geneCount]),
+               group = rep(1:nrow(exprGroups), times = exprGroups[, geneCount]),
+               cond = cond, gene = geneNames)
   }
 
   if(!randomTimepoints) {
