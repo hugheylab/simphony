@@ -21,7 +21,6 @@ Suggests:
   testthat (>= 2.0.0)
 Imports:
   data.table (>= 1.11.4),
-  foreach (>= 1.4.4),
-  methods (>= 3.4.4)
+  foreach (>= 1.4.4)
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
