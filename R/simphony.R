@@ -163,7 +163,7 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
     nGroups = sapply(exprGroupsList, nrow)
     if(length(unique(nGroups)) != 1) {
       stop('Number of rows in each exprGroups must be the same for all conditions') }
-    exprGroupsList = foreach(exprGroups = exprGroupsList, .combine = list) %do% {
+    exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
       setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
   }
 

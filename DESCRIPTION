@@ -17,9 +17,9 @@ Suggests:
   ggplot2 (>= 3.0.0),
   knitr (>= 1.20),
   limma (>= 3.34.9),
-  precrec (>= 0.9.1)
+  precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
-  testthat (>= 2.0.0),
+  testthat (>= 2.0.0)
 Imports:
   data.table (>= 1.11.4),
   foreach (>= 1.4.4),
