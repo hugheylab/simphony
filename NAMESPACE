@@ -3,5 +3,7 @@
 export(generateExprGroups)
 export(simulateGeneData)
 importFrom(data.table,":=")
+importFrom(data.table,data.table)
 importFrom(foreach,"%do%")
+importFrom(foreach,foreach)
 importFrom(methods,"is")
