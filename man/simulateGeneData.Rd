@@ -11,30 +11,30 @@ simulateGeneData(exprGroupsList, nGenes = 10, period = 24,
 \arguments{
 \item{exprGroupsList}{is a list of data.frame or data.table objects with the
 \itemize{
-  \item{geneFrac}: {Fraction of all simulated genes which fall into this
-                    group. Defaults to 1/nrow(exprGroups) if not supplied.}
-  \item{meanBase}: {The mean baseline expression for this group. Defaults 
-                    to 0 if not supplied.}
-  \item{dBase}: {The difference in baseline expression across conditions
-                 for this group. Defaults to 0 if not supplied.}
-  \item{meanAmp}: {The mean amplitude of the rhythmic component of 
-                   expression for this group. Defaults to 0 if not
-                   supplied.}
-  \item{dAmp}: {The difference in amplitude of the rhythmic component of 
-                expression across conditions for this group. Defaults to 0
-                if not supplied.}
-  \item{meanPhase}: {The mean phase of the rhythmic component of expression
-                     for this group. Defaults to 0 if not supplied.}
-  \item{dPhase}: {The difference in phase of the rhythmic component of 
-                  expression across conditions for this group. Defaults to
-                  0 if not supplied.}
-  \item{meanSd}: {The mean standard deviation of the sample error for this
-                  group. Defaults to 1 if not supplied.}
-  \item{dSd}: {The difference in standard deviation of the sample error for
-               this group. Defaults to 0 if not supplied.}
-  \item{rhyFunc}: {The function used to generate the rhythmic component of
-                   this group's gene expression. rhyFunc must have a period
-                   of 2*pi. Defaults to sin if not supplied.}
+\item{geneFrac}: {Fraction of all simulated genes which fall into this
+group. Defaults to 1/nrow(exprGroups) if not supplied.}
+\item{meanBase}: {The mean baseline expression for this group. Defaults
+to 0 if not supplied.}
+\item{dBase}: {The difference in baseline expression across conditions
+for this group. Defaults to 0 if not supplied.}
+\item{meanAmp}: {The mean amplitude of the rhythmic component of
+expression for this group. Defaults to 0 if not
+supplied.}
+\item{dAmp}: {The difference in amplitude of the rhythmic component of
+expression across conditions for this group. Defaults to 0
+if not supplied.}
+\item{meanPhase}: {The mean phase of the rhythmic component of expression
+for this group. Defaults to 0 if not supplied.}
+\item{dPhase}: {The difference in phase of the rhythmic component of
+expression across conditions for this group. Defaults to
+0 if not supplied.}
+\item{meanSd}: {The mean standard deviation of the sample error for this
+group. Defaults to 1 if not supplied.}
+\item{dSd}: {The difference in standard deviation of the sample error for
+this group. Defaults to 0 if not supplied.}
+\item{rhyFunc}: {The function used to generate the rhythmic component of
+this group's gene expression. rhyFunc must have a period
+of 2*pi. Defaults to sin if not supplied.}
 }}
 
 \item{nGenes}{is the integer number of total genes to simulate.}

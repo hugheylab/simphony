@@ -85,7 +85,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 #' @param twoCondGroups is the differential exprGroup to convert into two
 #'   separate exprGroup data.table objects.
 #' @examples
-#'   dGroups = data.table(meanBase = c(0, 0, 1, 1), dBase = c(0, 0, 0.5, 0.5),
+#'   dGroups = data.table::data.table(meanBase = c(0, 0, 1, 1), dBase = c(0, 0, 0.5, 0.5),
 #'                                    meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2),
 #'                                    meanPhase = c(0, 0, 3, 3), dPhase = c(0, 0, 3, 3),
 #'                                    meanSd = c(1, 1, 1, 1), dSd = c(0, 0, 0.5, 0.5))

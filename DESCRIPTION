@@ -7,19 +7,22 @@ Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
                     role = c("ctb")))
 Description: A framework allowing for the simulation of rhythmic and
   non-rhythmic gene expression.
+Depends: R (>= 3.4.4)
+Roxygen: list(markdown = TRUE)
+URL: https://github.com/hugheylab/simphony
 License: GPL-2
 Encoding: UTF-8
 Suggests:
-  testthat,
-  knitr,
-  rmarkdown,
-  ggplot2,
-  limma,
-  precrec,
-  rain
+  data.table (>= 1.11.4),
+  ggplot2 (>= 3.0.0),
+  knitr (>= 1.20),
+  limma (>= 3.34.9),
+  precrec (>= 0.9.1)
+  rmarkdown (>= 1.9),
+  testthat (>= 2.0.0),
 Imports:
-  data.table,
-  foreach,
-  methods
+  data.table (>= 1.11.4),
+  foreach (>= 1.4.4),
+  methods (>= 3.4.4)
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
