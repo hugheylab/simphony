@@ -20,10 +20,10 @@ library(simphony)
 
 ```{r, message = FALSE}
 set.seed(42)
-exprGroupsList = data.table(fracGenes = c(0.5, 0.5), base = 0, amp = c(0, 1.2),
-                            phase = 0)
-simGse = simulateExprData(exprGroupsList, nGenes = 1000)
-kable(exprGroupsList[[1]])
+exprGroups = data.table(fracGenes = c(0.5, 0.5), base = 0,
+                        amp = c(0, 1.2), phase = 0)
+simGse = simulateExprData(exprGroups, nGenes = 1000)
+kable(exprGroups)
 ```
 
 ```{r, message = FALSE, fig.width = 6}
