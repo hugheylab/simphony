@@ -1,6 +1,5 @@
 #' @importFrom data.table data.table ":="
 #' @importFrom foreach foreach "%do%"
-#' @importFrom methods "is"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dAmp', 'dBase', 'dSd', 'dispersionFunc', 'exprGroups',
                   'geneCount', 'geneFrac', 'meanAmp', 'meanBase', 'meanSd',
