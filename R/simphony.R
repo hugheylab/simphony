@@ -35,6 +35,7 @@ setDefaultExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
                                 rhyFunc, method) {
 
   exprGroups = data.table(exprGroups)
+  exprGroups[, group := 1:.N]
 
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
@@ -169,16 +170,14 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
 
   geneNames = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
 
-  gm = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
-    data.table(base = rep(exprGroups[, base], times = exprGroups[, numGenes]),
-               amp = rep(exprGroups[, amp], times = exprGroups[, numGenes]),
-               phase = rep(exprGroups[, phase], times = exprGroups[, numGenes]),
-               sd = ifelse('sd' %in% colnames(exprGroups),
-                           rep(exprGroups[, sd], times = exprGroups[, numGenes]),
-                           NA),
-               rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, numGenes]),
-               group = rep(1:nrow(exprGroups), times = exprGroups[, numGenes]),
-               cond = cond, gene = geneNames)
+  gm = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList),
+               .combine = rbind) %do% {
+    gmNow = exprGroups[rep(1:.N, times = numGenes)]
+    gmNow[, c('fracGenes', 'numGenes') := NULL]
+    gmNow[, cond := ..cond]
+    gmNow[, gene := geneNames]
+    setcolorder(gmNow, c('cond', 'group', 'gene'))
+    gmNow
   }
 
   if(!randomTimepoints) {
