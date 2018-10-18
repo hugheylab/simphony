@@ -170,14 +170,14 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   geneNames = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
 
   gm = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
-    data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),
-               amp = rep(exprGroups[, amp], times = exprGroups[, geneCount]),
-               phase = rep(exprGroups[, phase], times = exprGroups[, geneCount]),
+    data.table(base = rep(exprGroups[, base], times = exprGroups[, numGenes]),
+               amp = rep(exprGroups[, amp], times = exprGroups[, numGenes]),
+               phase = rep(exprGroups[, phase], times = exprGroups[, numGenes]),
                sd = ifelse('sd' %in% colnames(exprGroups),
-                           rep(exprGroups[, sd], times = exprGroups[, geneCount]),
+                           rep(exprGroups[, sd], times = exprGroups[, numGenes]),
                            NA),
-               rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, geneCount]),
-               group = rep(1:nrow(exprGroups), times = exprGroups[, geneCount]),
+               rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, numGenes]),
+               group = rep(1:nrow(exprGroups), times = exprGroups[, numGenes]),
                cond = cond, gene = geneNames)
   }
 
@@ -196,7 +196,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
     sampleIds = ((cond - 1) * nSamples + 1):(cond * nSamples)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1), sampleIds)
     data.table(sample = sampleNames, cond = cond,
-               time = timePoints[cond, ] * period / (2*pi))
+               time = times[cond, ] * period / (2*pi))
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = cbind) %do% {
