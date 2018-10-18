@@ -91,11 +91,12 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 #'   exprGroups = generateExprGroups(dGroups)
 #' @export
 generateExprGroups = function(twoCondGroups) {
-  exprGroups = list(data.table(
-    base = twoCondGroups[, meanBase] + twoCondGroups[, dBase],
-    amp = twoCondGroups[, meanAmp] + twoCondGroups[, dAmp],
-    phase = twoCondGroups[, meanPhase] + twoCondGroups[, dPhase],
-    sd = twoCondGroups[, meanSd] + twoCondGroups[, dSd]),
+  exprGroups = list(
+    data.table(
+      base = twoCondGroups[, meanBase] + twoCondGroups[, dBase],
+      amp = twoCondGroups[, meanAmp] + twoCondGroups[, dAmp],
+      phase = twoCondGroups[, meanPhase] + twoCondGroups[, dPhase],
+      sd = twoCondGroups[, meanSd] + twoCondGroups[, dSd]),
     data.table(
       base = twoCondGroups[, meanBase] - twoCondGroups[, dBase],
       amp = twoCondGroups[, meanAmp] - twoCondGroups[, dAmp],
