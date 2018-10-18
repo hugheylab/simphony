@@ -62,7 +62,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
     exprGroups[, base := 7] } }
   else {
     if(!'sd' %in% colnames(exprGroups)) {
-      exprGroups[, sd := 1] } 
+      exprGroups[, sd := 1] }
     if(!'base' %in% colnames(exprGroups)) {
       exprGroups[, base := 0] }}
 
@@ -80,7 +80,7 @@ setOneCondDefault = function(exprGroups, nGenes, randomTimepoints, nSamples,
 }
 
 #' Generate list of two expression groups from a combined differential exprGroup
-#' 
+#'
 #'
 #' @param twoCondGroups is the differential exprGroup to convert into two
 #'   separate exprGroup data.table objects.
@@ -111,19 +111,19 @@ generateExprGroups = function(twoCondGroups) {
 #'   \itemize{
 #'     \item{geneFrac}: {Fraction of all simulated genes which fall into this
 #'                       group. Defaults to 1/nrow(exprGroups) if not supplied.}
-#'     \item{meanBase}: {The mean baseline expression for this group. Defaults 
+#'     \item{meanBase}: {The mean baseline expression for this group. Defaults
 #'                       to 0 if not supplied.}
 #'     \item{dBase}: {The difference in baseline expression across conditions
 #'                    for this group. Defaults to 0 if not supplied.}
-#'     \item{meanAmp}: {The mean amplitude of the rhythmic component of 
+#'     \item{meanAmp}: {The mean amplitude of the rhythmic component of
 #'                      expression for this group. Defaults to 0 if not
 #'                      supplied.}
-#'     \item{dAmp}: {The difference in amplitude of the rhythmic component of 
+#'     \item{dAmp}: {The difference in amplitude of the rhythmic component of
 #'                   expression across conditions for this group. Defaults to 0
 #'                   if not supplied.}
 #'     \item{meanPhase}: {The mean phase of the rhythmic component of expression
 #'                        for this group. Defaults to 0 if not supplied.}
-#'     \item{dPhase}: {The difference in phase of the rhythmic component of 
+#'     \item{dPhase}: {The difference in phase of the rhythmic component of
 #'                     expression across conditions for this group. Defaults to
 #'                     0 if not supplied.}
 #'     \item{meanSd}: {The mean standard deviation of the sample error for this
@@ -167,6 +167,8 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
       setOneCondDefault(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
   }
 
+  geneNames = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
+
   geneData = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = rbind) %do% {
     data.table(base = rep(exprGroups[, base], times = exprGroups[, geneCount]),
                            amp = rep(exprGroups[, amp], times = exprGroups[, geneCount]),
@@ -176,7 +178,7 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
                                        NA),
                            rhyFunc = rep(exprGroups[, rhyFunc], times = exprGroups[, geneCount]),
                            group = rep(1:nrow(exprGroups), times = exprGroups[, geneCount]),
-                           cond = cond, gene = paste('gene', 1:nGenes, sep = '_'))
+                           cond = cond, gene = geneNames)
   }
 
   if(!randomTimepoints) {
@@ -191,8 +193,10 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
   }
 
   sm = foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
-    data.table(cond = cond, time = timePoints[cond, ] * period / (2*pi),
-                           sample = paste('sample', ((cond-1)*nSamples+1):(cond*nSamples), sep = '_'))
+    sampleIds = ((cond - 1) * nSamples + 1):(cond * nSamples)
+    sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1), sampleIds)
+    data.table(sample = sampleNames, cond = cond,
+               time = timePoints[cond, ] * period / (2*pi))
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = cbind) %do% {
@@ -200,7 +204,7 @@ simulateGeneData = function(exprGroupsList, nGenes = 10, period = 24,
   }
 
   colnames(emat) = sm$sample
-  rownames(emat) = paste('gene', 1:nGenes, sep = '_')
+  rownames(emat) = geneNames
 
   return(list(emat = emat, sm = sm, gm = geneData))
 }
