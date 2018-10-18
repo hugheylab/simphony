@@ -10,7 +10,7 @@ defaultDispersionFunc = function(x) {
   return(3/x)
 }
 
-simulateExprDataSingleCond = function(exprGroups, times, method) {
+simulateExprDataOneCond = function(exprGroups, times, method) {
   foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
     amp = exprGroups[group, amp]
     phase = exprGroups[group, phase]
@@ -198,8 +198,9 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
                time = times[cond, ] * period / (2*pi))
   }
 
-  emat = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList), .combine = cbind) %do% {
-    simulateExprDataSingleCond(exprGroups, times[cond, ], method)
+  emat = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList),
+                 .combine = cbind) %do% {
+    simulateExprDataOneCond(exprGroups, times[cond, ], method)
   }
 
   colnames(emat) = sm$sample
