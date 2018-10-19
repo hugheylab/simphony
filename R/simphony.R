@@ -36,7 +36,7 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
   exprGroups[, group := 1:.N]
 
   if(nrow(exprGroups) == 0) {
-    stop('No rows in exprGroups. Cannot simulate genes.') }
+    stop('exprGroups must have at least one row.') }
 
   if(!'fracGenes' %in% colnames(exprGroups)) {
     exprGroups[, fracGenes := 1 / nrow(exprGroups)] }
@@ -196,7 +196,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
                             timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
-    stop('Sample method must be either gaussian or negbinom') }
+    stop("method must be either 'gaussian' or 'negbinom'.") }
 
   if(is.data.frame(exprGroupsList)) {
     exprGroupsList = list(setDefaultExprGroups(exprGroupsList, nGenes,
@@ -204,7 +204,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   } else {
     nGroups = sapply(exprGroupsList, nrow)
     if(length(unique(nGroups)) != 1) {
-      stop('Number of rows in each exprGroups must be the same for all conditions') }
+      stop('Number of rows in each exprGroups must be the same for all conditions.') }
     exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
       setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method) }
   }
