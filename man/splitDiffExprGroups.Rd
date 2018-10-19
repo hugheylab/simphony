@@ -4,19 +4,17 @@
 \alias{splitDiffExprGroups}
 \title{Generate list of two expression groups from a combined differential exprGroup}
 \usage{
-splitDiffExprGroups(diffExprGroups)
+splitDiffExprGroups(diffExprGroups, checkValid = TRUE)
 }
 \arguments{
-\item{diffExprGroups}{is the differential exprGroup to convert into two
-separate exprGroup data.table objects.}
+\item{diffExprGroups}{is the differential exprGroups data.frame to convert
+into a list of single-condition exprGroups data.frames.}
 }
 \description{
 Generate list of two expression groups from a combined differential exprGroup
 }
 \examples{
-  dGroups = data.table::data.table(meanBase = c(0, 0, 1, 1), dBase = c(0, 0, 0.5, 0.5),
-                                   meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2),
-                                   meanPhase = c(0, 0, 3, 3), dPhase = c(0, 0, 3, 3),
-                                   meanSd = c(1, 1, 1, 1), dSd = c(0, 0, 0.5, 0.5))
-  exprGroups = splitDiffExprGroups(dGroups)
+dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
+                     meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
+exprGroups = splitDiffExprGroups(dGroups)
 }

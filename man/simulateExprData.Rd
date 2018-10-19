@@ -5,8 +5,9 @@
 \title{Generate simulated gene expression time courses}
 \usage{
 simulateExprData(exprGroupsList, nGenes = 10, period = 24,
-  interval = 4, nReps = 2, nSamples = NULL,
-  randomTimepoints = FALSE, rhyFunc = sin, method = "gaussian")
+  timepointsType = "auto", interval = 4, nReps = 2,
+  timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
+  method = "gaussian")
 }
 \arguments{
 \item{exprGroupsList}{is a list of data.frame or data.table objects with the
@@ -41,16 +42,15 @@ of 2*pi. Defaults to sin if not supplied.}
 
 \item{period}{is the integer number of hours in one rhythmic cycle.}
 
+\item{timepointsType}{stuff}
+
 \item{interval}{is the integer number of hours between simulated time points.}
 
 \item{nReps}{is the integer number of replicates per time point.}
 
-\item{nSamples}{is the integer number of time points to sample, if
-randomTimepoints is enabled. This must be supplied if randomTimepoints is
-TRUE.}
+\item{timepoints}{stuff}
 
-\item{randomTimepoints}{is a boolean determining whether to simulate an
-experiment with random sample times. Defaults to FALSE.}
+\item{nSamplesPerCond}{stuff}
 
 \item{rhyFunc}{is the rhythmic function to set for exprGroups missing a
 rhythmic function. Defaults to sin if not supplied.}
