@@ -1,12 +1,12 @@
 #' @importFrom data.table data.table ":="
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
-                  'dAmp', 'dBase', 'dSd', 'dispersionFunc', 'exprGroups',
+                  'dAmp', 'dBase', 'dSd', 'dispFunc', 'exprGroups',
                   'numGenes', 'fracGenes', 'meanAmp', 'meanBase', 'meanSd',
                   'dPhase', 'meanPhase'))
 
 
-defaultDispersionFunc = function(x) {
+defaultDispFunc = function(x) {
   return(3/x)
 }
 
@@ -23,10 +23,10 @@ simulateExprDataOneCond = function(exprGroups, times, method) {
                                rep(mu, exprGroups[group, numGenes]),
                                sd = exprGroups[group, sd])
     } else {
-      dispersionFunc = exprGroups[group, dispersionFunc][[1]]
+      dispFunc = exprGroups[group, dispFunc][[1]]
       groupEmat = stats::rnbinom(length(mu) * exprGroups[group, numGenes],
                                  mu = 2^rep(mu, exprGroups[group, numGenes]),
-                                 size = 1/dispersionFunc(2^mu)) }
+                                 size = 1/dispFunc(2^mu)) }
     matrix(groupEmat, nrow = exprGroups[group, numGenes], byrow = TRUE)
   }
 }
@@ -56,8 +56,8 @@ setDefaultExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
     exprGroups[, rhyFunc := data.table(rhyFunc)] }
 
   if(method == 'negbinom') {
-    if(!'dispersionFunc' %in% colnames(exprGroups)) {
-      exprGroups[, dispersionFunc := data.table(defaultDispersionFunc)] }
+    if(!'dispFunc' %in% colnames(exprGroups)) {
+      exprGroups[, dispFunc := data.table(defaultDispFunc)] }
     if(!'base' %in% colnames(exprGroups)) {
       exprGroups[, base := 7] } }
   else {
