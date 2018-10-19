@@ -1,4 +1,4 @@
-#' @importFrom data.table data.table setcolorder ":="
+#' @importFrom data.table data.table ":="
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dAmp', 'dBase', 'dSd', 'dispFunc', 'exprGroups',
@@ -220,7 +220,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
     gmNow[, c('fracGenes', 'numGenes') := NULL]
     gmNow[, cond := ..cond]
     gmNow[, gene := geneNames]
-    setcolorder(gmNow, c('cond', 'group', 'gene'))
+    data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
     gmNow
   }
 
