@@ -256,7 +256,7 @@ combineData = function(simData, geneNames) {
 
 #' @export
 getExpectedExpr = function(geneMetadata, time, period = 24) {
-  d = geneMetadata[rep(1:.N, each = length(time))]
+  d = data.table(geneMetadata)[rep(1:.N, each = length(time))]
   d[, time := rep(..time, times = nrow(geneMetadata))]
   d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period)]
   return(d)
