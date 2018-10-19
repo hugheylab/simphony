@@ -82,27 +82,52 @@ setDefaultExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
 #' Generate list of two expression groups from a combined differential exprGroup
 #'
 #'
-#' @param diffExprGroups is the differential exprGroup to convert into two
-#'   separate exprGroup data.table objects.
+#' @param diffExprGroups is the differential exprGroups data.frame to convert
+#' into a list of single-condition exprGroups data.frames.
 #' @examples
-#'   dGroups = data.table::data.table(meanBase = c(0, 0, 1, 1), dBase = c(0, 0, 0.5, 0.5),
-#'                                    meanAmp = c(1,2,1,2), dAmp = c(1,1,2,2),
-#'                                    meanPhase = c(0, 0, 3, 3), dPhase = c(0, 0, 3, 3),
-#'                                    meanSd = c(1, 1, 1, 1), dSd = c(0, 0, 0.5, 0.5))
-#'   exprGroups = splitDiffExprGroups(dGroups)
+#' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
+#'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
+#' exprGroups = splitDiffExprGroups(dGroups)
 #' @export
-splitDiffExprGroups = function(diffExprGroups) {
-  exprGroups = list(
-    data.table(
-      base = diffExprGroups[, meanBase] + diffExprGroups[, dBase],
-      amp = diffExprGroups[, meanAmp] + diffExprGroups[, dAmp],
-      phase = diffExprGroups[, meanPhase] + diffExprGroups[, dPhase],
-      sd = diffExprGroups[, meanSd] + diffExprGroups[, dSd]),
-    data.table(
-      base = diffExprGroups[, meanBase] - diffExprGroups[, dBase],
-      amp = diffExprGroups[, meanAmp] - diffExprGroups[, dAmp],
-      phase = diffExprGroups[, meanPhase] - diffExprGroups[, dPhase],
-      sd = diffExprGroups[, meanSd] - diffExprGroups[, dSd]))
+splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
+  dGroups = data.table(diffExprGroups)
+
+  capCols = c('Base', 'Amp', 'Phase', 'Sd')
+  cols = tolower(capCols)
+  meanCols = paste0('mean', capCols)
+  dCols = paste0('d', capCols)
+
+  d1 = data.table(.dummy = rep(1, nrow(dGroups)))
+  d2 = data.table(.dummy = rep(1, nrow(dGroups)))
+  for (ii in 1:length(cols)) {
+    if (all(c(meanCols[ii], dCols[ii]) %in% colnames(dGroups))) {
+      d1[[cols[ii]]] = dGroups[[meanCols[ii]]] - 0.5 * dGroups[[dCols[ii]]]
+      d2[[cols[ii]]] = dGroups[[meanCols[ii]]] + 0.5 * dGroups[[dCols[ii]]]
+    }
+  }
+  d1[, .dummy := NULL]
+  d2[, .dummy := NULL]
+
+  heldbackCols = setdiff(colnames(dGroups), c(meanCols, dCols))
+  if (length(heldbackCols) > 0) {
+    dHeldback = dGroups[, heldbackCols, with = FALSE]
+    d1 = cbind(d1, dHeldback)
+    d2 = cbind(d2, dHeldback)
+  }
+
+  if (checkValid) {
+    idx = rep(TRUE, nrow(d1))
+    if ('amp' %in% colnames(d1)) {
+      idx = idx & (d1$amp >= 0) & (d2$amp >= 0)
+    }
+    if ('sd' %in% colnames(d1)) {
+      idx = idx & (d1$sd > 0) & (d2$sd > 0)
+    }
+    d1 = d1[idx]
+    d2 = d2[idx]
+  }
+
+  return(list(d1, d2))
 }
 
 #' Generate simulated gene expression time courses
