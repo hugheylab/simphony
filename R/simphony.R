@@ -1,4 +1,4 @@
-#' @importFrom data.table data.table ":="
+#' @importFrom data.table data.table setcolorder ":="
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dAmp', 'dBase', 'dSd', 'dispFunc', 'exprGroups',
@@ -227,7 +227,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   nSamples = prod(dim(times))
   nSamplesPerCond = ncol(times)
   sm = foreach(cond = 1:nCond, .combine = rbind) %do% {
-    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamples)
+    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
     data.table(sample = sampleNames, cond = cond,
