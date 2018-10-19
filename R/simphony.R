@@ -220,14 +220,14 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
     gmNow[, c('fracGenes', 'numGenes') := NULL]
     gmNow[, cond := ..cond]
     gmNow[, gene := geneNames]
-    setcolorder(gmNow, c('cond', 'group', 'gene'))
+    data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
     gmNow
   }
 
   nSamples = prod(dim(times))
   nSamplesPerCond = ncol(times)
   sm = foreach(cond = 1:nCond, .combine = rbind) %do% {
-    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamples)
+    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
     data.table(sample = sampleNames, cond = cond,
