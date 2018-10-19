@@ -1,0 +1,69 @@
+---
+title: "Using Simphony to Benchmark Rhythm Detection Methods"
+author: "Jordan Singer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, message = FALSE}
+library(data.table)
+library(ggplot2)
+library(limma)
+library(precrec)
+library(simphony)
+```
+
+```{r, message = FALSE}
+set.seed(42)
+exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
+simData = simulateExprData(exprGroups, nGenes = 200, interval = 2, nReps = 1)
+```
+
+```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
+geneMetadata = simData$geneMetadata
+gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
+dExample = combineData(simData, gmExample$gene)
+dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+
+dExpect = getExpectedExpr(gmExample, seq(0, 24, 0.25))
+dExpect[, low := mu - sd]
+dExpect[, high := mu + sd]
+dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+
+ggplot(dExample) +
+  facet_wrap(~ geneLabel, nrow = 1, scales = 'free_y') +
+  geom_ribbon(aes(x = time, ymin = low, ymax = high), fill = 'gray85', data = dExpect) +
+  geom_line(aes(x = time, y = mu), size = 0.25, data = dExpect) +
+  geom_point(aes(x = time, y = expr), shape = 21, size = 2.5) +
+  labs(x = 'Time (h)', y = 'Expression (a.u.)') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+```
+
+```{r, message = FALSE}
+sampleMetadata = simData$sampleMetadata
+sampleMetadata[, time_cos := cos(time * 2*pi / 24)]
+sampleMetadata[, time_sin := sin(time * 2*pi / 24)]
+design = model.matrix(~ time_cos + time_sin, data = sampleMetadata)
+
+fit = lmFit(simData$exprData, design)
+fit = eBayes(fit, trend = TRUE)
+
+rhyLimma = topTable(fit, coef = 2:3, number = Inf)
+rhyLimma$gene = rownames(rhyLimma)
+rhyLimma = merge(rhyLimma, geneMetadata[, .(gene, amp)], by = 'gene')
+```
+
+```{r, message = FALSE, fig.width = 3.5, fig.height = 3}
+ggplot(rhyLimma) +
+  geom_jitter(aes(x = factor(amp), y = P.Value), shape = 21, width = 0.2) +
+  labs(x = 'Rhythm amplitude (a.u.)', y = 'P-value of rhythmicity')
+```
+
+```{r, message = FALSE, fig.width = 3, fig.height = 3}
+rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
+autoplot(rocprc, 'ROC')
+```

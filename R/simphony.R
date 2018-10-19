@@ -208,3 +208,21 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
 
   return(list(exprData = emat, sampleMetadata = sm, geneMetadata = gm))
 }
+
+#' @export
+combineData = function(simData, geneNames) {
+  d = data.table(t(simData$exprData[geneNames, ]), keep.rownames = TRUE)
+  d = merge(simData$sampleMetadata, d, by.x = 'sample', by.y = 'rn')
+  d = melt(d, measure.vars = geneNames, variable.name = 'gene',
+           value.name = 'expr')
+  d = merge(d, simData$geneMetadata, by = c('gene', 'cond'))
+  return(d)
+}
+
+#' @export
+getExpectedExpr = function(geneMetadata, time, period = 24) {
+  d = geneMetadata[rep(1:.N, each = length(time))]
+  d[, time := rep(..time, times = nrow(geneMetadata))]
+  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period)]
+  return(d)
+}
