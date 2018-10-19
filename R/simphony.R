@@ -62,7 +62,10 @@ setDefaultExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
       exprGroups[, base := 7] } }
   else {
     if(!'sd' %in% colnames(exprGroups)) {
-      exprGroups[, sd := 1] }
+      exprGroups[, sd := 1]
+    } else if (!all(exprGroups$sd > 0)) {
+      stop('All groups in exprGroups must have standard deviation > 0.')
+    }
     if(!'base' %in% colnames(exprGroups)) {
       exprGroups[, base := 0] }}
 
