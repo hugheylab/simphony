@@ -31,17 +31,12 @@ simulateExprDataOneCond = function(exprGroups, times, method) {
   }
 }
 
-setDefaultExprGroups = function(exprGroups, nGenes, randomTimepoints, nSamples,
-                                rhyFunc, method) {
-
+setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
   exprGroups = data.table(exprGroups)
   exprGroups[, group := 1:.N]
 
   if(nrow(exprGroups) == 0) {
     stop('No rows in exprGroups. Cannot simulate genes.') }
-
-  if(randomTimepoints && is.null(nSamples)) {
-    stop('Number of random timepoint samples not specified.') }
 
   if(!'fracGenes' %in% colnames(exprGroups)) {
     exprGroups[, fracGenes := 1 / nrow(exprGroups)] }
@@ -133,6 +128,27 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
   return(list(d1, d2))
 }
 
+getTimes = function(timepointsType, interval, nReps, timepoints,
+                    nSamplesPerCond, nCond, period) {
+  if (timepointsType == 'auto') {
+    tt = (2 * pi / period) * interval *
+      0:(period %/% interval - (period %% interval == 0))
+    tt = rep(tt, each = nReps)
+    times = matrix(rep(tt, each = nCond), ncol = length(tt))
+  } else if (timepointsType == 'specified') {
+    tt = (2 * pi / period) * timepoints # don't do %%, let rhyFunc figure it out
+    times = matrix(rep(tt, each = nCond), ncol = length(tt))
+  } else if (timepointsType == 'random') {
+    tt = stats::runif(nSamplesPerCond * nCond, min = 0, max = 2 * pi)
+    tt = matrix(tt, nrow = nCond)
+    times = t(apply(tt, 1, sort))
+  } else {
+    stop("timepointsType must be 'auto', 'specified', or 'random'.")
+  }
+  return(times)
+}
+
+
 #' Generate simulated gene expression time courses
 #'
 #' @param exprGroupsList is a list of data.frame or data.table objects with the
@@ -165,41 +181,41 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #'   }
 #' @param nGenes is the integer number of total genes to simulate.
 #' @param period is the integer number of hours in one rhythmic cycle.
+#' @param timepointsType stuff
 #' @param interval is the integer number of hours between simulated time points.
 #' @param nReps is the integer number of replicates per time point.
-#' @param nSamples is the integer number of time points to sample, if
-#'   randomTimepoints is enabled. This must be supplied if randomTimepoints is
-#'   TRUE.
-#' @param randomTimepoints is a boolean determining whether to simulate an
-#'   experiment with random sample times. Defaults to FALSE.
+#' @param timepoints stuff
+#' @param nSamplesPerCond stuff
 #' @param rhyFunc is the rhythmic function to set for exprGroups missing a
 #'   rhythmic function. Defaults to sin if not supplied.
 #' @param method is the data generation method to use. Must be either 'gaussian'
 #'   or 'negbinom'.
 #' @export
 simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
-                            interval = 4, nReps = 2, nSamples = NULL,
-                            randomTimepoints = FALSE, rhyFunc = sin,
-                            method = 'gaussian') {
+                            timepointsType = 'auto', interval = 4, nReps = 2,
+                            timepoints = NULL, nSamplesPerCond = NULL,
+                            rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
     stop('Sample method must be either gaussian or negbinom') }
 
   if(is.data.frame(exprGroupsList)) {
     exprGroupsList = list(setDefaultExprGroups(exprGroupsList, nGenes,
-                                            randomTimepoints, nSamples, rhyFunc,
-                                            method))
+                                               rhyFunc, method))
   } else {
     nGroups = sapply(exprGroupsList, nrow)
     if(length(unique(nGroups)) != 1) {
       stop('Number of rows in each exprGroups must be the same for all conditions') }
     exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
-      setDefaultExprGroups(exprGroups, nGenes, randomTimepoints, nSamples, rhyFunc, method) }
+      setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method) }
   }
+  nCond = length(exprGroupsList)
+
+  times = getTimes(timepointsType, interval, nReps, timepoints,
+                   nSamplesPerCond, nCond, period)
 
   geneNames = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
 
-  gm = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList),
-               .combine = rbind) %do% {
+  gm = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = rbind) %do% {
     gmNow = exprGroups[rep(1:.N, times = numGenes)]
     gmNow[, c('fracGenes', 'numGenes') := NULL]
     gmNow[, cond := ..cond]
@@ -208,26 +224,17 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
     gmNow
   }
 
-  if(!randomTimepoints) {
-    tt = (2 * pi / period) * interval * 0:(period %/% interval - (period %% interval == 0))
-    tt = rep(tt, each = nReps)
-    nSamples = length(tt)
-    times = matrix(rep(tt, each = length(exprGroupsList)), ncol = nSamples)
-  } else {
-    tt = stats::runif(nSamples * length(exprGroupsList), min = 0, max = 2 * pi)
-    tt = matrix(tt, nrow = length(exprGroupsList), byrow = TRUE)
-    times = t(apply(tt, 1, sort))
-  }
-
-  sm = foreach(cond = 1:length(exprGroupsList), .combine = rbind) %do% {
-    sampleIds = ((cond - 1) * nSamples + 1):(cond * nSamples)
-    sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1), sampleIds)
+  nSamples = prod(dim(times))
+  nSamplesPerCond = ncol(times)
+  sm = foreach(cond = 1:nCond, .combine = rbind) %do% {
+    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamples)
+    sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
+                          sampleIds)
     data.table(sample = sampleNames, cond = cond,
                time = times[cond, ] * period / (2*pi))
   }
 
-  emat = foreach(exprGroups = exprGroupsList, cond = 1:length(exprGroupsList),
-                 .combine = cbind) %do% {
+  emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
     simulateExprDataOneCond(exprGroups, times[cond, ], method)
   }
 
