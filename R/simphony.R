@@ -62,8 +62,6 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #' @param exprGroupsList is a list of data.frame or data.table objects with the
 #"   following optional columns:
 #'   \itemize{
-#'     \item{fracGenes}: {Fraction of all simulated genes which fall into this
-#'                       group. Defaults to 1/nrow(exprGroups) if not supplied.}
 #'     \item{meanBase}: {The mean baseline expression for this group. Defaults
 #'                       to 0 if not supplied.}
 #'     \item{dBase}: {The difference in baseline expression across conditions
@@ -87,6 +85,9 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #'                      this group's gene expression. rhyFunc must have a period
 #'                      of 2*pi. Defaults to sin if not supplied.}
 #'   }
+#' @param fracGenes Fraction of all simulated genes which fall into each group.
+#'   Must have length of number of groups in each exprGroups object. Defaults to
+#'   1/(number of groups).
 #' @param nGenes is the integer number of total genes to simulate.
 #' @param period is the integer number of hours in one rhythmic cycle.
 #' @param timepointsType stuff
@@ -99,14 +100,14 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #' @param method is the data generation method to use. Must be either 'gaussian'
 #'   or 'negbinom'.
 #' @export
-simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
-                            timepointsType = 'auto', interval = 4, nReps = 2,
-                            timepoints = NULL, nSamplesPerCond = NULL,
+simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
+                            period = 24, timepointsType = 'auto', interval = 4,
+                            nReps = 2, timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
     stop("method must be either 'gaussian' or 'negbinom'.") }
 
-  if(is.data.frame(exprGroupsList)) {
+  if (is.data.frame(exprGroupsList)) {
     exprGroupsList = list(setDefaultExprGroups(exprGroupsList, nGenes,
                                                rhyFunc, method))
   } else {
@@ -118,6 +119,16 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   }
   nCond = length(exprGroupsList)
 
+  if ('fracGenes' %in% colnames(exprGroupsList[[1]])) {
+    fracGenes = exprGroupsList[[1]]$fracGenes }
+  if (is.null(fracGenes)) {
+    fracGenes = rep(1/nrow(exprGroupsList[[1]]), nrow(exprGroupsList[[1]]))
+  }
+  numGenes = as.integer(fracGenes * nGenes)
+  if(sum(numGenes) != nGenes) {
+    numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L
+  }
+
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, nCond, period)
 
@@ -125,7 +136,6 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
 
   gm = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = rbind) %do% {
     gmNow = exprGroups[rep(1:.N, times = numGenes)]
-    gmNow[, c('fracGenes', 'numGenes') := NULL]
     gmNow[, cond := ..cond]
     gmNow[, gene := geneNames]
     data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
@@ -143,7 +153,7 @@ simulateExprData = function(exprGroupsList, nGenes = 10, period = 24,
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
-    simulateExprDataOneCond(exprGroups, times[cond, ], method)
+    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method)
   }
 
   colnames(emat) = sm$sample

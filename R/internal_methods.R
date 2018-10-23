@@ -3,7 +3,7 @@ defaultDispFunc = function(x) {
 }
 
 
-simulateExprDataOneCond = function(exprGroups, times, method) {
+simulateExprDataOneCond = function(exprGroups, numGenes, times, method) {
   foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
     amp = exprGroups[group, amp]
     phase = exprGroups[group, phase]
@@ -12,15 +12,15 @@ simulateExprDataOneCond = function(exprGroups, times, method) {
     mu = amp * rhyFunc(times + 2 * pi * phase) + base
 
     if(method == 'gaussian') {
-      groupEmat = stats::rnorm(length(mu) * exprGroups[group, numGenes],
-                               rep(mu, exprGroups[group, numGenes]),
+      groupEmat = stats::rnorm(length(mu) * numGenes[[group]],
+                               rep(mu, numGenes[[group]]),
                                sd = exprGroups[group, sd])
     } else {
       dispFunc = exprGroups[group, dispFunc][[1]]
-      groupEmat = stats::rnbinom(length(mu) * exprGroups[group, numGenes],
-                                 mu = 2^rep(mu, exprGroups[group, numGenes]),
+      groupEmat = stats::rnbinom(length(mu) * numGenes[[group]],
+                                 mu = 2^rep(mu, numGenes[[group]]),
                                  size = 1/dispFunc(2^mu)) }
-    matrix(groupEmat, nrow = exprGroups[group, numGenes], byrow = TRUE)
+    matrix(groupEmat, nrow = numGenes[[group]], byrow = TRUE)
   }
 }
 
@@ -31,9 +31,6 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
 
   if(nrow(exprGroups) == 0) {
     stop('exprGroups must have at least one row.') }
-
-  if(!'fracGenes' %in% colnames(exprGroups)) {
-    exprGroups[, fracGenes := 1 / nrow(exprGroups)] }
 
   if(!'amp' %in% colnames(exprGroups)) {
     exprGroups[, amp := 0] }
@@ -57,16 +54,6 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
     }
     if(!'base' %in% colnames(exprGroups)) {
       exprGroups[, base := 0] }}
-
-  if(any(exprGroups[, fracGenes] <= 0)) {
-    stop('All groups in exprGroups must have fracGenes > 0.') }
-
-  # Compute a number of genes per group that sum to nGenes.
-  exprGroups[, fracGenes := fracGenes / sum(fracGenes)]
-  exprGroups[, numGenes := as.integer(fracGenes * nGenes)]
-  if(sum(exprGroups[, numGenes]) != nGenes) {
-    exprGroups[1L:(nGenes - sum(exprGroups[, numGenes])), numGenes := numGenes + 1]
-  }
 
   return(exprGroups)
 }
