@@ -4,16 +4,14 @@
 \alias{simulateExprData}
 \title{Generate simulated gene expression time courses}
 \usage{
-simulateExprData(exprGroupsList, nGenes = 10, period = 24,
-  timepointsType = "auto", interval = 4, nReps = 2,
+simulateExprData(exprGroupsList, fracGenes = NULL, nGenes = 10,
+  period = 24, timepointsType = "auto", interval = 4, nReps = 2,
   timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
   method = "gaussian")
 }
 \arguments{
 \item{exprGroupsList}{is a list of data.frame or data.table objects with the
 \itemize{
-\item{fracGenes}: {Fraction of all simulated genes which fall into this
-group. Defaults to 1/nrow(exprGroups) if not supplied.}
 \item{meanBase}: {The mean baseline expression for this group. Defaults
 to 0 if not supplied.}
 \item{dBase}: {The difference in baseline expression across conditions
@@ -37,6 +35,10 @@ this group. Defaults to 0 if not supplied.}
 this group's gene expression. rhyFunc must have a period
 of 2*pi. Defaults to sin if not supplied.}
 }}
+
+\item{fracGenes}{Fraction of all simulated genes which fall into each group.
+Must have length of number of groups in each exprGroups object. Defaults to
+1/(number of groups).}
 
 \item{nGenes}{is the integer number of total genes to simulate.}
 
