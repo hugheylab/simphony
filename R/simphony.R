@@ -121,6 +121,12 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L
   }
 
+  if (any(numGenes) == 0) {
+    stop(paste(c('At least one group has no genes. Increase nGenes,',
+                 'reduce the number of groups, or change fracGenes.'),
+               collapse = ' '))
+  }
+
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, nCond, period)
 
