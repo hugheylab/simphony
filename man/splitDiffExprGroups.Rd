@@ -9,6 +9,8 @@ splitDiffExprGroups(diffExprGroups, checkValid = TRUE)
 \arguments{
 \item{diffExprGroups}{is the differential exprGroups data.frame to convert
 into a list of single-condition exprGroups data.frames.}
+
+\item{checkValid}{stuff}
 }
 \description{
 Generate list of two expression groups from a combined differential exprGroup

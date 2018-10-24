@@ -1,9 +1,8 @@
 #' @importFrom data.table data.table ":="
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
-                  'dAmp', 'dBase', 'dSd', 'dispFunc', 'exprGroups',
-                  'numGenes', 'fracGenes', 'meanAmp', 'meanBase', 'meanSd',
-                  'dPhase', 'meanPhase'))
+                  'dispFunc', 'exprGroups', 'numGenes', 'fracGenes', 'time',
+                  '..cond', '..time', '.N', '.dummy', 'gene', 'mu'))
 
 
 #' Generate list of two expression groups from a combined differential exprGroup
@@ -11,6 +10,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'
 #' @param diffExprGroups is the differential exprGroups data.frame to convert
 #' into a list of single-condition exprGroups data.frames.
+#' @param checkValid stuff
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
 #'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
@@ -62,28 +62,20 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #' @param exprGroupsList is a list of data.frame or data.table objects with the
 #"   following optional columns:
 #'   \itemize{
-#'     \item{meanBase}: {The mean baseline expression for this group. Defaults
+#'     \item{fracGenes}: {Fraction of all simulated genes which fall into this
+#'                       group. Defaults to 1/nrow(exprGroups) if not supplied.}
+#'     \item{base}: {The baseline expression for this group. Defaults
 #'                       to 0 if not supplied.}
-#'     \item{dBase}: {The difference in baseline expression across conditions
-#'                    for this group. Defaults to 0 if not supplied.}
-#'     \item{meanAmp}: {The mean amplitude of the rhythmic component of
+#'     \item{amp}: {The amplitude of the rhythmic component of
 #'                      expression for this group. Defaults to 0 if not
 #'                      supplied.}
-#'     \item{dAmp}: {The difference in amplitude of the rhythmic component of
-#'                   expression across conditions for this group. Defaults to 0
-#'                   if not supplied.}
-#'     \item{meanPhase}: {The mean phase of the rhythmic component of expression
+#'     \item{phase}: {The phase of the rhythmic component of expression
 #'                        for this group. Defaults to 0 if not supplied.}
-#'     \item{dPhase}: {The difference in phase of the rhythmic component of
-#'                     expression across conditions for this group. Defaults to
-#'                     0 if not supplied.}
-#'     \item{meanSd}: {The mean standard deviation of the sample error for this
+#'     \item{sd}: {The standard deviation of the sample error for this
 #'                     group. Defaults to 1 if not supplied.}
-#'     \item{dSd}: {The difference in standard deviation of the sample error for
-#'                  this group. Defaults to 0 if not supplied.}
 #'     \item{rhyFunc}: {The function used to generate the rhythmic component of
 #'                      this group's gene expression. rhyFunc must have a period
-#'                      of 2*pi. Defaults to sin if not supplied.}
+#'                      of 2*pi. Defaults to sine if not supplied.}
 #'   }
 #' @param fracGenes Fraction of all simulated genes which fall into each group.
 #'   Must have length of number of groups in each exprGroups object. Defaults to
@@ -129,6 +121,12 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L
   }
 
+  if (any(numGenes) == 0) {
+    stop(paste(c('At least one group has no genes. Increase nGenes,',
+                 'reduce the number of groups, or change fracGenes.'),
+               collapse = ' '))
+  }
+
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, nCond, period)
 
@@ -166,8 +164,8 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
 combineData = function(simData, geneNames) {
   d = data.table(t(simData$exprData[geneNames, ]), keep.rownames = TRUE)
   d = merge(simData$sampleMetadata, d, by.x = 'sample', by.y = 'rn')
-  d = melt(d, measure.vars = geneNames, variable.name = 'gene',
-           value.name = 'expr')
+  d = data.table::melt(d, measure.vars = geneNames, variable.name = 'gene',
+                       value.name = 'expr')
   d = merge(d, simData$geneMetadata, by = c('gene', 'cond'))
   return(d)
 }

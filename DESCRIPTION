@@ -7,7 +7,7 @@ Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
                     role = c("ctb")))
 Description: A framework allowing for the simulation of rhythmic and
   non-rhythmic gene expression.
-Depends: R (>= 3.4.4)
+Depends: R (>= 3.4)
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
 License: GPL-2
