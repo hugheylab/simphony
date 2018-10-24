@@ -12,15 +12,15 @@ simulateExprDataOneCond = function(exprGroups, numGenes, times, method) {
     mu = amp * rhyFunc(times + 2 * pi * phase) + base
 
     if(method == 'gaussian') {
-      groupEmat = stats::rnorm(length(mu) * numGenes[[group]],
-                               rep(mu, numGenes[[group]]),
+      groupEmat = stats::rnorm(length(mu) * numGenes[group],
+                               rep(mu, numGenes[group]),
                                sd = exprGroups[group, sd])
     } else {
       dispFunc = exprGroups[group, dispFunc][[1]]
-      groupEmat = stats::rnbinom(length(mu) * numGenes[[group]],
-                                 mu = 2^rep(mu, numGenes[[group]]),
+      groupEmat = stats::rnbinom(length(mu) * numGenes[group],
+                                 mu = 2^rep(mu, numGenes[group]),
                                  size = 1/dispFunc(2^mu)) }
-    matrix(groupEmat, nrow = numGenes[[group]], byrow = TRUE)
+    matrix(groupEmat, nrow = numGenes[group], byrow = TRUE)
   }
 }
 
