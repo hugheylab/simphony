@@ -97,35 +97,29 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
                             nReps = 2, timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
-    stop("method must be either 'gaussian' or 'negbinom'.") }
+    stop("method must be either 'gaussian' or 'negbinom'.")}
 
   if (is.data.frame(exprGroupsList)) {
-    exprGroupsList = list(setDefaultExprGroups(exprGroupsList, nGenes,
-                                               rhyFunc, method))
-  } else {
-    nGroups = sapply(exprGroupsList, nrow)
-    if(length(unique(nGroups)) != 1) {
-      stop('Number of rows in each exprGroups must be the same for all conditions.') }
-    exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
-      setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method) }
-  }
+    exprGroupsList = list(exprGroupsList)}
+  if (length(unique(sapply(exprGroupsList, nrow))) != 1) {
+    stop('Each exprGroups data.frame must have the same number of rows.')}
+
+  exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
+    setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method)}
   nCond = length(exprGroupsList)
 
   if ('fracGenes' %in% colnames(exprGroupsList[[1]])) {
     fracGenes = exprGroupsList[[1]]$fracGenes }
   if (is.null(fracGenes)) {
-    fracGenes = rep(1/nrow(exprGroupsList[[1]]), nrow(exprGroupsList[[1]]))
-  }
+    fracGenes = rep(1/nrow(exprGroupsList[[1]]), nrow(exprGroupsList[[1]]))}
   numGenes = as.integer(fracGenes * nGenes)
-  if(sum(numGenes) != nGenes) {
-    numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L
-  }
+  if (sum(numGenes) != nGenes) {
+    numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L}
 
   if (any(numGenes) == 0) {
     stop(paste(c('At least one group has no genes. Increase nGenes,',
                  'reduce the number of groups, or change fracGenes.'),
-               collapse = ' '))
-  }
+               collapse = ' '))}
 
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, nCond, period)
