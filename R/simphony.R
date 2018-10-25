@@ -97,7 +97,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
                             nReps = 2, timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
-    stop("method must be either 'gaussian' or 'negbinom'.")}
+    stop("method must be 'gaussian' or 'negbinom'.")}
 
   if (is.data.frame(exprGroupsList)) {
     exprGroupsList = list(exprGroupsList)}
