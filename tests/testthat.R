@@ -1,4 +1,4 @@
 library(testthat)
-library(simulation)
+library(simphony)
 
-test_check("simulation")
+test_check("simphony")
