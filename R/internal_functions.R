@@ -3,13 +3,13 @@ defaultDispFunc = function(x) {
 }
 
 
-simulateExprDataOneCond = function(exprGroups, numGenes, times, method) {
+simulateExprDataOneCond = function(exprGroups, numGenes, times, method, period) {
   foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
     amp = exprGroups[group, amp]
-    phase = exprGroups[group, phase]
+    phase = exprGroups[group, phase] * 2 * pi / period
     base = exprGroups[group, base]
     rhyFunc = exprGroups[group, rhyFunc][[1]]
-    mu = amp * rhyFunc(times + 2 * pi * phase) + base
+    mu = amp * rhyFunc(times + phase) + base
 
     if(method == 'gaussian') {
       groupEmat = stats::rnorm(length(mu) * numGenes[group],

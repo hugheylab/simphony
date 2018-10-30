@@ -145,7 +145,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
-    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method)
+    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method, period)
   }
 
   colnames(emat) = sm$sample
