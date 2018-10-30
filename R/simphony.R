@@ -168,6 +168,6 @@ combineData = function(simData, geneNames) {
 getExpectedExpr = function(geneMetadata, times, period = 24) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
   d[, time := rep(times, times = nrow(geneMetadata))]
-  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period)]
+  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period), by = 1:nrow(d)]
   return(data.table::copy(d))
 }
