@@ -93,8 +93,8 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #'   or 'negbinom'.
 #' @export
 simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
-                            period = 24, timepointsType = 'auto', interval = 4,
-                            nReps = 2, timepoints = NULL, nSamplesPerCond = NULL,
+                            period = 24, timepointsType = 'auto', interval = 2,
+                            nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
     stop("method must be 'gaussian' or 'negbinom'.")}
