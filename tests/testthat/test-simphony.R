@@ -31,7 +31,8 @@ test_that('Number of genes and samples simulated are predictable', {
   expect_equal(ncol(simGse$exprData),
                length(exprGroupsList) * nReps * as.integer(24 / sampleInterval))
   expect_equal(nrow(simGse$exprData), nGenes)
-  expect_equal(nrow(simGse$exprData), nrow(simGse$geneMetadata) / length(exprGroupsList))
+  expect_equal(nrow(simGse$exprData),
+               nrow(simGse$geneMetadata) / length(exprGroupsList))
 
   rm(exprGroupsList, simGse)
 })
@@ -40,10 +41,10 @@ test_that('Appropriate errors are thrown', {
   badExprGroupsList = list(data.table::data.table(base = c(1, 2)),
                            data.table::data.table(base = 1))
   expect_error(simulateExprData(badExprGroupsList),
-               'Number of rows in each exprGroups must be the same for all conditions')
+               'Each exprGroups data.frame must have the same number of rows.')
 
   goodExprGroupsList = list(data.table::data.table(base = c(2)),
                            data.table::data.table(base = 1))
   expect_error(simulateExprData(goodExprGroupsList, method = 'socratic'),
-               'method must be either \'gaussian\' or \'negbinom\'.')
+               'method must be \'gaussian\' or \'negbinom\'.')
 })
