@@ -5,7 +5,7 @@
 \title{Generate simulated gene expression time courses}
 \usage{
 simulateExprData(exprGroupsList, fracGenes = NULL, nGenes = 10,
-  period = 24, timepointsType = "auto", interval = 4, nReps = 2,
+  period = 24, timepointsType = "auto", interval = 2, nReps = 1,
   timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
   method = "gaussian")
 }

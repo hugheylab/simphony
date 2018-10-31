@@ -93,8 +93,8 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #'   or 'negbinom'.
 #' @export
 simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
-                            period = 24, timepointsType = 'auto', interval = 4,
-                            nReps = 2, timepoints = NULL, nSamplesPerCond = NULL,
+                            period = 24, timepointsType = 'auto', interval = 2,
+                            nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
                             rhyFunc = sin, method = 'gaussian') {
   if (!method %in% c('gaussian', 'negbinom')) {
     stop("method must be 'gaussian' or 'negbinom'.")}
@@ -145,7 +145,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
-    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method)
+    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method, period)
   }
 
   colnames(emat) = sm$sample
@@ -168,6 +168,6 @@ combineData = function(simData, geneNames) {
 getExpectedExpr = function(geneMetadata, times, period = 24) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
   d[, time := rep(times, times = nrow(geneMetadata))]
-  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period)]
+  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period), by = 1:nrow(d)]
   return(data.table::copy(d))
 }
