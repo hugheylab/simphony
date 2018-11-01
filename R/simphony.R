@@ -2,7 +2,7 @@
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dispFunc', 'exprGroups', 'numGenes', 'fracGenes', 'time',
-                  '..cond', '..time', '.N', '.dummy', 'gene', 'mu'))
+                  '..cond', '.N', '.dummy', 'gene', 'mu'))
 
 
 #' Generate list of two expression groups from a combined differential exprGroup
@@ -168,6 +168,7 @@ combineData = function(simData, geneNames) {
 getExpectedExpr = function(geneMetadata, times, period = 24) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
   d[, time := rep(times, times = nrow(geneMetadata))]
-  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period), by = 1:nrow(d)]
+  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period),
+    by = 1:nrow(d)]
   return(data.table::copy(d))
 }
