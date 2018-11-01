@@ -149,14 +149,21 @@ combineData = function(simData, geneNames) {
 }
 
 #' @export
-getExpectedExpr = function(geneMetadata, times, period = 24, samples = NULL) {
+getExpectedExpr = function(geneMetadata, times, period = 24, samples = NULL,
+                           useCondGroup = TRUE) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
   if (!is.null(samples)) {
     d[, sample := rep(samples, times = nrow(geneMetadata))]
   }
   d[, time := rep(times, times = nrow(geneMetadata))]
-  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
-    by = 1:nrow(d)]
+
+  if (useCondGroup) {
+    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+      by = c('cond', 'group')]
+  } else {
+    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+      by = 1:nrow(d)]
+  }
   return(data.table::copy(d))
 }
 
