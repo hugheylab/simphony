@@ -132,7 +132,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     data.table(sample = sampleNames, cond = cond, time = times[cond, ])
   }
 
-  exprDt = getExpectedExpr(gm, sm$time, period, sm$sample)
+  exprDt = getExpectedExpr(gm, period, sampleMetadata = sm)
   exprMat = getObservedExpr(exprDt, method, inplace = TRUE)
 
   return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))
@@ -149,13 +149,18 @@ combineData = function(simData, geneNames) {
 }
 
 #' @export
-getExpectedExpr = function(geneMetadata, times, period = 24, samples = NULL,
-                           useCondGroup = TRUE) {
-  d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
-  if (!is.null(samples)) {
-    d[, sample := rep(samples, times = nrow(geneMetadata))]
+getExpectedExpr = function(geneMetadata, period = 24,
+                           times = NULL, sampleMetadata = NULL,
+                           useCondGroup = is.null(times)) {
+  if (!is.null(times)) {
+    d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
+    d[, time := rep(times, times = nrow(geneMetadata))]
+  } else if (!is.null(sampleMetadata)) {
+    d = merge(data.table(geneMetadata), sampleMetadata, by = 'cond',
+              allow.cartesian = TRUE)
+  } else {
+    stop('Either times or sampleMetadata must not be NULL.')
   }
-  d[, time := rep(times, times = nrow(geneMetadata))]
 
   if (useCondGroup) {
     d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),

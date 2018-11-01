@@ -29,7 +29,7 @@ gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
 dExample = combineData(simData, gmExample$gene)
 dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
-dExpect = getExpectedExpr(gmExample, seq(0, 24, 0.25))
+dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))
 dExpect[, low := mu - sd]
 dExpect[, high := mu + sd]
 dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
