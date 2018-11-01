@@ -2,7 +2,7 @@
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dispFunc', 'exprGroups', 'numGenes', 'fracGenes', 'time',
-                  '..cond', '.N', '.dummy', 'gene', 'mu'))
+                  '..cond', '.N', '.dummy', 'gene', 'mu', '..period'))
 
 
 #' Generate list of two expression groups from a combined differential exprGroup
@@ -140,8 +140,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
-    data.table(sample = sampleNames, cond = cond,
-               time = times[cond, ] * period / (2*pi))
+    data.table(sample = sampleNames, cond = cond, time = times[cond, ])
   }
 
   emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
@@ -168,7 +167,7 @@ combineData = function(simData, geneNames) {
 getExpectedExpr = function(geneMetadata, times, period = 24) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
   d[, time := rep(times, times = nrow(geneMetadata))]
-  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / period),
+  d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
     by = 1:nrow(d)]
   return(data.table::copy(d))
 }

@@ -4,6 +4,7 @@ defaultDispFunc = function(x) {
 
 
 simulateExprDataOneCond = function(exprGroups, numGenes, times, method, period) {
+  times = times * 2 * pi / period
   foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
     amp = exprGroups[group, amp]
     phase = exprGroups[group, phase] * 2 * pi / period
@@ -62,15 +63,14 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
 getTimes = function(timepointsType, interval, nReps, timepoints,
                     nSamplesPerCond, nCond, period) {
   if (timepointsType == 'auto') {
-    tt = (2 * pi / period) * interval *
-      0:(period %/% interval - (period %% interval == 0))
+    tt = interval * 0:(period %/% interval - (period %% interval == 0))
     tt = rep(tt, each = nReps)
     times = matrix(rep(tt, each = nCond), ncol = length(tt))
   } else if (timepointsType == 'specified') {
-    tt = (2 * pi / period) * timepoints # don't do %%, let rhyFunc figure it out
-    times = matrix(rep(tt, each = nCond), ncol = length(tt))
+    # don't do %%, let rhyFunc figure it out
+    times = matrix(rep(timepoints, each = nCond), ncol = length(timepoints))
   } else if (timepointsType == 'random') {
-    tt = stats::runif(nSamplesPerCond * nCond, min = 0, max = 2 * pi)
+    tt = stats::runif(nSamplesPerCond * nCond, min = 0, max = period)
     tt = matrix(tt, nrow = nCond)
     times = t(apply(tt, 1, sort))
   } else {
