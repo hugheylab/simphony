@@ -169,7 +169,7 @@ getObservedExpr = function(exprDt, method, inplace = FALSE) {
   if (method == 'gaussian') {
     exprDt[, expr := stats::rnorm(.N, mu, sd)]
   } else {
-    exprDt[, expr := stats::rnbinom(1, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+    exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]
     # dispFunc is identical for genes of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
