@@ -143,14 +143,10 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     data.table(sample = sampleNames, cond = cond, time = times[cond, ])
   }
 
-  emat = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = cbind) %do% {
-    simulateExprDataOneCond(exprGroups, numGenes, times[cond, ], method, period)
-  }
+  exprDt = getExpectedExpr(gm, sm$time, period, sm$sample)
+  exprMat = getObservedExpr(exprDt, method, inplace = TRUE)
 
-  colnames(emat) = sm$sample
-  rownames(emat) = geneNames
-
-  return(list(exprData = emat, sampleMetadata = sm, geneMetadata = gm))
+  return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))
 }
 
 #' @export
@@ -164,10 +160,33 @@ combineData = function(simData, geneNames) {
 }
 
 #' @export
-getExpectedExpr = function(geneMetadata, times, period = 24) {
+getExpectedExpr = function(geneMetadata, times, period = 24, samples = NULL) {
   d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
+  if (!is.null(samples)) {
+    d[, sample := rep(samples, times = nrow(geneMetadata))]
+  }
   d[, time := rep(times, times = nrow(geneMetadata))]
   d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
     by = 1:nrow(d)]
   return(data.table::copy(d))
+}
+
+#' @export
+getObservedExpr = function(exprDt, method, inplace = FALSE) {
+  if (!inplace) {
+    exprDt = data.table(exprDt)
+  }
+
+  if (method == 'gaussian') {
+    exprDt[, expr := stats::rnorm(nrow(exprDt), mu, sd)]
+  } else {
+    exprDt[, expr := stats::rnbinom(1, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+           by = .(cond, group)]
+    # dispFunc is identical for genes of the same group in the same condition
+    # this is the way I've figured out how to call functions that are columns
+  }
+
+  exprDtCast = data.table::dcast(exprDt, gene ~ sample, value.var = 'expr')
+  exprMat = as.matrix(exprDtCast, rownames = 1)
+  return(exprMat)
 }

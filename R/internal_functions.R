@@ -2,30 +2,6 @@ defaultDispFunc = function(x) {
   return(3/x)
 }
 
-
-simulateExprDataOneCond = function(exprGroups, numGenes, times, method, period) {
-  times = times * 2 * pi / period
-  foreach(group = 1:nrow(exprGroups), .combine = rbind) %do% {
-    amp = exprGroups[group, amp]
-    phase = exprGroups[group, phase] * 2 * pi / period
-    base = exprGroups[group, base]
-    rhyFunc = exprGroups[group, rhyFunc][[1]]
-    mu = amp * rhyFunc(times + phase) + base
-
-    if(method == 'gaussian') {
-      groupEmat = stats::rnorm(length(mu) * numGenes[group],
-                               rep(mu, numGenes[group]),
-                               sd = exprGroups[group, sd])
-    } else {
-      dispFunc = exprGroups[group, dispFunc][[1]]
-      groupEmat = stats::rnbinom(length(mu) * numGenes[group],
-                                 mu = 2^rep(mu, numGenes[group]),
-                                 size = 1/dispFunc(2^mu)) }
-    matrix(groupEmat, nrow = numGenes[group], byrow = TRUE)
-  }
-}
-
-
 setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
   exprGroups = data.table(exprGroups)
   exprGroups[, group := 1:.N]
