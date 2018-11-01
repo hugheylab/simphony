@@ -7,7 +7,7 @@
 simulateExprData(exprGroupsList, fracGenes = NULL, nGenes = 10,
   period = 24, timepointsType = "auto", interval = 2, nReps = 1,
   timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-  method = "gaussian")
+  family = "gaussian")
 }
 \arguments{
 \item{exprGroupsList}{is a list of data.frame or data.table objects with the
@@ -49,7 +49,7 @@ Must have length of number of groups in each exprGroups object. Defaults to
 \item{rhyFunc}{is the rhythmic function to set for exprGroups missing a
 rhythmic function. Defaults to sin if not supplied.}
 
-\item{method}{is the data generation method to use. Must be either 'gaussian'
+\item{family}{is the data generation family to use. Must be either 'gaussian'
 or 'negbinom'.}
 }
 \description{

@@ -12,7 +12,7 @@ test_that('Multiple condition simulation works', {
   exprGroupsList = list(data.table::data.table(base = c(1, 2)),
                         data.table::data.table(amp = c(1,2), phase = c(3,4)))
   expect_silent(simulateExprData(exprGroupsList))
-  expect_silent(simulateExprData(exprGroupsList, method = 'negbinom'))
+  expect_silent(simulateExprData(exprGroupsList, family = 'negbinom'))
 
   rm(exprGroupsList)
 })
@@ -44,6 +44,6 @@ test_that('Appropriate errors are thrown', {
 
   goodExprGroupsList = list(data.table::data.table(base = c(2)),
                            data.table::data.table(base = 1))
-  expect_error(simulateExprData(goodExprGroupsList, method = 'socratic'),
-               'method must be \'gaussian\' or \'negbinom\'.')
+  expect_error(simulateExprData(goodExprGroupsList, family = 'socratic'),
+               'family must be \'gaussian\' or \'negbinom\'.')
 })

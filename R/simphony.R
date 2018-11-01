@@ -29,9 +29,7 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
   for (ii in 1:length(cols)) {
     if (all(c(meanCols[ii], dCols[ii]) %in% colnames(dGroups))) {
       d1[[cols[ii]]] = dGroups[[meanCols[ii]]] - 0.5 * dGroups[[dCols[ii]]]
-      d2[[cols[ii]]] = dGroups[[meanCols[ii]]] + 0.5 * dGroups[[dCols[ii]]]
-    }
-  }
+      d2[[cols[ii]]] = dGroups[[meanCols[ii]]] + 0.5 * dGroups[[dCols[ii]]]}}
   d1[, .dummy := NULL]
   d2[, .dummy := NULL]
 
@@ -39,23 +37,19 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
   if (length(heldbackCols) > 0) {
     dHeldback = dGroups[, heldbackCols, with = FALSE]
     d1 = cbind(d1, dHeldback)
-    d2 = cbind(d2, dHeldback)
-  }
+    d2 = cbind(d2, dHeldback)}
 
   if (checkValid) {
     idx = rep(TRUE, nrow(d1))
     if ('amp' %in% colnames(d1)) {
-      idx = idx & (d1$amp >= 0) & (d2$amp >= 0)
-    }
+      idx = idx & (d1$amp >= 0) & (d2$amp >= 0)}
     if ('sd' %in% colnames(d1)) {
-      idx = idx & (d1$sd > 0) & (d2$sd > 0)
-    }
+      idx = idx & (d1$sd > 0) & (d2$sd > 0)}
     d1 = d1[idx]
-    d2 = d2[idx]
-  }
+    d2 = d2[idx]}
 
-  return(list(d1, d2))
-}
+  return(list(d1, d2))}
+
 
 #' Generate simulated gene expression time courses
 #'
@@ -89,15 +83,15 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
 #' @param nSamplesPerCond stuff
 #' @param rhyFunc is the rhythmic function to set for exprGroups missing a
 #'   rhythmic function. Defaults to sin if not supplied.
-#' @param method is the data generation method to use. Must be either 'gaussian'
+#' @param family is the data generation family to use. Must be either 'gaussian'
 #'   or 'negbinom'.
 #' @export
 simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
                             period = 24, timepointsType = 'auto', interval = 2,
                             nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
-                            rhyFunc = sin, method = 'gaussian') {
-  if (!method %in% c('gaussian', 'negbinom')) {
-    stop("method must be 'gaussian' or 'negbinom'.")}
+                            rhyFunc = sin, family = 'gaussian') {
+  if (!family %in% c('gaussian', 'negbinom')) {
+    stop("family must be 'gaussian' or 'negbinom'.")}
 
   if (is.data.frame(exprGroupsList)) {
     exprGroupsList = list(exprGroupsList)}
@@ -105,7 +99,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     stop('Each exprGroups data.frame must have the same number of rows.')}
 
   exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
-    setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method)}
+    setDefaultExprGroups(exprGroups, nGenes, rhyFunc, family)}
   nCond = length(exprGroupsList)
 
   nGenesPerGroup = getNGenesPerGroup(exprGroupsList[[1]], fracGenes, nGenes)
@@ -120,8 +114,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     gmNow[, cond := ..cond]
     gmNow[, gene := geneNames]
     data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
-    gmNow
-  }
+    gmNow}
 
   nSamples = prod(dim(times))
   nSamplesPerCond = ncol(times)
@@ -129,14 +122,13 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
-    data.table(sample = sampleNames, cond = cond, time = times[cond, ])
-  }
+    data.table(sample = sampleNames, cond = cond, time = times[cond, ])}
 
   exprDt = getExpectedExpr(gm, period, sampleMetadata = sm)
-  exprMat = getObservedExpr(exprDt, method, inplace = TRUE)
+  exprMat = getObservedExpr(exprDt, family, inplace = TRUE)
 
-  return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))
-}
+  return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))}
+
 
 #' @export
 combineData = function(simData, geneNames) {
@@ -145,8 +137,8 @@ combineData = function(simData, geneNames) {
   d = data.table::melt(d, measure.vars = geneNames, variable.name = 'gene',
                        value.name = 'expr')
   d = merge(d, simData$geneMetadata, by = c('gene', 'cond'))
-  return(d)
-}
+  return(d)}
+
 
 #' @export
 getExpectedExpr = function(geneMetadata, period = 24,
@@ -159,35 +151,30 @@ getExpectedExpr = function(geneMetadata, period = 24,
     d = merge(data.table(geneMetadata), sampleMetadata, by = 'cond',
               allow.cartesian = TRUE)
   } else {
-    stop('Either times or sampleMetadata must not be NULL.')
-  }
+    stop('Either times or sampleMetadata must not be NULL.')}
 
   if (useCondGroup) {
     d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
       by = c('cond', 'group')]
   } else {
     d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
-      by = 1:nrow(d)]
-  }
-  return(data.table::copy(d))
-}
+      by = 1:nrow(d)]}
+  return(data.table::copy(d))}
+
 
 #' @export
-getObservedExpr = function(exprDt, method, inplace = FALSE) {
+getObservedExpr = function(exprDt, family, inplace = FALSE) {
   if (!inplace) {
-    exprDt = data.table(exprDt)
-  }
+    exprDt = data.table(exprDt)}
 
-  if (method == 'gaussian') {
+  if (family == 'gaussian') {
     exprDt[, expr := stats::rnorm(.N, mu, sd)]
   } else {
-    exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
-           by = c('cond', 'group')]
     # dispFunc is identical for genes of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
-  }
+    exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+           by = c('cond', 'group')]}
 
   exprDtCast = data.table::dcast(exprDt, gene ~ sample, value.var = 'expr')
   exprMat = as.matrix(exprDtCast, rownames = 1)
-  return(exprMat)
-}
+  return(exprMat)}

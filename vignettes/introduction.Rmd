@@ -30,13 +30,14 @@ dExample = combineData(simData, gmExample$gene)
 dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))
-dExpect[, low := mu - sd]
-dExpect[, high := mu + sd]
+dExpect[, lower := mu - sd]
+dExpect[, upper := mu + sd]
 dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 ggplot(dExample) +
   facet_wrap(~ geneLabel, nrow = 1, scales = 'free_y') +
-  geom_ribbon(aes(x = time, ymin = low, ymax = high), fill = 'gray85', data = dExpect) +
+  geom_ribbon(aes(x = time, ymin = lower, ymax = upper),
+              fill = 'gray85', data = dExpect) +
   geom_line(aes(x = time, y = mu), size = 0.25, data = dExpect) +
   geom_point(aes(x = time, y = expr), shape = 21, size = 2.5) +
   labs(x = 'Time (h)', y = 'Expression (a.u.)') +

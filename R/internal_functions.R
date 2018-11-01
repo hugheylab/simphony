@@ -1,39 +1,38 @@
 defaultDispFunc = function(x) {
-  return(3/x)
-}
+  return(3/x)}
 
-setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
+
+setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, family) {
   exprGroups = data.table(exprGroups)
   exprGroups[, group := 1:.N]
 
-  if(nrow(exprGroups) == 0) {
+  if (nrow(exprGroups) == 0) {
     stop('exprGroups must have at least one row.') }
 
-  if(!'amp' %in% colnames(exprGroups)) {
-    exprGroups[, amp := 0] }
+  if (!'amp' %in% colnames(exprGroups)) {
+    exprGroups[, amp := 0]}
 
-  if(!'phase' %in% colnames(exprGroups)) {
-    exprGroups[, phase := 0] }
+  if (!'phase' %in% colnames(exprGroups)) {
+    exprGroups[, phase := 0]}
 
-  if(!'rhyFunc' %in% colnames(exprGroups)) {
-    exprGroups[, rhyFunc := data.table(rhyFunc)] }
+  if (!'rhyFunc' %in% colnames(exprGroups)) {
+    exprGroups[, rhyFunc := data.table(rhyFunc)]}
 
-  if(method == 'negbinom') {
-    if(!'dispFunc' %in% colnames(exprGroups)) {
+  if (family == 'negbinom') {
+    if (!'dispFunc' %in% colnames(exprGroups)) {
       exprGroups[, dispFunc := data.table(defaultDispFunc)] }
-    if(!'base' %in% colnames(exprGroups)) {
-      exprGroups[, base := 7] } }
+    if (!'base' %in% colnames(exprGroups)) {
+      exprGroups[, base := 7]}}
   else {
-    if(!'sd' %in% colnames(exprGroups)) {
+    if (!'sd' %in% colnames(exprGroups)) {
       exprGroups[, sd := 1]
     } else if (!all(exprGroups$sd > 0)) {
-      stop('All groups in exprGroups must have standard deviation > 0.')
-    }
-    if(!'base' %in% colnames(exprGroups)) {
-      exprGroups[, base := 0] }}
+      stop('All groups in exprGroups must have standard deviation > 0.')}
+    if (!'base' %in% colnames(exprGroups)) {
+      exprGroups[, base := 0]}}
 
-  return(exprGroups)
-}
+  return(exprGroups)}
+
 
 getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
   if ('fracGenes' %in% colnames(exprGroups)) {
@@ -41,8 +40,7 @@ getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
   } else if (is.null(fracGenes)) {
     fracGenes = rep(1 / nrow(exprGroups), nrow(exprGroups))
   } else if (length(fracGenes) != nrow(exprGroups)) {
-    stop('Length of fracGenes must equal number of rows in exprGroups.')
-  }
+    stop('Length of fracGenes must equal number of rows in exprGroups.')}
 
   nGenesPerGroup = as.integer(fracGenes * nGenes)
   if (sum(nGenesPerGroup) != nGenes) {
@@ -53,8 +51,8 @@ getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
     stop(paste(c('At least one group has no genes. Increase nGenes,',
                  'reduce the number of groups, or change fracGenes.'),
                collapse = ' '))}
-  return(nGenesPerGroup)
-}
+  return(nGenesPerGroup)}
+
 
 getTimes = function(timepointsType, interval, nReps, timepoints,
                     nSamplesPerCond, nCond, period) {
@@ -70,7 +68,5 @@ getTimes = function(timepointsType, interval, nReps, timepoints,
     tt = matrix(tt, nrow = nCond)
     times = t(apply(tt, 1, sort))
   } else {
-    stop("timepointsType must be 'auto', 'specified', or 'random'.")
-  }
-  return(times)
-}
+    stop("timepointsType must be 'auto', 'specified', or 'random'.")}
+  return(times)}
