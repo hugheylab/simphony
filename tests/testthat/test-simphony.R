@@ -45,5 +45,5 @@ test_that('Appropriate errors are thrown', {
   goodExprGroupsList = list(data.table::data.table(base = c(2)),
                            data.table::data.table(base = 1))
   expect_error(simulateExprData(goodExprGroupsList, method = 'socratic'),
-               'method must be either \'gaussian\' or \'negbinom\'.')
+               'method must be \'gaussian\' or \'negbinom\'.')
 })

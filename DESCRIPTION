@@ -1,6 +1,6 @@
 Package: simphony
 Title: Simulating gene expression data
-Version: 0.0.0.9010
+Version: 0.0.0.9011
 Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
                     role = c("aut", "cre")),
              person("Darwin", "Fu", email = "darwin.y.fu.1@vumc.org",

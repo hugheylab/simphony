@@ -35,6 +35,26 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, method) {
   return(exprGroups)
 }
 
+getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
+  if ('fracGenes' %in% colnames(exprGroups)) {
+    fracGenes = exprGroups$fracGenes
+  } else if (is.null(fracGenes)) {
+    fracGenes = rep(1 / nrow(exprGroups), nrow(exprGroups))
+  } else if (length(fracGenes) != nrow(exprGroups)) {
+    stop('Length of fracGenes must equal number of rows in exprGroups.')
+  }
+
+  nGenesPerGroup = as.integer(fracGenes * nGenes)
+  if (sum(nGenesPerGroup) != nGenes) {
+    nGenesPerGroup[1L:(nGenes - sum(nGenesPerGroup))] =
+      nGenesPerGroup[1L:(nGenes - sum(nGenesPerGroup))] + 1L}
+
+  if (any(nGenesPerGroup) == 0) {
+    stop(paste(c('At least one group has no genes. Increase nGenes,',
+                 'reduce the number of groups, or change fracGenes.'),
+               collapse = ' '))}
+  return(nGenesPerGroup)
+}
 
 getTimes = function(timepointsType, interval, nReps, timepoints,
                     nSamplesPerCond, nCond, period) {

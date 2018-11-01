@@ -1,8 +1,8 @@
 #' @importFrom data.table data.table ":="
 #' @importFrom foreach foreach "%do%"
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
-                  'dispFunc', 'exprGroups', 'numGenes', 'fracGenes', 'time',
-                  '..cond', '.N', '.dummy', 'gene', 'mu', '..period'))
+                  'dispFunc', 'exprGroups', 'time', 'expr', '..cond', '.N',
+                  '.dummy', 'gene', 'mu', '..period'))
 
 
 #' Generate list of two expression groups from a combined differential exprGroup
@@ -108,18 +108,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
     setDefaultExprGroups(exprGroups, nGenes, rhyFunc, method)}
   nCond = length(exprGroupsList)
 
-  if ('fracGenes' %in% colnames(exprGroupsList[[1]])) {
-    fracGenes = exprGroupsList[[1]]$fracGenes }
-  if (is.null(fracGenes)) {
-    fracGenes = rep(1/nrow(exprGroupsList[[1]]), nrow(exprGroupsList[[1]]))}
-  numGenes = as.integer(fracGenes * nGenes)
-  if (sum(numGenes) != nGenes) {
-    numGenes[1L:(nGenes - sum(numGenes))] = numGenes[1L:(nGenes - sum(numGenes))] + 1L}
-
-  if (any(numGenes) == 0) {
-    stop(paste(c('At least one group has no genes. Increase nGenes,',
-                 'reduce the number of groups, or change fracGenes.'),
-               collapse = ' '))}
+  nGenesPerGroup = getNGenesPerGroup(exprGroupsList[[1]], fracGenes, nGenes)
 
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, nCond, period)
@@ -127,7 +116,7 @@ simulateExprData = function(exprGroupsList, fracGenes = NULL, nGenes = 10,
   geneNames = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
 
   gm = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = rbind) %do% {
-    gmNow = exprGroups[rep(1:.N, times = numGenes)]
+    gmNow = exprGroups[rep(1:.N, times = nGenesPerGroup)]
     gmNow[, cond := ..cond]
     gmNow[, gene := geneNames]
     data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
@@ -178,10 +167,10 @@ getObservedExpr = function(exprDt, method, inplace = FALSE) {
   }
 
   if (method == 'gaussian') {
-    exprDt[, expr := stats::rnorm(nrow(exprDt), mu, sd)]
+    exprDt[, expr := stats::rnorm(.N, mu, sd)]
   } else {
     exprDt[, expr := stats::rnbinom(1, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
-           by = .(cond, group)]
+           by = c('cond', 'group')]
     # dispFunc is identical for genes of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
   }

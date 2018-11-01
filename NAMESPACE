@@ -2,6 +2,7 @@
 
 export(combineData)
 export(getExpectedExpr)
+export(getObservedExpr)
 export(simulateExprData)
 export(splitDiffExprGroups)
 importFrom(data.table,":=")
