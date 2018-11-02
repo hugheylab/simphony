@@ -9,6 +9,8 @@
 #' @return Numeric vector of dispersions.
 #'
 #' @examples
+#' x = 2^(4:6)
+#' d = defaultDispFunc(x)
 #'
 #' @seealso `\link{simphony}`
 #'
@@ -36,6 +38,10 @@ defaultDispFunc = function(x) {
 #' @return `data.table`.
 #'
 #' @examples
+#' library('data.table')
+#' exprGroups = data.table(amp = c(0, 1))
+#' simData = simphony(exprGroups)
+#' simDataMerged = mergeSimData(simData, simData$geneMetadata$gene[1:2])
 #'
 #' @seealso `\link{simphony}`
 #'

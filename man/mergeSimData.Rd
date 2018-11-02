@@ -27,6 +27,10 @@ into one \code{data.table}. This function is useful for making plots using
 ggplot2.
 }
 \examples{
+library('data.table')
+exprGroups = data.table(amp = c(0, 1))
+simData = simphony(exprGroups)
+simDataMerged = mergeSimData(simData, simData$geneMetadata$gene[1:2])
 
 }
 \seealso{

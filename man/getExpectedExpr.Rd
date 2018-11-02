@@ -8,8 +8,9 @@ getExpectedExpr(geneMetadata, period = 24, times = NULL,
   sampleMetadata = NULL, byCondGroup = is.null(times))
 }
 \arguments{
-\item{geneMetadata}{\code{data.table} with columns \code{base}, \code{rhyFunc}, \code{amp}, and
-\code{phase}.}
+\item{geneMetadata}{\code{data.table} with columns \code{gene}, \code{base}, \code{rhyFunc},
+\code{amp}, and \code{phase}, where every row corresponds to a gen. If \code{byCondGroup} ==
+\code{TRUE}, then must also have columns \code{cond} and \code{group}.}
 
 \item{period}{Integer for the period of simulated rhythms.}
 
@@ -33,6 +34,10 @@ Calculate expected expression for multiple genes at multiple timepoints in
 multiple conditions.
 }
 \examples{
+library('data.table')
+geneMetadata = data.table(gene = c('gene_1', 'gene_2'), base = 0,
+                          amp = c(0, 1), phase = 0, rhyFunc = sin)
+exprDt = getExpectedExpr(geneMetadata, times = 6:17)
 
 }
 \seealso{

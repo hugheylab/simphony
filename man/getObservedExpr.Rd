@@ -4,12 +4,13 @@
 \alias{getObservedExpr}
 \title{Sample expression values}
 \usage{
-getObservedExpr(exprDt, family, inplace = FALSE)
+getObservedExpr(exprDt, family = "gaussian", inplace = FALSE)
 }
 \arguments{
-\item{exprDt}{\code{data.table}. If \code{family} == 'gaussian', required columns are
-\code{gene}, \code{sample}, \code{mu}, and \code{sd}. If \code{family} == 'negbinom', required columns
-are \code{gene}, \code{sample}, \code{mu}, \code{dispFunc}, \code{cond}, and \code{group}.}
+\item{exprDt}{\code{data.table} of expected expression. If \code{family} == 'gaussian',
+required columns are \code{gene}, \code{sample}, \code{mu}, and \code{sd}. If \code{family} ==
+'negbinom', required columns are \code{gene}, \code{sample}, \code{mu}, \code{dispFunc}, \code{cond},
+and \code{group}.}
 
 \item{family}{Character string for the family of distributions from which
 to generate the expression values. Must be 'gaussian' or 'negbinom'.}
@@ -27,6 +28,11 @@ is used internally by \code{simphony()}, and should not usually need to be
 called directly.
 }
 \examples{
+library('data.table')
+set.seed(6022)
+exprDt = data.table(gene = 'gene_1', sample = c('sample_1', 'sample_2'),
+                    mu = c(0, 5), sd = 1)
+exprMat = getObservedExpr(exprDt)
 
 }
 \seealso{

@@ -67,6 +67,14 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' }
 #'
 #' @examples
+#' library('data.table')
+#' exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
+#'                         rhyFunc = c(cos, cos, sin))
+#' simData = simphony(exprGroups, nGenes = 100, nReps = 2, family = 'negbinom')
+#'
+#' exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
+#'                       data.table(amp = c(3, 2), phase = c(0, 3)))
+#' simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
 #'
 #' @seealso `\link{defaultDispFunc}`
 #'
@@ -121,8 +129,9 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
 #' Calculate expected expression for multiple genes at multiple timepoints in
 #' multiple conditions.
 #'
-#' @param geneMetadata `data.table` with columns `base`, `rhyFunc`, `amp`, and
-#' `phase`.
+#' @param geneMetadata `data.table` with columns `gene`, `base`, `rhyFunc`,
+#' `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup` ==
+#' `TRUE`, then must also have columns `cond` and `group`.
 #' @param period Integer for the period of simulated rhythms.
 #' @param times Numeric vector of the times (in the same units as `period`) at
 #' which to calculate expected expression for each row in `geneMetadata`.
@@ -137,6 +146,10 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
 #' will use the negative binomial family, `mu` corresponds to log2 counts.
 #'
 #' @examples
+#' library('data.table')
+#' geneMetadata = data.table(gene = c('gene_1', 'gene_2'), base = 0,
+#'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
+#' exprDt = getExpectedExpr(geneMetadata, times = 6:17)
 #'
 #' @seealso `\link{simphony}`, `\link{getObservedExpr}`
 #'
@@ -168,9 +181,10 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #' is used internally by `simphony()`, and should not usually need to be
 #' called directly.
 #'
-#' @param exprDt `data.table`. If `family` == 'gaussian', required columns are
-#' `gene`, `sample`, `mu`, and `sd`. If `family` == 'negbinom', required columns
-#' are `gene`, `sample`, `mu`, `dispFunc`, `cond`, and `group`.
+#' @param exprDt `data.table` of expected expression. If `family` == 'gaussian',
+#' required columns are `gene`, `sample`, `mu`, and `sd`. If `family` ==
+#' 'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`, `cond`,
+#' and `group`.
 #' @param family Character string for the family of distributions from which
 #' to generate the expression values. Must be 'gaussian' or 'negbinom'.
 #' @param inplace Logical for whether to modify in-place `exprDt`, adding a
@@ -180,11 +194,16 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #' columns correspond to samples.
 #'
 #' @examples
+#' library('data.table')
+#' set.seed(6022)
+#' exprDt = data.table(gene = 'gene_1', sample = c('sample_1', 'sample_2'),
+#'                     mu = c(0, 5), sd = 1)
+#' exprMat = getObservedExpr(exprDt)
 #'
 #' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
 #'
 #' @export
-getObservedExpr = function(exprDt, family, inplace = FALSE) {
+getObservedExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
   if (!inplace) {
     exprDt = data.table(exprDt)}
 

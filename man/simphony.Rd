@@ -83,6 +83,14 @@ Simulate experiments in which rhythmic and non-rhythmic gene expression is
 measured at multiple timepoints in one or more conditions.
 }
 \examples{
+library('data.table')
+exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
+                        rhyFunc = c(cos, cos, sin))
+simData = simphony(exprGroups, nGenes = 100, nReps = 2, family = 'negbinom')
+
+exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
+                      data.table(amp = c(3, 2), phase = c(0, 3)))
+simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
 
 }
 \seealso{

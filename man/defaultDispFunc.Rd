@@ -18,6 +18,8 @@ counts. Trends were estimated by using DESeq2 and circadian RNA-seq data from
 mice and humans.
 }
 \examples{
+x = 2^(4:6)
+d = defaultDispFunc(x)
 
 }
 \seealso{
