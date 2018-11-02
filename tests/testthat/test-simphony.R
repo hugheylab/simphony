@@ -38,13 +38,10 @@ test_that('Number of genes and samples simulated are predictable', {
 })
 
 test_that('Statistics from NBD are as expected', {
-  dispFunc = function(x) {
-    return(0.05 + 10/x)
-  }
   base = c(3, 5, 7)
-  expectedVariance = 2^base + dispFunc(2^base) * ((2^base)^2)
+  expectedVariance = 2^base + defaultDispFunc(2^base) * ((2^base)^2)
 
-  exprGroupsList = data.table::data.table(base = base, amp = 0, dispFunc = dispFunc)
+  exprGroupsList = data.table::data.table(base = base, amp = 0, dispFunc = defaultDispFunc)
   simGse = simphony(exprGroupsList, nGenes = 3, nReps = 500, family = 'negbinom')
 
   exprData = data.table::data.table(expr = c(t(simGse$exprData)),
@@ -53,7 +50,7 @@ test_that('Statistics from NBD are as expected', {
   expect_equal(exprData[, log2(mean(expr)), by = gene][, V1], base, tolerance = 1e-1)
   expect_equal(exprData[, var(expr), by = gene][, V1], expectedVariance, tolerance = 1e-1)
 
-  rm(dispFunc, base, expectedVariance, exprGroupsList, simGse, exprData)
+  rm(base, expectedVariance, exprGroupsList, simGse, exprData)
 })
 
 test_that('Appropriate errors are thrown', {
