@@ -20,23 +20,24 @@ library(simphony)
 ```{r, message = FALSE}
 set.seed(42)
 exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
-simData = simulateExprData(exprGroups, nGenes = 200, interval = 2, nReps = 1)
+simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1)
 ```
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
 geneMetadata = simData$geneMetadata
 gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
-dExample = combineData(simData, gmExample$gene)
+dExample = mergeSimData(simData, gmExample$gene)
 dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
-dExpect = getExpectedExpr(gmExample, seq(0, 24, 0.25))
-dExpect[, low := mu - sd]
-dExpect[, high := mu + sd]
+dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))
+dExpect[, lower := mu - sd]
+dExpect[, upper := mu + sd]
 dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 ggplot(dExample) +
   facet_wrap(~ geneLabel, nrow = 1, scales = 'free_y') +
-  geom_ribbon(aes(x = time, ymin = low, ymax = high), fill = 'gray85', data = dExpect) +
+  geom_ribbon(aes(x = time, ymin = lower, ymax = upper),
+              fill = 'gray85', data = dExpect) +
   geom_line(aes(x = time, y = mu), size = 0.25, data = dExpect) +
   geom_point(aes(x = time, y = expr), shape = 21, size = 2.5) +
   labs(x = 'Time (h)', y = 'Expression (a.u.)') +

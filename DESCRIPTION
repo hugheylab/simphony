@@ -1,12 +1,11 @@
 Package: simphony
 Title: Simulating gene expression data
-Version: 0.0.0.9009
-Authors@R: c(person("Jordan", "Singer", email = "jordan.m.singer@gmail.com",
-                    role = c("aut", "cre")),
-             person("Darwin", "Fu", email = "darwin.y.fu.1@vumc.org",
-                    role = c("ctb")))
-Description: A framework allowing for the simulation of rhythmic and
-  non-rhythmic gene expression.
+Version: 0.0.0.9016
+Authors@R: as.person(c(
+  "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
+  "Darwin Fu <darwin.y.fu.1@vumc.org> [ctb]",
+  "Jake Hughey <jakejhughey@gmail.com> [ctb]"))
+Description: A framework for simulating rhythmic and non-rhythmic gene expression.
 Depends: R (>= 3.4)
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
