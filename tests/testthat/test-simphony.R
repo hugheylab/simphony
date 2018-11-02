@@ -45,7 +45,7 @@ test_that('Statistics from NBD are as expected', {
   expectedVariance = 2^base + dispFunc(2^base) * ((2^base)^2)
 
   exprGroupsList = data.table::data.table(base = base, amp = 0, dispFunc = dispFunc)
-  simGse = simulateExprData(exprGroupsList, nGenes = 3, nReps = 5e4, method = 'negbinom')
+  simGse = simphony(exprGroupsList, nGenes = 3, nReps = 500, family = 'negbinom')
 
   exprData = data.table::data.table(expr = c(t(simGse$exprData)),
                                     gene = rep(rownames(simGse$exprData),
@@ -63,7 +63,7 @@ test_that('Appropriate errors are thrown', {
                'Each exprGroups data.frame must have the same number of rows.')
 
   goodExprGroupsList = list(data.table::data.table(base = c(2)),
-                           data.table::data.table(base = 1))
+                            data.table::data.table(base = 1))
   expect_error(simphony(goodExprGroupsList, family = 'socratic'),
                'family must be \'gaussian\' or \'negbinom\'.')
 })
