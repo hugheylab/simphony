@@ -20,13 +20,13 @@ library(simphony)
 ```{r, message = FALSE}
 set.seed(42)
 exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
-simData = simulateExprData(exprGroups, nGenes = 200, interval = 2, nReps = 1)
+simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1)
 ```
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
 geneMetadata = simData$geneMetadata
 gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
-dExample = combineData(simData, gmExample$gene)
+dExample = mergeSimData(simData, gmExample$gene)
 dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))

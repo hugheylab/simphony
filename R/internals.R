@@ -1,8 +1,4 @@
-defaultDispFunc = function(x) {
-  return(3/x)}
-
-
-setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, family) {
+setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
   exprGroups = data.table(exprGroups)
   exprGroups[, group := 1:.N]
 
@@ -20,7 +16,7 @@ setDefaultExprGroups = function(exprGroups, nGenes, rhyFunc, family) {
 
   if (family == 'negbinom') {
     if (!'dispFunc' %in% colnames(exprGroups)) {
-      exprGroups[, dispFunc := data.table(defaultDispFunc)] }
+      exprGroups[, dispFunc := data.table(dispFunc)] }
     if (!'base' %in% colnames(exprGroups)) {
       exprGroups[, base := 7]}}
   else {

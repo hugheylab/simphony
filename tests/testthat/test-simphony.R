@@ -3,7 +3,7 @@ context('simphony')
 
 test_that('Single condition simulation works', {
   exprGroupsList = data.table::data.table(base = 1, amp = 3, phase = 2)
-  expect_silent({simGse = simulateExprData(exprGroupsList)})
+  expect_silent({simGse = simphony(exprGroupsList)})
 
   rm(exprGroupsList, simGse)
 })
@@ -11,8 +11,8 @@ test_that('Single condition simulation works', {
 test_that('Multiple condition simulation works', {
   exprGroupsList = list(data.table::data.table(base = c(1, 2)),
                         data.table::data.table(amp = c(1,2), phase = c(3,4)))
-  expect_silent(simulateExprData(exprGroupsList))
-  expect_silent(simulateExprData(exprGroupsList, family = 'negbinom'))
+  expect_silent(simphony(exprGroupsList))
+  expect_silent(simphony(exprGroupsList, family = 'negbinom'))
 
   rm(exprGroupsList)
 })
@@ -24,7 +24,7 @@ test_that('Number of genes and samples simulated are predictable', {
 
   exprGroupsList = list(data.table::data.table(base = c(1, 2)),
                         data.table::data.table(amp = c(1,2), phase = c(3,4)))
-  simGse = simulateExprData(exprGroupsList, nGenes = nGenes,
+  simGse = simphony(exprGroupsList, nGenes = nGenes,
                             interval = sampleInterval, nReps = nReps)
 
   expect_equal(ncol(simGse$exprData), nrow(simGse$sampleMetadata))
@@ -39,11 +39,11 @@ test_that('Number of genes and samples simulated are predictable', {
 test_that('Appropriate errors are thrown', {
   badExprGroupsList = list(data.table::data.table(base = c(1, 2)),
                            data.table::data.table(base = 1))
-  expect_error(simulateExprData(badExprGroupsList),
-               'Number of rows in each exprGroups must be the same for all conditions')
+  expect_error(simphony(badExprGroupsList),
+               'Each exprGroups data.frame must have the same number of rows.')
 
   goodExprGroupsList = list(data.table::data.table(base = c(2)),
                            data.table::data.table(base = 1))
-  expect_error(simulateExprData(goodExprGroupsList, family = 'socratic'),
+  expect_error(simphony(goodExprGroupsList, family = 'socratic'),
                'family must be \'gaussian\' or \'negbinom\'.')
 })
