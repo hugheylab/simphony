@@ -1,5 +1,5 @@
 ---
-title: "Using Simphony to Benchmark Rhythm Detection Methods"
+title: "Using Simphony to Benchmark Rhythmic Detection Methods"
 author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,6 +9,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+Simphony is a framework for simulating rhythmic and non-rhythmic transcriptome data. This vignette goes through a sample use case of benchmarking a method of rhythmic gene detection, leveraging Simphony.
+
+## Load packages and set parameters
+
 ```{r setup, message = FALSE}
 library(data.table)
 library(ggplot2)
@@ -17,12 +21,29 @@ library(precrec)
 library(simphony)
 ```
 
+Here we set the parameters for our simulated genes in `exprGroups`, and specify the parameters governing the simulated experimental setup.
+
+We will generate a small dataset of 200 simulated genes, with 75% of them having no rhythmicity (`amp` = 0) and the remaining 25% having rhythmicity with an amplitude `amp` = 1.1.
+
+We will simulate an experiment with a sample interval of 2 hours, with 1 replicate per time point.
 ```{r, message = FALSE}
 set.seed(42)
+
 exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
-simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1)
+
+nGenes = 200
+sampleInterval = 2
+nReps = 1
 ```
 
+## Generate the simulated transcriptome dataset
+
+We can now simulate genes and associated metadata in one function call, given our desired setup. Here, we use `simphony`'s default method of Gaussian sampling to simulate a microarray experiment.
+```{r message=FALSE}
+simData = simphony(exprGroups, nGenes = nGenes, interval = sampleInterval, nReps = nReps)
+```
+
+We can see how our simulated expression samples compare to the expected range by plotting both a non-rhythmic and rhythmic gene with their associated standard deviation bands.
 ```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
 geneMetadata = simData$geneMetadata
 gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
@@ -44,6 +65,9 @@ ggplot(dExample) +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 ```
 
+## Identifying rhythmic genes with limma
+
+`limma` provides a simple interface to run a linear model on our simulated gene expression data. Here, we supply it with a design matrix of ~ $cos(t \frac{2 \pi}{24}) + sin(t \frac{2 \pi}{24})$, where $t$ is the time taken from `sampleMetadata`.
 ```{r, message = FALSE}
 sampleMetadata = simData$sampleMetadata
 sampleMetadata[, time_cos := cos(time * 2*pi / 24)]
@@ -58,12 +82,16 @@ rhyLimma$gene = rownames(rhyLimma)
 rhyLimma = merge(rhyLimma, geneMetadata[, .(gene, amp)], by = 'gene')
 ```
 
+## Benchmarking limma's performance
+
+As expected under the null hypothesis of a gene not being rhythmic, `limma` gives a uniform distribution of p-values for genes with a rhythm amplitude of 0, and a distribution of low p-values for the remaining genes, having a rhythm amplitude of 1.1.
 ```{r, message = FALSE, fig.width = 3.5, fig.height = 3}
 ggplot(rhyLimma) +
   geom_jitter(aes(x = factor(amp), y = P.Value), shape = 21, width = 0.2) +
   labs(x = 'Rhythm amplitude (a.u.)', y = 'P-value of rhythmicity')
 ```
 
+We can leverage `simphony`'s labels of rhythmic properties from its `geneMetadata` output to compare limma's p-values to the ground-truth of rhythmicity. We treat the 150 genes with no rhythmic amplitude as non-rhythmic, and the remaining 50 genes with a rhythmic amplitude of 1.1 as rhythmic, and display the resultant Receiver-Operating Charactersitic curve.
 ```{r, message = FALSE, fig.width = 3, fig.height = 3}
 rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
 autoplot(rocprc, 'ROC')
