@@ -215,6 +215,9 @@ getObservedExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
     exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]}
 
-  exprDtCast = data.table::dcast(exprDt, gene ~ sample, value.var = 'expr')
-  exprMat = as.matrix(exprDtCast, rownames = 1)
+  data.table::setorderv(exprDt, c('sample', 'gene'))
+  genes = unique(exprDt$gene)
+  samples = unique(exprDt$sample)
+  exprMat = matrix(exprDt$expr, nrow = length(genes),
+                   dimnames = list(genes, samples))
   return(exprMat)}
