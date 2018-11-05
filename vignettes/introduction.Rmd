@@ -25,7 +25,7 @@ Here we set the parameters for our simulated genes in `exprGroups`, and specify 
 
 We will generate a small dataset of 200 simulated genes, with 75% of them having no rhythmicity (`amp` = 0) and the remaining 25% having rhythmicity with an amplitude `amp` = 1.1.
 
-We will simulate an experiment with a sample interval of 2 hours, with 1 replicate per time point.
+We will simulate a microarray experiment with a sample interval of 2 hours, with 1 replicate per time point.
 ```{r, message = FALSE}
 set.seed(42)
 
@@ -34,16 +34,11 @@ exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
 nGenes = 200
 sampleInterval = 2
 nReps = 1
-```
 
-## Generate the simulated transcriptome dataset
-
-We can now simulate genes and associated metadata in one function call, given our desired setup. Here, we use `simphony`'s default method of Gaussian sampling to simulate a microarray experiment.
-```{r message=FALSE}
 simData = simphony(exprGroups, nGenes = nGenes, interval = sampleInterval, nReps = nReps)
 ```
 
-We can see how our simulated expression samples compare to the expected range by plotting both a non-rhythmic and rhythmic gene with their associated standard deviation bands.
+We can see how our simulated expression samples compare to the expected range by plotting both a non-rhythmic and rhythmic gene. We also plot ribbons displaying the standard deviation of the Gaussian we sampled from.
 ```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
 geneMetadata = simData$geneMetadata
 gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
@@ -91,7 +86,7 @@ ggplot(rhyLimma) +
   labs(x = 'Rhythm amplitude (a.u.)', y = 'P-value of rhythmicity')
 ```
 
-We can leverage `simphony`'s labels of rhythmic properties from its `geneMetadata` output to compare limma's p-values to the ground-truth of rhythmicity. We treat the 150 genes with no rhythmic amplitude as non-rhythmic, and the remaining 50 genes with a rhythmic amplitude of 1.1 as rhythmic, and display the resultant Receiver-Operating Charactersitic curve.
+We can measure `limma`'s performance by leveraging `simphony`'s ground-truth labels of rhythmicity to generate a Receiver-Operating Charactersitic curve.
 ```{r, message = FALSE, fig.width = 3, fig.height = 3}
 rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
 autoplot(rocprc, 'ROC')
