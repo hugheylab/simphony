@@ -88,7 +88,10 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
     stop("family must be 'gaussian' or 'negbinom'.")}
 
   if (is.data.frame(exprGroupsList)) {
-    exprGroupsList = list(exprGroupsList)}
+    exprGroupsList = list(exprGroupsList)
+  } else if (!is.list(exprGroupsList) || !all(sapply(exprGroupsList, is.data.frame))) {
+    stop('exprGroupsList must be a data.frame or a list of data.frames.')}
+
   if (length(unique(sapply(exprGroupsList, nrow))) != 1) {
     stop('Each exprGroups data.frame must have the same number of rows.')}
 

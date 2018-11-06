@@ -1,4 +1,7 @@
 setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
+  if ('group' %in% colnames(exprGroups)) {
+    stop("exprGroups must not have a column named 'group'.")}
+
   exprGroups = data.table(exprGroups)
   exprGroups[, group := 1:.N]
 
