@@ -113,7 +113,7 @@ ggplot(rhyLimma) +
   labs(x = expression('Rhythm amplitude '*(log[2]~counts)), y = 'P-value of rhythmicity')
 ```
 
-Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here generated using the *precrec* package).
+Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the *precrec* package).
 ```{r, fig.width = 3, fig.height = 3}
 rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
 autoplot(rocprc, 'ROC')
