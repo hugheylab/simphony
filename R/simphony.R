@@ -97,29 +97,11 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
 
   exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
     setDefaultExprGroups(exprGroups, nGenes, dispFunc, rhyFunc, family)}
-  nCond = length(exprGroupsList)
-
-  nGenesPerGroup = getNGenesPerGroup(exprGroupsList[[1]], fracGenes, nGenes)
 
   times = getTimes(timepointsType, interval, nReps, timepoints,
-                   nSamplesPerCond, nCond, period)
-
-  genes = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
-
-  gm = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = rbind) %do% {
-    gmNow = exprGroups[rep(1:.N, times = nGenesPerGroup)]
-    gmNow[, cond := ..cond]
-    gmNow[, gene := genes]
-    data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
-    gmNow}
-
-  nSamples = prod(dim(times))
-  nSamplesPerCond = ncol(times)
-  sm = foreach(cond = 1:nCond, .combine = rbind) %do% {
-    sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
-    sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
-                          sampleIds)
-    data.table(sample = sampleNames, cond = cond, time = times[cond, ])}
+                   nSamplesPerCond, length(exprGroupsList), period)
+  sm = getSampleMetadata(times)
+  gm = getGeneMetadata(exprGroupsList, fracGenes, nGenes)
 
   exprDt = getExpectedExpr(gm, period, sampleMetadata = sm)
   exprMat = getObservedExpr(exprDt, family, inplace = TRUE)
@@ -212,11 +194,13 @@ getObservedExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
 
   if (family == 'gaussian') {
     exprDt[, expr := stats::rnorm(.N, mu, sd)]
-  } else {
+  } else if (family == 'negbinom') {
     # dispFunc is identical for genes of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
     exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
-           by = c('cond', 'group')]}
+           by = c('cond', 'group')]
+  } else {
+    stop("family must be 'gaussian' or 'negbinom'.")}
 
   data.table::setorderv(exprDt, c('sample', 'gene'))
   genes = unique(exprDt$gene)
