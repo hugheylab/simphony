@@ -41,5 +41,5 @@ exprDt = getExpectedExpr(geneMetadata, times = 6:17)
 
 }
 \seealso{
-\code{\link{simphony}}, \code{\link{getObservedExpr}}
+\code{\link{simphony}}, \code{\link{getSampledExpr}}
 }

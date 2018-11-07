@@ -2,7 +2,7 @@
 
 export(defaultDispFunc)
 export(getExpectedExpr)
-export(getObservedExpr)
+export(getSampledExpr)
 export(mergeSimData)
 export(simphony)
 export(splitDiffExprGroups)

@@ -104,7 +104,7 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
   gm = getGeneMetadata(exprGroupsList, fracGenes, nGenes)
 
   exprDt = getExpectedExpr(gm, period, sampleMetadata = sm)
-  exprMat = getObservedExpr(exprDt, family, inplace = TRUE)
+  exprMat = getSampledExpr(exprDt, family, inplace = TRUE)
 
   return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))}
 
@@ -136,7 +136,7 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
 #'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
 #' exprDt = getExpectedExpr(geneMetadata, times = 6:17)
 #'
-#' @seealso `\link{simphony}`, `\link{getObservedExpr}`
+#' @seealso `\link{simphony}`, `\link{getSampledExpr}`
 #'
 #' @export
 getExpectedExpr = function(geneMetadata, period = 24,
@@ -183,12 +183,12 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #' set.seed(6022)
 #' exprDt = data.table(gene = 'gene_1', sample = c('sample_1', 'sample_2'),
 #'                     mu = c(0, 5), sd = 1)
-#' exprMat = getObservedExpr(exprDt)
+#' exprMat = getSampledExpr(exprDt)
 #'
 #' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
 #'
 #' @export
-getObservedExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
+getSampledExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
   if (!inplace) {
     exprDt = data.table(exprDt)}
 
