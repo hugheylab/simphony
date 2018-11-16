@@ -1,5 +1,5 @@
 ---
-title: "Using Simphony to Benchmark Rhythm Detection Methods"
+title: "Using Simphony to Benchmark Rhythm Detection"
 author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,61 +9,112 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, message = FALSE}
+```{r, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE, collapse = TRUE, comment = '#>', fig.retina = 2)
+```
+
+*Simphony* is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using *simphony* to benchmark a method for detecting rhythmicity.
+
+## Load the packages we'll use
+
+Internally, *simphony* uses the *data.table* package, which provides an enhanced version of the standard R `data.frame`. We'll use *data.table* for this example as well.
+```{r}
 library(data.table)
 library(ggplot2)
+library(kableExtra)
+library(knitr)
 library(limma)
 library(precrec)
 library(simphony)
 ```
 
-```{r, message = FALSE}
+## Simulate the data
+
+Here we create a `data.table` called `exprGroups` that specifies the desired properties of the simulated genes. We want 75% of simulated genes to be non-rhythmic and 25% to have a rhythm amplitude of 1.1. Properties not specified in `exprGroups` will be given their default values.
+
+Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point.
+```{r}
 set.seed(42)
-exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 1.1))
-simData = simulateExprData(exprGroups, nGenes = 200, interval = 2, nReps = 1)
+exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 0.3))
+simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1, family = 'negbinom')
 ```
 
-```{r, message = FALSE, fig.width = 6, fig.height = 2.75}
-geneMetadata = simData$geneMetadata
-gmExample = geneMetadata[gene %in% c('gene_105', 'gene_193'), ]
-dExample = combineData(simData, gmExample$gene)
-dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+The output of `simphony` has three components: `exprData`, `sampleMetadata`, and `geneMetadata`. `exprData` is a matrix that contains the simulated expression values. Each row of corresponds to a gene, each column corresponds to a sample. Since we sampled from the negative binomial family, all expression values are integers.
+```{r}
+kable(simData$exprData[1:3, 1:3])
+```
 
-dExpect = getExpectedExpr(gmExample, seq(0, 24, 0.25))
-dExpect[, low := mu - sd]
-dExpect[, high := mu + sd]
+`sampleMetadata` is a `data.table` that contains the condition (`cond`) and time for each sample. Here we simulated one condition, so `cond` is 1 for all samples.
+```{r}
+kable(simData$sampleMetadata[1:3,])
+```
+
+`geneMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `exprGroups` to which the gene belongs.
+```{r}
+kable(simData$geneMetadata[149:151,]) %>%
+  kable_styling(font_size = 12)
+```
+
+## Plot the simulated time-course for selected genes
+
+Here we plot the simulated time-course for a non-rhythmic gene and a rhythmic gene. We use the `mergeSimData` function to merge the expression values, the sample metadata, and the gene metadata.
+```{r}
+gmExample = simData$geneMetadata[gene %in% c('gene_150', 'gene_151')]
+dExample = mergeSimData(simData, gmExample$gene)
+```
+
+We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the `getExpectedExpr` function. Since we sampled from the negative binomial family, the resulting `mu` column corresponds to the expected log~2~ counts.
+```{r}
+dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))
+```
+
+Then it all comes together with `ggplot`.
+```{r, fig.width = 6, fig.height = 2.75}
+dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 ggplot(dExample) +
-  facet_wrap(~ geneLabel, nrow = 1, scales = 'free_y') +
-  geom_ribbon(aes(x = time, ymin = low, ymax = high), fill = 'gray85', data = dExpect) +
-  geom_line(aes(x = time, y = mu), size = 0.25, data = dExpect) +
-  geom_point(aes(x = time, y = expr), shape = 21, size = 2.5) +
-  labs(x = 'Time (h)', y = 'Expression (a.u.)') +
+  facet_wrap(~ geneLabel, nrow = 1) +
+  geom_line(aes(x = time, y = log2(2^mu + 1)), size = 0.25, data = dExpect) +
+  geom_point(aes(x = time, y = log2(expr + 1)), shape = 21, size = 2.5) +
+  labs(x = 'Time (h)', y = expression(log[2](counts+1))) +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 ```
 
-```{r, message = FALSE}
-sampleMetadata = simData$sampleMetadata
-sampleMetadata[, time_cos := cos(time * 2*pi / 24)]
-sampleMetadata[, time_sin := sin(time * 2*pi / 24)]
-design = model.matrix(~ time_cos + time_sin, data = sampleMetadata)
+## Detect rhythmic genes
 
-fit = lmFit(simData$exprData, design)
-fit = eBayes(fit, trend = TRUE)
-
-rhyLimma = topTable(fit, coef = 2:3, number = Inf)
-rhyLimma$gene = rownames(rhyLimma)
-rhyLimma = merge(rhyLimma, geneMetadata[, .(gene, amp)], by = 'gene')
+We can use the *limma* package to detect rhythmic genes based on a linear model that corresponds to cosinor regression. 
+```{r}
+sampleMetadata = copy(simData$sampleMetadata)
+sampleMetadata[, timeCos := cos(time * 2*pi / 24)]
+sampleMetadata[, timeSin := sin(time * 2*pi / 24)]
+design = model.matrix(~ timeCos + timeSin, data = sampleMetadata)
 ```
 
-```{r, message = FALSE, fig.width = 3.5, fig.height = 3}
+Here we follow the typical *limma* workflow: fit the linear model for each gene, run empirical Bayes, and extract the relevant summary statistics. We pass *lmFit* the log~2~ transformed counts.
+```{r}
+fit = lmFit(log2(simData$exprData + 1), design)
+fit = eBayes(fit, trend = TRUE)
+rhyLimma = topTable(fit, coef = 2:3, number = Inf)
+```
+
+## Evaluate accuracy of rhythmic gene detection
+
+First we merge the results from *limma* with the known amplitudes from `geneMetadata`.
+```{r}
+rhyLimma$gene = rownames(rhyLimma)
+rhyLimma = merge(data.table(rhyLimma), simData$geneMetadata[, .(gene, amp)], by = 'gene')
+```
+
+We can plot the distributions of p-values of rhythmicity for non-rhythmic and rhythmic genes. P-values for non-rhythmic genes are uniformly distributed between 0 and 1, as they should be under the null hypothesis. P-values for rhythmic genes, on the other hand, tend to be closer to 0.
+```{r, fig.width = 3.5, fig.height = 3}
 ggplot(rhyLimma) +
   geom_jitter(aes(x = factor(amp), y = P.Value), shape = 21, width = 0.2) +
-  labs(x = 'Rhythm amplitude (a.u.)', y = 'P-value of rhythmicity')
+  labs(x = expression('Rhythm amplitude '*(log[2]~counts)), y = 'P-value of rhythmicity')
 ```
 
-```{r, message = FALSE, fig.width = 3, fig.height = 3}
+Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the *precrec* package).
+```{r, fig.width = 3, fig.height = 3}
 rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
 autoplot(rocprc, 'ROC')
 ```
