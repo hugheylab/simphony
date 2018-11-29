@@ -1,8 +1,8 @@
 #' Calculate dispersion given expected counts
 #'
 #' Calculate dispersion for a negative binomial distribution given expected
-#' counts. Trends were estimated by using DESeq2 and circadian RNA-seq data from
-#' mice and humans.
+#' counts. Default trends were estimated by using DESeq2 and circadian RNA-seq
+#' data from mouse lungs.
 #'
 #' @param x Numeric vector of expected expression counts.
 #'
@@ -10,14 +10,15 @@
 #'
 #' @examples
 #' x = 2^(4:6)
-#' d = defaultDispFunc(x)
+#' dispFunc = getDispFunc()
+#' dispersionValues = dispFunc(x)
 #'
 #' @seealso `\link{simphony}`
 #'
 #' @export
-defaultDispFunc = function(x) {
-  return(3/x)}
-
+getDefaultDispFunc = function(x0 = 0.007834046, x1 = 4.318777972) {
+  f = function(x0, x1) {function(x) x0 + x1 / x}
+  return(f(x0, x1))}
 
 #' Merge expression data, gene metadata, and sample metadata
 #'

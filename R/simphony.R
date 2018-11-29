@@ -76,13 +76,13 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'                       data.table(amp = c(3, 2), phase = c(0, 3)))
 #' simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
 #'
-#' @seealso `\link{defaultDispFunc}`
+#' @seealso `\link{getDefaultDispFunc}`
 #'
 #' @export
 simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
                     timepointsType = 'auto', interval = 2, nReps = 1,
                     timepoints = NULL, nSamplesPerCond = NULL,
-                    dispFunc = defaultDispFunc, rhyFunc = sin,
+                    dispFunc = getDefaultDispFunc(), rhyFunc = sin,
                     family = 'gaussian') {
   if (!family %in% c('gaussian', 'negbinom')) {
     stop("family must be 'gaussian' or 'negbinom'.")}

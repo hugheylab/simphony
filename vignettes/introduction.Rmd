@@ -34,7 +34,7 @@ Here we create a `data.table` called `exprGroups` that specifies the desired pro
 
 Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point.
 ```{r}
-set.seed(42)
+set.seed(44)
 exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 0.3))
 simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1, family = 'negbinom')
 ```
