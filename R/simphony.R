@@ -81,9 +81,8 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @export
 simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
                     timepointsType = 'auto', interval = 2, nReps = 1,
-                    timepoints = NULL, nSamplesPerCond = NULL,
-                    dispFunc = getDefaultDispFunc(), rhyFunc = sin,
-                    family = 'gaussian') {
+                    timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
+                    dispFunc = getDispFunc(), family = 'gaussian') {
   if (!family %in% c('gaussian', 'negbinom')) {
     stop("family must be 'gaussian' or 'negbinom'.")}
 

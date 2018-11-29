@@ -1,12 +1,15 @@
-#' Calculate dispersion given expected counts
+#' Generate a dispersion function for the negative binomial distribution, of the
+#' form d(mean) = x0 + x1/mean.
 #'
-#' Calculate dispersion for a negative binomial distribution given expected
-#' counts. Default trends were estimated by using DESeq2 and circadian RNA-seq
-#' data from mouse lungs.
+#' This is used to calculate dispersion for a negative binomial distribution
+#' given expected counts. Default values for x0 and x1 were estimated by using
+#' DESeq2 and circadian RNA-seq data from mouse lungs.
 #'
-#' @param x Numeric vector of expected expression counts.
+#' @param x0 Coefficient on the constant term for the dispersion function.
+#'   Default is 0.00783.
+#' @param x1 Coefficient on 1/mean for the dispersion function. Default is 4.32.
 #'
-#' @return Numeric vector of dispersions.
+#' @return An anonymous function which returns vectorized dispersion values.
 #'
 #' @examples
 #' x = 2^(4:6)
@@ -16,7 +19,7 @@
 #' @seealso `\link{simphony}`
 #'
 #' @export
-getDefaultDispFunc = function(x0 = 0.007834046, x1 = 4.318777972) {
+getDispFunc = function(x0 = 0.00783, x1 = 4.32) {
   f = function(x0, x1) {function(x) x0 + x1 / x}
   return(f(x0, x1))}
 
