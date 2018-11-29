@@ -76,7 +76,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'                       data.table(amp = c(3, 2), phase = c(0, 3)))
 #' simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
 #'
-#' @seealso `\link{getDefaultDispFunc}`
+#' @seealso `\link{getDispFunc}`
 #'
 #' @export
 simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,

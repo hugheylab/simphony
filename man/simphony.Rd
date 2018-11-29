@@ -6,8 +6,8 @@
 \usage{
 simphony(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
   timepointsType = "auto", interval = 2, nReps = 1,
-  timepoints = NULL, nSamplesPerCond = NULL,
-  dispFunc = defaultDispFunc, rhyFunc = sin, family = "gaussian")
+  timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
+  dispFunc = getDispFunc(), family = "gaussian")
 }
 \arguments{
 \item{exprGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -57,14 +57,14 @@ any replicates. Only used if \code{timepointsType} == 'specified'.}
 which will be randomly uniformly spaced between 0 and \code{period} and different
 for each condition. Only used if timepointsType == 'random'.}
 
+\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
+of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}
+lacks a \code{rhyFunc} column.}
+
 \item{dispFunc}{Function to calculate dispersion of sampled expression
 values, given expected expression in counts. Defaults to \code{defaultDispFunc}.
 Only used if \code{family} == 'negbinom' and a \code{data.frame} in \code{exprGroupsList}
 lacks a \code{dispFunc} column.}
-
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}
-lacks a \code{rhyFunc} column.}
 
 \item{family}{Character string for the family of distributions from
 which to generate the expression values. Must be 'gaussian' or 'negbinom'.}
@@ -94,5 +94,5 @@ simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
 
 }
 \seealso{
-\code{\link{defaultDispFunc}}
+\code{\link{getDispFunc}}
 }

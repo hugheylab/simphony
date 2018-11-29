@@ -22,5 +22,5 @@ Suggests:
 Imports:
   data.table (>= 1.11.4),
   foreach (>= 1.4.4)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
