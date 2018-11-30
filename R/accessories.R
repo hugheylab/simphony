@@ -1,15 +1,16 @@
-#' Generate a dispersion function for the negative binomial distribution, of the
-#' form d(mean) = x0 + x1/mean.
+#' Generate a function that returns the dispersion, given expected counts
 #'
-#' This is used to calculate dispersion for a negative binomial distribution
-#' given expected counts. Default values for x0 and x1 were estimated by using
-#' DESeq2 and circadian RNA-seq data from mouse lungs.
+#' The dispersion function is of the form d(x) = (x0 + x1 / x) * x2, where x is
+#' expected counts of a negative binomial distribution. Default values for x0
+#' and x1 were estimated using DESeq2 and circadian RNA-seq data from mouse
+#' lung. `getDispFunc` is not vectorized, so `x0`, `x1`, and `x2` should be
+#' single numeric values, not vectors.
 #'
-#' @param x0 Coefficient on the constant term for the dispersion function.
-#'   Default is 0.00783.
-#' @param x1 Coefficient on 1/mean for the dispersion function. Default is 4.32.
+#' @param x0 Coefficient on the constant term.
+#' @param x1 Coefficient on 1 / x.
+#' @param x2 Multiplicative factor.
 #'
-#' @return An anonymous function which returns vectorized dispersion values.
+#' @return An anonymous, vectorized function.
 #'
 #' @examples
 #' x = 2^(4:6)
@@ -19,8 +20,9 @@
 #' @seealso `\link{simphony}`
 #'
 #' @export
-getDispFunc = function(x0 = 0.00783, x1 = 4.32) {
-  return(function(x) x0 + x1 / x)}
+getDispFunc = function(x0 = 7.83e-3, x1 = 4.32, x2 = 1) {
+  f = function(x) (x0 + x1 / x) * x2
+  return(f)}
 
 #' Merge expression data, gene metadata, and sample metadata
 #'

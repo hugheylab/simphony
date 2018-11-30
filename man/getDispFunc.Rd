@@ -2,24 +2,26 @@
 % Please edit documentation in R/accessories.R
 \name{getDispFunc}
 \alias{getDispFunc}
-\title{Generate a dispersion function for the negative binomial distribution, of the
-form d(mean) = x0 + x1/mean.}
+\title{Generate a function that returns the dispersion, given expected counts}
 \usage{
-getDispFunc(x0 = 0.00783, x1 = 4.32)
+getDispFunc(x0 = 0.00783, x1 = 4.32, x2 = 1)
 }
 \arguments{
-\item{x0}{Coefficient on the constant term for the dispersion function.
-Default is 0.00783.}
+\item{x0}{Coefficient on the constant term.}
 
-\item{x1}{Coefficient on 1/mean for the dispersion function. Default is 4.32.}
+\item{x1}{Coefficient on 1 / x.}
+
+\item{x2}{Multiplicative factor.}
 }
 \value{
-An anonymous function which returns vectorized dispersion values.
+An anonymous, vectorized function.
 }
 \description{
-This is used to calculate dispersion for a negative binomial distribution
-given expected counts. Default values for x0 and x1 were estimated by using
-DESeq2 and circadian RNA-seq data from mouse lungs.
+The dispersion function is of the form d(x) = (x0 + x1 / x) * x2, where x is
+expected counts of a negative binomial distribution. Default values for x0
+and x1 were estimated using DESeq2 and circadian RNA-seq data from mouse
+lung. \code{getDispFunc} is not vectorized, so \code{x0}, \code{x1}, and \code{x2} should be
+single numeric values, not vectors.
 }
 \examples{
 x = 2^(4:6)

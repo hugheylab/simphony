@@ -61,40 +61,12 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @return List with the following elements:
 #' \describe{
 #'   \item{exprData}{Matrix of expression values (counts, if `family` ==
-#'   'negbinom'), with rownames for genes and colnames for samples.}
+#'   'negbinom'), with genes as rownames and samples as colnames.}
 #'   \item{sampleMetadata}{`data.table` with one row per sample.}
 #'   \item{geneMetadata}{`data.table` with one row per gene per condition.}
 #' }
 #'
-#' @examples
-#' # Basic usage - Simulate 100 rhythmic genes with various rhythmic parameters.
-#' library('data.table')
-#' exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
-#'                         rhyFunc = c(cos, cos, sin))
-#' simData = simphony(exprGroups, nGenes = 100, nReps = 2, family = 'negbinom')
-#'
-#' exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
-#'                       data.table(amp = c(3, 2), phase = c(0, 3)))
-#' simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
-#'
-#'
-#' # Simulate 100 genes from a single condition, with mean expression sampled
-#' # from a log-norm distribution, fit to gene expression from the <xx> dataset.
-#'
-#' library('data.table')
-#' geneBaseExpr = 2^(rnorm(100, mean = 8.72, sd = 2.16))
-#' exprGroups = data.table(base = geneBaseExpr, fracGenes = 1/100)
-#' simData = simphony(exprGroups, nGenes = 100)
-#'
-#'
-#' # Simulate 100 genes from a single condition, with amplitudes sampled from
-#' # a log-norm distribution, fit to gene expression from the <xx> dataset.
-#'
-#'
-#' library('data.table')
-#' geneAmps = 2^rnorm(100, sd = 0.415, mean = 1.322)
-#' exprGroups = data.table(amp = geneAmps, fracGenes = 1/100)
-#' simData = simphony(exprGroups, nGenes = 100)
+#' @example R/simphony_examples.R
 #'
 #' @seealso `\link{getDispFunc}`
 #'
