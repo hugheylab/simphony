@@ -20,7 +20,7 @@
 #'
 #' @export
 getDispFunc = function(x0 = 0.00783, x1 = 4.32) {
-  return(function(x) x0 + x1 / x}
+  return(function(x) x0 + x1 / x)}
 
 #' Merge expression data, gene metadata, and sample metadata
 #'
