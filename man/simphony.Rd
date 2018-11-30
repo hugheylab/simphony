@@ -28,8 +28,8 @@ values, given expected expression in counts. Only used if \code{family} ==
 non-rhythmic.}
 \item{phase}{Phase of rhythmic expression, in the same units as \code{period}.
 Defaults to 0.}
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-of 2*pi. Defaults to \code{sin}.}
+\item{rhyFunc}{Function to generate rhythmic expression. Must have a
+period of 2*pi. Defaults to \code{sin}.}
 }}
 
 \item{fracGenes}{Fraction of simulated genes to allocate to each group.
@@ -83,6 +83,7 @@ Simulate experiments in which rhythmic and non-rhythmic gene expression is
 measured at multiple timepoints in one or more conditions.
 }
 \examples{
+# Basic usage - Simulate 100 rhythmic genes with various rhythmic parameters.
 library('data.table')
 exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
                         rhyFunc = c(cos, cos, sin))
@@ -91,6 +92,25 @@ simData = simphony(exprGroups, nGenes = 100, nReps = 2, family = 'negbinom')
 exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
                       data.table(amp = c(3, 2), phase = c(0, 3)))
 simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
+
+
+# Simulate 100 genes from a single condition, with mean expression sampled
+# from a log-norm distribution, fit to gene expression from the <xx> dataset.
+
+library('data.table')
+geneBaseExpr = 2^(rnorm(100, mean = 8.72, sd = 2.16))
+exprGroups = data.table(base = geneBaseExpr, fracGenes = 1/100)
+simData = simphony(exprGroups, nGenes = 100)
+
+
+# Simulate 100 genes from a single condition, with amplitudes sampled from
+# a log-norm distribution, fit to gene expression from the <xx> dataset.
+
+
+library('data.table')
+geneAmps = 2^rnorm(100, sd = 0.415, mean = 1.322)
+exprGroups = data.table(amp = geneAmps, fracGenes = 1/100)
+simData = simphony(exprGroups, nGenes = 100)
 
 }
 \seealso{

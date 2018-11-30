@@ -11,52 +11,52 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' measured at multiple timepoints in one or more conditions.
 #'
 #' @param exprGroupsList `data.frame` or `data.table` (for a single condition)
-#' or list of `data.frame`s or `data.table`s (for multiple conditions), where
-#' each row corresponds to a group of genes to simulate. The following
-#' columns are all optional:
-#' \describe{
-#'   \item{fracGenes}{Fraction of simulated genes to allocate to each group.
-#'   Defaults to 1/(number of groups).}
-#'   \item{base}{Average expression. Defaults to 0 if `family` == 'gaussian'
-#'   and to 7 (mean log2 counts) if `family` == 'negbinom'.}
-#'   \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
-#'   Only used if `family` == 'gaussian'.}
-#'   \item{dispFunc}{Function to calculate dispersion of sampled expression
-#'   values, given expected expression in counts. Only used if `family` ==
-#'   'negbinom'.}
-#'   \item{amp}{Amplitude of rhythmic expression. Defaults to 0 (i.e.,
-#'   non-rhythmic.}
-#'   \item{phase}{Phase of rhythmic expression, in the same units as `period`.
-#'   Defaults to 0.}
-#'   \item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-#'   of 2*pi. Defaults to `sin`.}
-#' }
+#'   or list of `data.frame`s or `data.table`s (for multiple conditions), where
+#'   each row corresponds to a group of genes to simulate. The following
+#'   columns are all optional:
+#'   \describe{
+#'     \item{fracGenes}{Fraction of simulated genes to allocate to each group.
+#'       Defaults to 1/(number of groups).}
+#'     \item{base}{Average expression. Defaults to 0 if `family` == 'gaussian'
+#'       and to 7 (mean log2 counts) if `family` == 'negbinom'.}
+#'     \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
+#'       Only used if `family` == 'gaussian'.}
+#'     \item{dispFunc}{Function to calculate dispersion of sampled expression
+#'       values, given expected expression in counts. Only used if `family` ==
+#'       'negbinom'.}
+#'     \item{amp}{Amplitude of rhythmic expression. Defaults to 0 (i.e.,
+#'       non-rhythmic.}
+#'     \item{phase}{Phase of rhythmic expression, in the same units as `period`.
+#'       Defaults to 0.}
+#'     \item{rhyFunc}{Function to generate rhythmic expression. Must have a
+#'       period of 2*pi. Defaults to `sin`.}
+#'   }
 #' @param fracGenes Fraction of simulated genes to allocate to each group.
-#' Defaults to 1/(number of groups). Only used if the first `exprGroupsList`
-#' `data.frame` lacks a `fracGenes` column.
+#'   Defaults to 1/(number of groups). Only used if the first `exprGroupsList`
+#'   `data.frame` lacks a `fracGenes` column.
 #' @param nGenes Integer for the total number of genes to simulate.
 #' @param period Integer for the period of simulated rhythms.
 #' @param timepointsType Character string for how to set the timepoints
-#' for the simulation. Must be 'auto' (default), 'specified', or 'random'.
+#'   for the simulation. Must be 'auto' (default), 'specified', or 'random'.
 #' @param interval Integer for the amount of time between consecutive
-#' timepoints, in the same units as `period`. The first timepoint is 0. Only
-#' used if `timepointsType` == 'auto'.
+#'   timepoints, in the same units as `period`. The first timepoint is 0. Only
+#'   used if `timepointsType` == 'auto'.
 #' @param nReps Integer for the number of replicates per timepoint. Only used
-#' if `timepointsType` == 'auto'.
+#'   if `timepointsType` == 'auto'.
 #' @param timepoints Numeric vector of exact timepoints to simulate, including
-#' any replicates. Only used if `timepointsType` == 'specified'.
+#'   any replicates. Only used if `timepointsType` == 'specified'.
 #' @param nSamplesPerCond Integer for the number of samples per condition,
-#' which will be randomly uniformly spaced between 0 and `period` and different
-#' for each condition. Only used if timepointsType == 'random'.
+#'   which will be randomly uniformly spaced between 0 and `period` and different
+#'   for each condition. Only used if timepointsType == 'random'.
 #' @param dispFunc Function to calculate dispersion of sampled expression
-#' values, given expected expression in counts. Defaults to `defaultDispFunc`.
-#' Only used if `family` == 'negbinom' and a `data.frame` in `exprGroupsList`
-#' lacks a `dispFunc` column.
+#'   values, given expected expression in counts. Defaults to `defaultDispFunc`.
+#'   Only used if `family` == 'negbinom' and a `data.frame` in `exprGroupsList`
+#'   lacks a `dispFunc` column.
 #' @param rhyFunc Function to generate rhythmic expression. Must have a period
-#' of 2*pi. Defaults to `sin`. Only used if a `data.frame` in `exprGroupsList`
-#' lacks a `rhyFunc` column.
+#'   of 2*pi. Defaults to `sin`. Only used if a `data.frame` in `exprGroupsList`
+#'   lacks a `rhyFunc` column.
 #' @param family Character string for the family of distributions from
-#' which to generate the expression values. Must be 'gaussian' or 'negbinom'.
+#'   which to generate the expression values. Must be 'gaussian' or 'negbinom'.
 #'
 #' @return List with the following elements:
 #' \describe{
@@ -67,6 +67,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' }
 #'
 #' @examples
+#' # Basic usage - Simulate 100 rhythmic genes with various rhythmic parameters.
 #' library('data.table')
 #' exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
 #'                         rhyFunc = c(cos, cos, sin))
@@ -75,6 +76,25 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
 #'                       data.table(amp = c(3, 2), phase = c(0, 3)))
 #' simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
+#'
+#'
+#' # Simulate 100 genes from a single condition, with mean expression sampled
+#' # from a log-norm distribution, fit to gene expression from the <xx> dataset.
+#'
+#' library('data.table')
+#' geneBaseExpr = 2^(rnorm(100, mean = 8.72, sd = 2.16))
+#' exprGroups = data.table(base = geneBaseExpr, fracGenes = 1/100)
+#' simData = simphony(exprGroups, nGenes = 100)
+#'
+#'
+#' # Simulate 100 genes from a single condition, with amplitudes sampled from
+#' # a log-norm distribution, fit to gene expression from the <xx> dataset.
+#'
+#'
+#' library('data.table')
+#' geneAmps = 2^rnorm(100, sd = 0.415, mean = 1.322)
+#' exprGroups = data.table(amp = geneAmps, fracGenes = 1/100)
+#' simData = simphony(exprGroups, nGenes = 100)
 #'
 #' @seealso `\link{getDispFunc}`
 #'
@@ -114,20 +134,20 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
 #' multiple conditions.
 #'
 #' @param geneMetadata `data.table` with columns `gene`, `base`, `rhyFunc`,
-#' `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup` ==
-#' `TRUE`, then must also have columns `cond` and `group`.
+#'   `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup` ==
+#'   `TRUE`, then must also have columns `cond` and `group`.
 #' @param period Integer for the period of simulated rhythms.
 #' @param times Numeric vector of the times (in the same units as `period`) at
-#' which to calculate expected expression for each row in `geneMetadata`.
+#'   which to calculate expected expression for each row in `geneMetadata`.
 #' @param sampleMetadata `data.table` with columns `sample`, `cond`, and
-#' `time`. Either `times` or `sampleMetadata` must be provided, and the former
-#' takes precedence.
+#'   `time`. Either `times` or `sampleMetadata` must be provided, and the former
+#'   takes precedence.
 #' @param byCondGroup Logical for whether to speed up the calculation by
-#' grouping by the columns `cond` and `group`. Primarily for internal use.
+#'   grouping by the columns `cond` and `group`. Primarily for internal use.
 #'
 #' @return `data.table` derived from `geneMetadata` (but with more rows),
-#' with additional columns `time` and `mu` and possibly others. If sampling
-#' will use the negative binomial family, `mu` corresponds to log2 counts.
+#'   with additional columns `time` and `mu` and possibly others. If sampling
+#'   will use the negative binomial family, `mu` corresponds to log2 counts.
 #'
 #' @examples
 #' library('data.table')
@@ -166,16 +186,16 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #' called directly.
 #'
 #' @param exprDt `data.table` of expected expression. If `family` == 'gaussian',
-#' required columns are `gene`, `sample`, `mu`, and `sd`. If `family` ==
-#' 'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`, `cond`,
-#' and `group`.
+#'   required columns are `gene`, `sample`, `mu`, and `sd`. If `family` ==
+#'   'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`, `cond`,
+#'   and `group`.
 #' @param family Character string for the family of distributions from which
-#' to generate the expression values. Must be 'gaussian' or 'negbinom'.
+#'   to generate the expression values. Must be 'gaussian' or 'negbinom'.
 #' @param inplace Logical for whether to modify in-place `exprDt`, adding a
-#' column `expr` containing the expression values.
+#'   column `expr` containing the expression values.
 #'
 #' @return Matrix of expression values, where rows correspond to genes and
-#' columns correspond to samples.
+#'   columns correspond to samples.
 #'
 #' @examples
 #' library('data.table')
