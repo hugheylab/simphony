@@ -40,9 +40,13 @@ getTimes = function(timepointsType, interval, nReps, timepoints,
     tt = rep(tt, each = nReps)
     times = matrix(rep(tt, each = nCond), ncol = length(tt))
   } else if (timepointsType == 'specified') {
+    if (is.null(timepoints)) {
+      stop("timepoints cannot be NULL, if timepointsType is 'specified'.")}
     # don't do %%, let rhyFunc figure it out
     times = matrix(rep(timepoints, each = nCond), ncol = length(timepoints))
   } else if (timepointsType == 'random') {
+    if (is.null(nSamplesPerCond)) {
+      stop("nSamplesPerCond cannot be NULL, if timepointsType is 'random'.")}
     tt = stats::runif(nSamplesPerCond * nCond, min = 0, max = period)
     tt = matrix(tt, nrow = nCond)
     times = t(apply(tt, 1, sort))

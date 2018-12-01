@@ -90,6 +90,11 @@ exprGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
                         rhyFunc = c(cos, cos, sin))
 simData = simphony(exprGroups)
 
+# Simulate data for an experiment with specified timepoints and replicates.
+exprGroups = data.table(amp = c(0, 1))
+simData = simphony(exprGroups, timepointsType = 'specified',
+                   timepoints = rep(seq(0, 6, 2), each = 2))
+
 # Simulate data for genes whose rhythmicity varies between two conditions.
 exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
                       data.table(amp = c(3, 2), phase = c(0, 3)))
