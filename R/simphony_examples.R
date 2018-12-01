@@ -20,19 +20,12 @@ fracGenes = c(1 - rhyFrac, rep(rhyFrac / nRhyGenes, nRhyGenes))
 exprGroups = data.table(amp = c(0, rhyAmps), fracGenes = fracGenes)
 simData = simphony(exprGroups, nGenes = nGenes)
 
-# Simulate data for 100 rhythmic genes, with expression values sampled from
-# the negative binomial family and with baseline log2 expected counts sampled
-# from a normal distribution whose parameters were estimated using DESeq2 and
-# circadian RNA-seq data from mouse lung (NCBI GEO GSE54651).
-baseLogCounts = rnorm(100, mean = 8.96, sd = 2.27)
-exprGroups = data.table(base = baseLogCounts, amp = 1)
-simData = simphony(exprGroups, nGenes = nrow(exprGroups), family = 'negbinom')
-
-# Simulate data for 100 rhythmic genes, with expression values sampled from
-# the negative binomial family and with variance of residual log dispersion
-# sampled from a normal distribution whose parameters were estimated
-# using DESeq2 and circadian RNA-seq data from mouse lung (NCBI GEO GSE54651).
-dispFactors = exp(rnorm(100, sd = sqrt(1.02)))
+# Simulate data for 100 rhythmic genes, with baseline log2 expected counts and
+# residual log dispersion sampled from distributions whose parameters were
+# estimated using DESeq2 and circadian RNA-seq data from mouse lung (GSE54651).
+nGenes = 100
+baseLogCounts = rnorm(nGenes, mean = 8.96, sd = 2.27)
+dispFactors = exp(rnorm(nGenes, sd = 1.01))
 dispFuncs = sapply(dispFactors, function(z) getDispFunc(x2 = z))
-exprGroups = data.table(dispFunc = dispFuncs, amp = 1)
-simData = simphony(exprGroups, nGenes = nrow(exprGroups), family = 'negbinom')
+exprGroups = data.table(base = baseLogCounts, dispFunc = dispFuncs, amp = 1)
+simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
