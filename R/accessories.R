@@ -20,7 +20,7 @@
 #' @seealso `\link{simphony}`
 #'
 #' @export
-getDispFunc = function(x0 = 7.83e-3, x1 = 4.32, x2 = 1) {
+getDispFunc = function(x0 = 7.89e-3, x1 = 4.32, x2 = 1) {
   f = function(x) (x0 + x1 / x) * x2
   return(f)}
 

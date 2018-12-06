@@ -101,7 +101,9 @@ exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
 simData = simphony(exprGroupsList)
 
 # Simulate data for 100 genes, half non-rhythmic and half rhythmic, with
-# amplitudes for rhythmic genes sampled from a log-normal distribution.
+# amplitudes for rhythmic genes sampled from a log-normal distribution whose
+# parameters were estimated using limma and circadian microarray data from
+# mouse lung (GSE54650).
 nGenes = 100
 rhyFrac = 0.5
 nRhyGenes = round(rhyFrac * nGenes)
@@ -114,8 +116,8 @@ simData = simphony(exprGroups, nGenes = nGenes)
 # residual log dispersion sampled from distributions whose parameters were
 # estimated using DESeq2 and circadian RNA-seq data from mouse lung (GSE54651).
 nGenes = 100
-baseLogCounts = rnorm(nGenes, mean = 8.96, sd = 2.27)
-dispFactors = exp(rnorm(nGenes, sd = 1.01))
+baseLogCounts = rnorm(nGenes, mean = 8.63, sd = 2.63)
+dispFactors = exp(rnorm(nGenes, sd = 1.02))
 dispFuncs = sapply(dispFactors, function(z) getDispFunc(x2 = z))
 exprGroups = data.table(base = baseLogCounts, dispFunc = dispFuncs, amp = 1)
 simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')

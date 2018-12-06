@@ -4,7 +4,7 @@
 \alias{getDispFunc}
 \title{Generate a function that returns the dispersion, given expected counts}
 \usage{
-getDispFunc(x0 = 0.00783, x1 = 4.32, x2 = 1)
+getDispFunc(x0 = 0.00789, x1 = 4.32, x2 = 1)
 }
 \arguments{
 \item{x0}{Coefficient on the constant term.}
