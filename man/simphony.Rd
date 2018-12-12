@@ -7,7 +7,7 @@
 simphony(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
   timepointsType = "auto", interval = 2, nReps = 1,
   timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-  dispFunc = getDispFunc(), family = "gaussian")
+  dispFunc = defaultDispFunc, family = "gaussian")
 }
 \arguments{
 \item{exprGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -101,27 +101,30 @@ exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
 simData = simphony(exprGroupsList)
 
 # Simulate data for 100 genes, half non-rhythmic and half rhythmic, with
-# amplitudes for rhythmic genes sampled from a log-normal distribution whose
-# parameters were estimated using limma and circadian microarray data from
-# mouse lung (GSE54650).
+# amplitudes for rhythmic genes sampled from a distribution whose parameters
+# were estimated, using limma-voom (q <= 0.01) and fitdistrplus, from
+# circadian RNA-seq data from mouse liver (PRJNA297287).
 nGenes = 100
 rhyFrac = 0.5
 nRhyGenes = round(rhyFrac * nGenes)
-rhyAmps = 2^rnorm(nRhyGenes, sd = 0.415, mean = 1.32)
+rhyAmps = 2^rnorm(nRhyGenes, mean = -0.278, sd = 0.563)
 fracGenes = c(1 - rhyFrac, rep(rhyFrac / nRhyGenes, nRhyGenes))
 exprGroups = data.table(amp = c(0, rhyAmps), fracGenes = fracGenes)
-simData = simphony(exprGroups, nGenes = nGenes)
-
-# Simulate data for 100 rhythmic genes, with baseline log2 expected counts and
-# residual log dispersion sampled from distributions whose parameters were
-# estimated using DESeq2 and circadian RNA-seq data from mouse lung (GSE54651).
-nGenes = 100
-baseLogCounts = rnorm(nGenes, mean = 8.63, sd = 2.63)
-dispFactors = exp(rnorm(nGenes, sd = 1.02))
-dispFuncs = sapply(dispFactors, function(z) getDispFunc(x2 = z))
-exprGroups = data.table(base = baseLogCounts, dispFunc = dispFuncs, amp = 1)
 simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
+
+# Simulate data for 100 rhythmic genes, with baseline log2 expected counts
+# and residual log dispersion sampled from distributions whose parameters
+# were estimated, using DESeq2 and fitdistrplus, from circadian RNA-seq data
+# from mouse liver (PRJNA297287).
+nGenes = 100
+baseLog2Counts = rnorm(nGenes, mean = 8.63, sd = 2.73)
+dispFactors = exp(rnorm(nGenes, sd = 0.819))
+dispFuncs = sapply(dispFactors, function(z) {function(x) defaultDispFunc(x) * z})
+exprGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
+simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
+
 }
 \seealso{
-\code{\link{getDispFunc}}
+\code{\link{defaultDispFunc}}, \code{\link{getExpectedExpr}},
+\code{\link{getSampledExpr}}, \code{\link{mergeSimData}}
 }

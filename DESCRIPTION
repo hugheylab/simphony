@@ -1,6 +1,6 @@
 Package: simphony
 Title: Simulating gene expression data
-Version: 0.0.0.9016
+Version: 0.0.0.9017
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
   "Darwin Fu <darwin.y.fu.1@vumc.org> [ctb]",
@@ -11,6 +11,10 @@ Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
 License: GPL-2
 Encoding: UTF-8
+LazyData: true
+Imports:
+  data.table (>= 1.11.4),
+  foreach (>= 1.4.4)
 Suggests:
   ggplot2 (>= 3.0.0),
   kableExtra (>= 0.9.0),
@@ -19,8 +23,5 @@ Suggests:
   precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
   testthat (>= 2.0.0)
-Imports:
-  data.table (>= 1.11.4),
-  foreach (>= 1.4.4)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
