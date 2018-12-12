@@ -76,6 +76,7 @@ List with the following elements:
 'negbinom'), with genes as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
 \item{geneMetadata}{\code{data.table} with one row per gene per condition.}
+\item{simMetadata}{List of arguments that were passed to \code{simphony}.}
 }
 }
 \description{

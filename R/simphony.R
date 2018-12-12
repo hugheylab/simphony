@@ -67,6 +67,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'   'negbinom'), with genes as rownames and samples as colnames.}
 #'   \item{sampleMetadata}{`data.table` with one row per sample.}
 #'   \item{geneMetadata}{`data.table` with one row per gene per condition.}
+#'   \item{simMetadata}{List of arguments that were passed to `simphony`.}
 #' }
 #'
 #' @examples
@@ -140,4 +141,13 @@ simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
   exprDt = getExpectedExpr(gm, period, sampleMetadata = sm)
   exprMat = getSampledExpr(exprDt, family, inplace = TRUE)
 
-  return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm))}
+  # call = sys.call()
+  simMetadata = list(exprGroupsList = exprGroupsList, fracGenes = fracGenes,
+                     nGenes = nGenes, period = period,
+                     timepointsType = timepointsType, interval = interval,
+                     nReps = nReps, timepoints = timepoints,
+                     nSamplesPerCond = nSamplesPerCond, rhyFunc = rhyFunc,
+                     dispFunc = dispFunc, family = family)
+
+  return(list(exprData = exprMat, sampleMetadata = sm, geneMetadata = gm,
+              simMetadata = simMetadata))}
