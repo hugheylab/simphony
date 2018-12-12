@@ -157,15 +157,15 @@ mergeSimData = function(simData, genes) {
 #' which can then be passed to `simphony()`.
 #'
 #' @param diffExprGroups `data.frame` with optional columns `meanBase`,
-#' `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
-#' describing the changes in expression between two conditions. Each row
-#' corresponds to a group of genes.
+#'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
+#'   describing the changes in expression between two conditions. Each row
+#'   corresponds to a group of genes.
 #' @param checkValid Logical for whether to only return rows for which both
-#' amplitudes are greater than or equal to zero and both standard deviations are
-#' greater than zero.
+#'   amplitudes are greater than or equal to zero and both standard deviations
+#'   are greater than zero.
 #'
-#' @return List of two `data.table`s with possible columns `base`, `sd`,
-#' `amp`, and `phase`, depending on the columns in `diffExprGroups`.
+#' @return List of two `data.table`s with possible columns `base`, `sd`, `amp`,
+#'   and `phase`, depending on the columns in `diffExprGroups`.
 #'
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
