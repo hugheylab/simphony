@@ -4,7 +4,7 @@
 \alias{mergeSimData}
 \title{Merge expression data, gene metadata, and sample metadata}
 \usage{
-mergeSimData(simData, genes)
+mergeSimData(simData, genes = NULL)
 }
 \arguments{
 \item{simData}{List with the following elements, such as returned by
@@ -16,7 +16,8 @@ colnames for samples.}
 \item{geneMetadata}{\code{data.table} with columns \code{gene} and \code{cond}.}
 }}
 
-\item{genes}{Character vector of genes for which to get expression data.}
+\item{genes}{Character vector of genes for which to get expression data. If
+NULL, then all genes.}
 }
 \value{
 \code{data.table}.
@@ -30,7 +31,7 @@ ggplot2.
 library('data.table')
 exprGroups = data.table(amp = c(0, 1))
 simData = simphony(exprGroups)
-simDataMerged = mergeSimData(simData, simData$geneMetadata$gene[1:2])
+mergedSimData = mergeSimData(simData, simData$geneMetadata$gene[1:2])
 
 }
 \seealso{

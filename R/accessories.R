@@ -129,7 +129,8 @@ getSampledExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
 #'   \item{sampleMetadata}{`data.table` with columns `sample` and `cond`.}
 #'   \item{geneMetadata}{`data.table` with columns `gene` and `cond`.}
 #' }
-#' @param genes Character vector of genes for which to get expression data.
+#' @param genes Character vector of genes for which to get expression data. If
+#'   NULL, then all genes.
 #'
 #' @return `data.table`.
 #'
@@ -137,16 +138,20 @@ getSampledExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
 #' library('data.table')
 #' exprGroups = data.table(amp = c(0, 1))
 #' simData = simphony(exprGroups)
-#' simDataMerged = mergeSimData(simData, simData$geneMetadata$gene[1:2])
+#' mergedSimData = mergeSimData(simData, simData$geneMetadata$gene[1:2])
 #'
 #' @seealso `\link{simphony}`
 #'
 #' @export
-mergeSimData = function(simData, genes) {
-  d = data.table(t(simData$exprData[genes, ]), keep.rownames = TRUE)
-  d = merge(data.table(simData$sampleMetadata), d, by.x = 'sample', by.y = 'rn')
-  d = data.table::melt(d, measure.vars = genes, variable.name = 'gene',
-                       value.name = 'expr')
+mergeSimData = function(simData, genes = NULL) {
+  if (is.null(genes)) {
+    genes = rownames(simData$exprData)}
+
+  d = data.table(simData$exprData, keep.rownames = TRUE)
+  setnames(d, 'rn', 'gene')
+  d = melt(d, id.vars = 'gene', variable.name = 'sample', value.name = 'expr')
+
+  d = merge(d, simData$sampleMetadata, by = 'sample')
   d = merge(d, simData$geneMetadata, by = c('gene', 'cond'))
   return(d)}
 
