@@ -1,11 +1,11 @@
 Package: simphony
-Title: Simulating gene expression data
+Title: Simulating large-scale, rhythmic data
 Version: 0.0.0.9017
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
   "Darwin Fu <darwin.y.fu.1@vumc.org> [ctb]",
   "Jake Hughey <jakejhughey@gmail.com> [ctb]"))
-Description: A framework for simulating rhythmic and non-rhythmic gene expression.
+Description: A tool for simulating rhythmic data, especially transcriptome data.
 Depends: R (>= 3.4)
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
