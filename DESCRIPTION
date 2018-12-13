@@ -15,7 +15,7 @@ LazyData: true
 Imports:
   data.table (>= 1.11.4),
   foreach (>= 1.4.4),
-  locfit (1.5-9.1)
+  locfit (>= 1.5-9.1)
 Suggests:
   ggplot2 (>= 3.0.0),
   kableExtra (>= 0.9.0),
