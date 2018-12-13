@@ -59,11 +59,6 @@ test_that('Appropriate errors are thrown', {
                            data.table::data.table(base = 1))
   expect_error(simphony(badExprGroupsList),
                'Each exprGroups data.frame must have the same number of rows.')
-
-  goodExprGroupsList = list(data.table::data.table(base = c(2)),
-                            data.table::data.table(base = 1))
-  expect_error(simphony(goodExprGroupsList, family = 'socratic'),
-               'family must be \'gaussian\' or \'negbinom\'.')
 })
 
 test_that('Arbitrary values for dispersion parameters can be used.', {
