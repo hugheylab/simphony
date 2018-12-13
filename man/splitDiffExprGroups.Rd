@@ -13,12 +13,12 @@ describing the changes in expression between two conditions. Each row
 corresponds to a group of genes.}
 
 \item{checkValid}{Logical for whether to only return rows for which both
-amplitudes are greater than or equal to zero and both standard deviations are
-greater than zero.}
+amplitudes are greater than or equal to zero and both standard deviations
+are greater than zero.}
 }
 \value{
-List of two \code{data.table}s with possible columns \code{base}, \code{sd},
-\code{amp}, and \code{phase}, depending on the columns in \code{diffExprGroups}.
+List of two \code{data.table}s with possible columns \code{base}, \code{sd}, \code{amp},
+and \code{phase}, depending on the columns in \code{diffExprGroups}.
 }
 \description{
 Split a diffExprGroups data.frame into a list of two exprGroups data.frames,

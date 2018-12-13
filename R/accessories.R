@@ -1,22 +1,118 @@
-#' Calculate dispersion given expected counts
+#' Default function for mapping expected counts to dispersion.
 #'
-#' Calculate dispersion for a negative binomial distribution given expected
-#' counts. Trends were estimated by using DESeq2 and circadian RNA-seq data from
-#' mice and humans.
+#' The function was estimated from circadian RNA-seq data from mouse liver
+#' (PRJNA297287), using local regression in DESeq2. In a negative binomial
+#' distribution, variance = mean + mean^2 * dispersion.
 #'
-#' @param x Numeric vector of expected expression counts.
-#'
-#' @return Numeric vector of dispersions.
+#' @format A vectorized function with some attributes.
 #'
 #' @examples
-#' x = 2^(4:6)
-#' d = defaultDispFunc(x)
+#' means = 2^(6:10)
+#' dispersions = defaultDispFunc(means)
 #'
 #' @seealso `\link{simphony}`
+'defaultDispFunc'
+
+
+#' Calculate expected expression
+#'
+#' Calculate expected expression for multiple genes at multiple timepoints in
+#' multiple conditions.
+#'
+#' @param geneMetadata `data.table` with columns `gene`, `base`, `rhyFunc`,
+#'   `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup`
+#'   is `TRUE`, then must also have columns `cond` and `group`.
+#' @param period Integer for the period of simulated rhythms.
+#' @param times Numeric vector of the times (in the same units as `period`) at
+#'   which to calculate expected expression for each row in `geneMetadata`.
+#' @param sampleMetadata `data.table` with columns `sample`, `cond`, and
+#'   `time`. Either `times` or `sampleMetadata` must be provided, and the former
+#'   takes precedence.
+#' @param byCondGroup Logical for whether to speed up the calculation by
+#'   grouping by the columns `cond` and `group`. Primarily for internal use.
+#'
+#' @return `data.table` derived from `geneMetadata` (but with more rows),
+#'   with additional columns `time` and `mu` and possibly others. If sampling
+#'   will use the negative binomial family, `mu` corresponds to log2 counts.
+#'
+#' @examples
+#' library('data.table')
+#' geneMetadata = data.table(gene = c('gene_1', 'gene_2'), base = 0,
+#'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
+#' exprDt = getExpectedExpr(geneMetadata, times = 6:17)
+#'
+#' @seealso `\link{simphony}`, `\link{getSampledExpr}`
 #'
 #' @export
-defaultDispFunc = function(x) {
-  return(3/x)}
+getExpectedExpr = function(geneMetadata, period = 24,
+                           times = NULL, sampleMetadata = NULL,
+                           byCondGroup = is.null(times)) {
+  if (!is.null(times)) {
+    d = data.table(geneMetadata)[rep(1:.N, each = length(times))]
+    d[, time := rep(times, times = nrow(geneMetadata))]
+  } else if (!is.null(sampleMetadata)) {
+    d = merge(data.table(geneMetadata), sampleMetadata, by = 'cond',
+              allow.cartesian = TRUE)
+  } else {
+    stop('Either times or sampleMetadata must not be NULL.')}
+
+  if (isTRUE(byCondGroup)) {
+    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+      by = c('cond', 'group')]
+  } else {
+    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+      by = 1:nrow(d)]}
+  return(data.table::copy(d))}
+
+
+#' Sample expression values
+#'
+#' Sample gene expression values from the given distributions. This function
+#' is used internally by `simphony()`, and should not usually need to be
+#' called directly.
+#'
+#' @param exprDt `data.table` of expected expression. If `family` == 'gaussian',
+#'   required columns are `gene`, `sample`, `mu`, and `sd`. If `family` ==
+#'   'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`,
+#'   `cond`, and `group`.
+#' @param family Character string for the family of distributions from which
+#'   to generate the expression values. Must be 'gaussian' or 'negbinom'.
+#' @param inplace Logical for whether to modify `exprDt` in-place, adding a
+#'   column `expr` containing the expression values.
+#'
+#' @return Matrix of expression values, where rows correspond to genes and
+#'   columns correspond to samples.
+#'
+#' @examples
+#' library('data.table')
+#' set.seed(6022)
+#' exprDt = data.table(gene = 'gene_1', sample = c('sample_1', 'sample_2'),
+#'                     mu = c(0, 5), sd = 1)
+#' exprMat = getSampledExpr(exprDt)
+#'
+#' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
+#'
+#' @export
+getSampledExpr = function(exprDt, family = c('gaussian', 'negbinom'),
+                          inplace = FALSE) {
+  family = match.arg(family)
+  if (isFALSE(inplace)) {
+    exprDt = data.table(exprDt)}
+
+  if (family == 'gaussian') {
+    exprDt[, expr := stats::rnorm(.N, mu, sd)]
+  } else {
+    # dispFunc is identical for genes of the same group in the same condition
+    # this is the way I've figured out how to call functions that are columns
+    exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+           by = c('cond', 'group')]}
+
+  data.table::setorderv(exprDt, c('sample', 'gene'))
+  genes = unique(exprDt$gene)
+  samples = unique(exprDt$sample)
+  exprMat = matrix(exprDt$expr, nrow = length(genes),
+                   dimnames = list(genes, samples))
+  return(exprMat)}
 
 
 #' Merge expression data, gene metadata, and sample metadata
@@ -33,7 +129,8 @@ defaultDispFunc = function(x) {
 #'   \item{sampleMetadata}{`data.table` with columns `sample` and `cond`.}
 #'   \item{geneMetadata}{`data.table` with columns `gene` and `cond`.}
 #' }
-#' @param genes Character vector of genes for which to get expression data.
+#' @param genes Character vector of genes for which to get expression data. If
+#'   NULL, then all genes.
 #'
 #' @return `data.table`.
 #'
@@ -41,16 +138,20 @@ defaultDispFunc = function(x) {
 #' library('data.table')
 #' exprGroups = data.table(amp = c(0, 1))
 #' simData = simphony(exprGroups)
-#' simDataMerged = mergeSimData(simData, simData$geneMetadata$gene[1:2])
+#' mergedSimData = mergeSimData(simData, simData$geneMetadata$gene[1:2])
 #'
 #' @seealso `\link{simphony}`
 #'
 #' @export
-mergeSimData = function(simData, genes) {
-  d = data.table(t(simData$exprData[genes, ]), keep.rownames = TRUE)
-  d = merge(data.table(simData$sampleMetadata), d, by.x = 'sample', by.y = 'rn')
-  d = data.table::melt(d, measure.vars = genes, variable.name = 'gene',
-                       value.name = 'expr')
+mergeSimData = function(simData, genes = NULL) {
+  if (is.null(genes)) {
+    genes = rownames(simData$exprData)}
+
+  d = data.table(simData$exprData, keep.rownames = TRUE)
+  setnames(d, 'rn', 'gene')
+  d = melt(d, id.vars = 'gene', variable.name = 'sample', value.name = 'expr')
+
+  d = merge(d, simData$sampleMetadata, by = 'sample')
   d = merge(d, simData$geneMetadata, by = c('gene', 'cond'))
   return(d)}
 
@@ -61,15 +162,15 @@ mergeSimData = function(simData, genes) {
 #' which can then be passed to `simphony()`.
 #'
 #' @param diffExprGroups `data.frame` with optional columns `meanBase`,
-#' `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
-#' describing the changes in expression between two conditions. Each row
-#' corresponds to a group of genes.
+#'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
+#'   describing the changes in expression between two conditions. Each row
+#'   corresponds to a group of genes.
 #' @param checkValid Logical for whether to only return rows for which both
-#' amplitudes are greater than or equal to zero and both standard deviations are
-#' greater than zero.
+#'   amplitudes are greater than or equal to zero and both standard deviations
+#'   are greater than zero.
 #'
-#' @return List of two `data.table`s with possible columns `base`, `sd`,
-#' `amp`, and `phase`, depending on the columns in `diffExprGroups`.
+#' @return List of two `data.table`s with possible columns `base`, `sd`, `amp`,
+#'   and `phase`, depending on the columns in `diffExprGroups`.
 #'
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
@@ -102,7 +203,7 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
     d1 = cbind(d1, dHeldback)
     d2 = cbind(d2, dHeldback)}
 
-  if (checkValid) {
+  if (isTRUE(checkValid)) {
     idx = rep(TRUE, nrow(d1))
     if ('amp' %in% colnames(d1)) {
       idx = idx & (d1$amp >= 0) & (d2$amp >= 0)}

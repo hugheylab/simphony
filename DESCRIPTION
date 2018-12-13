@@ -1,16 +1,21 @@
 Package: simphony
-Title: Simulating gene expression data
-Version: 0.0.0.9016
+Title: Simulating large-scale, rhythmic data
+Version: 0.0.0.9017
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
-  "Darwin Fu <darwin.y.fu.1@vumc.org> [ctb]",
+  "Darwin Fu <darwinyfu@gmail.com> [ctb]",
   "Jake Hughey <jakejhughey@gmail.com> [ctb]"))
-Description: A framework for simulating rhythmic and non-rhythmic gene expression.
+Description: A tool for simulating rhythmic data, especially transcriptome data.
 Depends: R (>= 3.4)
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
 License: GPL-2
 Encoding: UTF-8
+LazyData: true
+Imports:
+  data.table (>= 1.11.4),
+  foreach (>= 1.4.4),
+  locfit (>= 1.5-9.1)
 Suggests:
   ggplot2 (>= 3.0.0),
   kableExtra (>= 0.9.0),
@@ -19,8 +24,5 @@ Suggests:
   precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
   testthat (>= 2.0.0)
-Imports:
-  data.table (>= 1.11.4),
-  foreach (>= 1.4.4)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr

@@ -21,7 +21,7 @@ setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
     if (!'dispFunc' %in% colnames(exprGroups)) {
       exprGroups[, dispFunc := data.table(dispFunc)] }
     if (!'base' %in% colnames(exprGroups)) {
-      exprGroups[, base := 7]}}
+      exprGroups[, base := 8]}}
   else {
     if (!'sd' %in% colnames(exprGroups)) {
       exprGroups[, sd := 1]
@@ -34,20 +34,22 @@ setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
 
 
 getTimes = function(timepointsType, interval, nReps, timepoints,
-                    nSamplesPerCond, nCond, period) {
+                    nSamplesPerCond, nConds, period) {
   if (timepointsType == 'auto') {
     tt = interval * 0:(period %/% interval - (period %% interval == 0))
     tt = rep(tt, each = nReps)
-    times = matrix(rep(tt, each = nCond), ncol = length(tt))
+    times = matrix(rep(tt, each = nConds), ncol = length(tt))
   } else if (timepointsType == 'specified') {
+    if (is.null(timepoints)) {
+      stop("timepoints cannot be NULL, if timepointsType is 'specified'.")}
     # don't do %%, let rhyFunc figure it out
-    times = matrix(rep(timepoints, each = nCond), ncol = length(timepoints))
+    times = matrix(rep(timepoints, each = nConds), ncol = length(timepoints))
   } else if (timepointsType == 'random') {
-    tt = stats::runif(nSamplesPerCond * nCond, min = 0, max = period)
-    tt = matrix(tt, nrow = nCond)
-    times = t(apply(tt, 1, sort))
-  } else {
-    stop("timepointsType must be 'auto', 'specified', or 'random'.")}
+    if (is.null(nSamplesPerCond)) {
+      stop("nSamplesPerCond cannot be NULL, if timepointsType is 'random'.")}
+    tt = stats::runif(nSamplesPerCond * nConds, min = 0, max = period)
+    tt = matrix(tt, nrow = nConds)
+    times = t(apply(tt, 1, sort))}
   return(times)}
 
 
@@ -85,9 +87,9 @@ getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
 getGeneMetadata = function(exprGroupsList, fracGenes, nGenes) {
   nGenesPerGroup = getNGenesPerGroup(exprGroupsList[[1]], fracGenes, nGenes)
   genes = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
-  nCond = length(exprGroupsList)
+  nConds = length(exprGroupsList)
 
-  gm = foreach(exprGroups = exprGroupsList, cond = 1:nCond, .combine = rbind) %do% {
+  gm = foreach(exprGroups = exprGroupsList, cond = 1:nConds, .combine = rbind) %do% {
     gmNow = exprGroups[rep(1:.N, times = nGenesPerGroup)]
     gmNow[, cond := ..cond]
     gmNow[, gene := genes]

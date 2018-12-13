@@ -38,10 +38,11 @@ test_that('Number of genes and samples simulated are predictable', {
 })
 
 test_that('Statistics from NBD are as expected', {
+  dispFunc = getDispFunc()
   base = c(3, 5, 7)
-  expectedVariance = 2^base + defaultDispFunc(2^base) * ((2^base)^2)
+  expectedVariance = 2^base + dispFunc(2^base) * ((2^base)^2)
 
-  exprGroupsList = data.table::data.table(base = base, amp = 0, dispFunc = defaultDispFunc)
+  exprGroupsList = data.table::data.table(base = base, amp = 0, dispFunc = dispFunc)
   simGse = simphony(exprGroupsList, nGenes = 3, nReps = 500, family = 'negbinom')
 
   exprData = data.table::data.table(expr = c(t(simGse$exprData)),
@@ -50,7 +51,7 @@ test_that('Statistics from NBD are as expected', {
   expect_equal(exprData[, log2(mean(expr)), by = gene][, V1], base, tolerance = 1e-1)
   expect_equal(exprData[, var(expr), by = gene][, V1], expectedVariance, tolerance = 1e-1)
 
-  rm(base, expectedVariance, exprGroupsList, simGse, exprData)
+  rm(base, expectedVariance, exprGroupsList, simGse, exprData, dispFunc)
 })
 
 test_that('Appropriate errors are thrown', {
@@ -58,9 +59,14 @@ test_that('Appropriate errors are thrown', {
                            data.table::data.table(base = 1))
   expect_error(simphony(badExprGroupsList),
                'Each exprGroups data.frame must have the same number of rows.')
+})
 
-  goodExprGroupsList = list(data.table::data.table(base = c(2)),
-                            data.table::data.table(base = 1))
-  expect_error(simphony(goodExprGroupsList, family = 'socratic'),
-               'family must be \'gaussian\' or \'negbinom\'.')
+test_that('Arbitrary values for dispersion parameters can be used.', {
+  x0 = 3
+  x1 = 1.435
+
+  dispFunc = getDispFunc(x0, x1)
+  expect_silent(simphony(data.table::data.table(amp = 1), dispFunc = dispFunc))
+
+  rm(x0, x1, dispFunc)
 })

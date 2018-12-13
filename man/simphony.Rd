@@ -5,9 +5,10 @@
 \title{Simulate gene expression data}
 \usage{
 simphony(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
-  timepointsType = "auto", interval = 2, nReps = 1,
-  timepoints = NULL, nSamplesPerCond = NULL,
-  dispFunc = defaultDispFunc, rhyFunc = sin, family = "gaussian")
+  timepointsType = c("auto", "specified", "random"), interval = 2,
+  nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
+  rhyFunc = sin, dispFunc = defaultDispFunc, family = c("gaussian",
+  "negbinom"))
 }
 \arguments{
 \item{exprGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -18,7 +19,7 @@ columns are all optional:
 \item{fracGenes}{Fraction of simulated genes to allocate to each group.
 Defaults to 1/(number of groups).}
 \item{base}{Average expression. Defaults to 0 if \code{family} == 'gaussian'
-and to 7 (mean log2 counts) if \code{family} == 'negbinom'.}
+and to 8 (mean log2 counts) if \code{family} == 'negbinom'.}
 \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
 Only used if \code{family} == 'gaussian'.}
 \item{dispFunc}{Function to calculate dispersion of sampled expression
@@ -28,8 +29,8 @@ values, given expected expression in counts. Only used if \code{family} ==
 non-rhythmic.}
 \item{phase}{Phase of rhythmic expression, in the same units as \code{period}.
 Defaults to 0.}
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-of 2*pi. Defaults to \code{sin}.}
+\item{rhyFunc}{Function to generate rhythmic expression. Must have a
+period of 2*pi. Defaults to \code{sin}.}
 }}
 
 \item{fracGenes}{Fraction of simulated genes to allocate to each group.
@@ -54,17 +55,17 @@ if \code{timepointsType} == 'auto'.}
 any replicates. Only used if \code{timepointsType} == 'specified'.}
 
 \item{nSamplesPerCond}{Integer for the number of samples per condition,
-which will be randomly uniformly spaced between 0 and \code{period} and different
-for each condition. Only used if timepointsType == 'random'.}
+which will be randomly uniformly spaced between 0 and \code{period} and
+different for each condition. Only used if timepointsType == 'random'.}
+
+\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
+of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}
+lacks a \code{rhyFunc} column.}
 
 \item{dispFunc}{Function to calculate dispersion of sampled expression
 values, given expected expression in counts. Defaults to \code{defaultDispFunc}.
 Only used if \code{family} == 'negbinom' and a \code{data.frame} in \code{exprGroupsList}
 lacks a \code{dispFunc} column.}
-
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}
-lacks a \code{rhyFunc} column.}
 
 \item{family}{Character string for the family of distributions from
 which to generate the expression values. Must be 'gaussian' or 'negbinom'.}
@@ -73,9 +74,10 @@ which to generate the expression values. Must be 'gaussian' or 'negbinom'.}
 List with the following elements:
 \describe{
 \item{exprData}{Matrix of expression values (counts, if \code{family} ==
-'negbinom'), with rownames for genes and colnames for samples.}
+'negbinom'), with genes as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
 \item{geneMetadata}{\code{data.table} with one row per gene per condition.}
+\item{simMetadata}{List of arguments that were passed to \code{simphony}.}
 }
 }
 \description{
@@ -84,15 +86,47 @@ measured at multiple timepoints in one or more conditions.
 }
 \examples{
 library('data.table')
-exprGroups = data.table(amp = c(1, 2, 2), phase = c(0, 0, 6),
-                        rhyFunc = c(cos, cos, sin))
-simData = simphony(exprGroups, nGenes = 100, nReps = 2, family = 'negbinom')
 
+# Simulate data for genes having one of three sets of rhythmic parameters.
+exprGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
+                        rhyFunc = c(cos, cos, sin))
+simData = simphony(exprGroups)
+
+# Simulate data for an experiment with specified timepoints and replicates.
+exprGroups = data.table(amp = c(0, 1))
+simData = simphony(exprGroups, timepointsType = 'specified',
+                   timepoints = rep(seq(0, 6, 2), each = 2))
+
+# Simulate data for genes whose rhythmicity varies between two conditions.
 exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
                       data.table(amp = c(3, 2), phase = c(0, 3)))
-simData = simphony(exprGroupsList, nGenes = 2, interval = 4)
+simData = simphony(exprGroupsList)
+
+# Simulate data for 100 genes, half non-rhythmic and half rhythmic, with
+# amplitudes for rhythmic genes sampled from a distribution whose parameters
+# were estimated, using limma-voom (q <= 0.01) and fitdistrplus, from
+# circadian RNA-seq data from mouse liver (PRJNA297287).
+nGenes = 100
+rhyFrac = 0.5
+nRhyGenes = round(rhyFrac * nGenes)
+rhyAmps = 2^rnorm(nRhyGenes, mean = -0.278, sd = 0.563)
+fracGenes = c(1 - rhyFrac, rep(rhyFrac / nRhyGenes, nRhyGenes))
+exprGroups = data.table(amp = c(0, rhyAmps), fracGenes = fracGenes)
+simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
+
+# Simulate data for 100 rhythmic genes, with baseline log2 expected counts
+# and residual log dispersion sampled from distributions whose parameters
+# were estimated, using DESeq2 and fitdistrplus, from circadian RNA-seq data
+# from mouse liver (PRJNA297287).
+nGenes = 100
+baseLog2Counts = rnorm(nGenes, mean = 8.63, sd = 2.73)
+dispFactors = exp(rnorm(nGenes, sd = 0.819))
+dispFuncs = sapply(dispFactors, function(z) {function(x) defaultDispFunc(x) * z})
+exprGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
+simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
 
 }
 \seealso{
-\code{\link{defaultDispFunc}}
+\code{\link{defaultDispFunc}}, \code{\link{getExpectedExpr}},
+\code{\link{getSampledExpr}}, \code{\link{mergeSimData}}
 }

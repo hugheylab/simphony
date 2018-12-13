@@ -2,24 +2,19 @@
 % Please edit documentation in R/accessories.R
 \name{defaultDispFunc}
 \alias{defaultDispFunc}
-\title{Calculate dispersion given expected counts}
+\title{Default function for mapping expected counts to dispersion.}
+\format{A vectorized function with some attributes.}
 \usage{
-defaultDispFunc(x)
-}
-\arguments{
-\item{x}{Numeric vector of expected expression counts.}
-}
-\value{
-Numeric vector of dispersions.
+defaultDispFunc(means)
 }
 \description{
-Calculate dispersion for a negative binomial distribution given expected
-counts. Trends were estimated by using DESeq2 and circadian RNA-seq data from
-mice and humans.
+The function was estimated from circadian RNA-seq data from mouse liver
+(PRJNA297287), using local regression in DESeq2. In a negative binomial
+distribution, variance = mean + mean^2 * dispersion.
 }
 \examples{
-x = 2^(4:6)
-d = defaultDispFunc(x)
+means = 2^(6:10)
+dispersions = defaultDispFunc(means)
 
 }
 \seealso{
