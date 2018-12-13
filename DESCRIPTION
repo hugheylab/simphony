@@ -3,7 +3,7 @@ Title: Simulating large-scale, rhythmic data
 Version: 0.0.0.9017
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
-  "Darwin Fu <darwin.y.fu.1@vumc.org> [ctb]",
+  "Darwin Fu <darwinyfu@gmail.com> [ctb]",
   "Jake Hughey <jakejhughey@gmail.com> [ctb]"))
 Description: A tool for simulating rhythmic data, especially transcriptome data.
 Depends: R (>= 3.4)
