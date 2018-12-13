@@ -21,7 +21,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'     \item{fracGenes}{Fraction of simulated genes to allocate to each group.
 #'       Defaults to 1/(number of groups).}
 #'     \item{base}{Average expression. Defaults to 0 if `family` == 'gaussian'
-#'       and to 7 (mean log2 counts) if `family` == 'negbinom'.}
+#'       and to 8 (mean log2 counts) if `family` == 'negbinom'.}
 #'     \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
 #'       Only used if `family` == 'gaussian'.}
 #'     \item{dispFunc}{Function to calculate dispersion of sampled expression

@@ -21,7 +21,7 @@ setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
     if (!'dispFunc' %in% colnames(exprGroups)) {
       exprGroups[, dispFunc := data.table(dispFunc)] }
     if (!'base' %in% colnames(exprGroups)) {
-      exprGroups[, base := 7]}}
+      exprGroups[, base := 8]}}
   else {
     if (!'sd' %in% colnames(exprGroups)) {
       exprGroups[, sd := 1]

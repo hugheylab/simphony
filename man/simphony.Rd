@@ -19,7 +19,7 @@ columns are all optional:
 \item{fracGenes}{Fraction of simulated genes to allocate to each group.
 Defaults to 1/(number of groups).}
 \item{base}{Average expression. Defaults to 0 if \code{family} == 'gaussian'
-and to 7 (mean log2 counts) if \code{family} == 'negbinom'.}
+and to 8 (mean log2 counts) if \code{family} == 'negbinom'.}
 \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
 Only used if \code{family} == 'gaussian'.}
 \item{dispFunc}{Function to calculate dispersion of sampled expression
