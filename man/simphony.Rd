@@ -5,9 +5,10 @@
 \title{Simulate gene expression data}
 \usage{
 simphony(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
-  timepointsType = "auto", interval = 2, nReps = 1,
-  timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-  dispFunc = defaultDispFunc, family = "gaussian")
+  timepointsType = c("auto", "specified", "random"), interval = 2,
+  nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
+  rhyFunc = sin, dispFunc = defaultDispFunc, family = c("gaussian",
+  "negbinom"))
 }
 \arguments{
 \item{exprGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -54,8 +55,8 @@ if \code{timepointsType} == 'auto'.}
 any replicates. Only used if \code{timepointsType} == 'specified'.}
 
 \item{nSamplesPerCond}{Integer for the number of samples per condition,
-which will be randomly uniformly spaced between 0 and \code{period} and different
-for each condition. Only used if timepointsType == 'random'.}
+which will be randomly uniformly spaced between 0 and \code{period} and
+different for each condition. Only used if timepointsType == 'random'.}
 
 \item{rhyFunc}{Function to generate rhythmic expression. Must have a period
 of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}

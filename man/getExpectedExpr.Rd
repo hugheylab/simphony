@@ -9,8 +9,8 @@ getExpectedExpr(geneMetadata, period = 24, times = NULL,
 }
 \arguments{
 \item{geneMetadata}{\code{data.table} with columns \code{gene}, \code{base}, \code{rhyFunc},
-\code{amp}, and \code{phase}, where every row corresponds to a gen. If \code{byCondGroup} ==
-\code{TRUE}, then must also have columns \code{cond} and \code{group}.}
+\code{amp}, and \code{phase}, where every row corresponds to a gen. If \code{byCondGroup}
+is \code{TRUE}, then must also have columns \code{cond} and \code{group}.}
 
 \item{period}{Integer for the period of simulated rhythms.}
 

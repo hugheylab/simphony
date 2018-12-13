@@ -20,8 +20,8 @@
 #' multiple conditions.
 #'
 #' @param geneMetadata `data.table` with columns `gene`, `base`, `rhyFunc`,
-#'   `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup` ==
-#'   `TRUE`, then must also have columns `cond` and `group`.
+#'   `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup`
+#'   is `TRUE`, then must also have columns `cond` and `group`.
 #' @param period Integer for the period of simulated rhythms.
 #' @param times Numeric vector of the times (in the same units as `period`) at
 #'   which to calculate expected expression for each row in `geneMetadata`.
@@ -56,7 +56,7 @@ getExpectedExpr = function(geneMetadata, period = 24,
   } else {
     stop('Either times or sampleMetadata must not be NULL.')}
 
-  if (byCondGroup) {
+  if (isTRUE(byCondGroup)) {
     d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
       by = c('cond', 'group')]
   } else {
@@ -73,11 +73,11 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #'
 #' @param exprDt `data.table` of expected expression. If `family` == 'gaussian',
 #'   required columns are `gene`, `sample`, `mu`, and `sd`. If `family` ==
-#'   'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`, `cond`,
-#'   and `group`.
+#'   'negbinom', required columns are `gene`, `sample`, `mu`, `dispFunc`,
+#'   `cond`, and `group`.
 #' @param family Character string for the family of distributions from which
 #'   to generate the expression values. Must be 'gaussian' or 'negbinom'.
-#' @param inplace Logical for whether to modify in-place `exprDt`, adding a
+#' @param inplace Logical for whether to modify `exprDt` in-place, adding a
 #'   column `expr` containing the expression values.
 #'
 #' @return Matrix of expression values, where rows correspond to genes and
@@ -93,19 +93,19 @@ getExpectedExpr = function(geneMetadata, period = 24,
 #' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
 #'
 #' @export
-getSampledExpr = function(exprDt, family = 'gaussian', inplace = FALSE) {
-  if (!inplace) {
+getSampledExpr = function(exprDt, family = c('gaussian', 'negbinom'),
+                          inplace = FALSE) {
+  family = match.arg(family)
+  if (isFALSE(inplace)) {
     exprDt = data.table(exprDt)}
 
   if (family == 'gaussian') {
     exprDt[, expr := stats::rnorm(.N, mu, sd)]
-  } else if (family == 'negbinom') {
+  } else {
     # dispFunc is identical for genes of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
     exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
-           by = c('cond', 'group')]
-  } else {
-    stop("family must be 'gaussian' or 'negbinom'.")}
+           by = c('cond', 'group')]}
 
   data.table::setorderv(exprDt, c('sample', 'gene'))
   genes = unique(exprDt$gene)
@@ -203,7 +203,7 @@ splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
     d1 = cbind(d1, dHeldback)
     d2 = cbind(d2, dHeldback)}
 
-  if (checkValid) {
+  if (isTRUE(checkValid)) {
     idx = rep(TRUE, nrow(d1))
     if ('amp' %in% colnames(d1)) {
       idx = idx & (d1$amp >= 0) & (d2$amp >= 0)}

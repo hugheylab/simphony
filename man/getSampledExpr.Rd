@@ -4,18 +4,19 @@
 \alias{getSampledExpr}
 \title{Sample expression values}
 \usage{
-getSampledExpr(exprDt, family = "gaussian", inplace = FALSE)
+getSampledExpr(exprDt, family = c("gaussian", "negbinom"),
+  inplace = FALSE)
 }
 \arguments{
 \item{exprDt}{\code{data.table} of expected expression. If \code{family} == 'gaussian',
 required columns are \code{gene}, \code{sample}, \code{mu}, and \code{sd}. If \code{family} ==
-'negbinom', required columns are \code{gene}, \code{sample}, \code{mu}, \code{dispFunc}, \code{cond},
-and \code{group}.}
+'negbinom', required columns are \code{gene}, \code{sample}, \code{mu}, \code{dispFunc},
+\code{cond}, and \code{group}.}
 
 \item{family}{Character string for the family of distributions from which
 to generate the expression values. Must be 'gaussian' or 'negbinom'.}
 
-\item{inplace}{Logical for whether to modify in-place \code{exprDt}, adding a
+\item{inplace}{Logical for whether to modify \code{exprDt} in-place, adding a
 column \code{expr} containing the expression values.}
 }
 \value{

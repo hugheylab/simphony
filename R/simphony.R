@@ -49,8 +49,8 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @param timepoints Numeric vector of exact timepoints to simulate, including
 #'   any replicates. Only used if `timepointsType` == 'specified'.
 #' @param nSamplesPerCond Integer for the number of samples per condition,
-#'   which will be randomly uniformly spaced between 0 and `period` and different
-#'   for each condition. Only used if timepointsType == 'random'.
+#'   which will be randomly uniformly spaced between 0 and `period` and
+#'   different for each condition. Only used if timepointsType == 'random'.
 #' @param dispFunc Function to calculate dispersion of sampled expression
 #'   values, given expected expression in counts. Defaults to `defaultDispFunc`.
 #'   Only used if `family` == 'negbinom' and a `data.frame` in `exprGroupsList`
@@ -116,11 +116,13 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'
 #' @export
 simphony = function(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
-                    timepointsType = 'auto', interval = 2, nReps = 1,
-                    timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-                    dispFunc = defaultDispFunc, family = 'gaussian') {
-  if (!family %in% c('gaussian', 'negbinom')) {
-    stop("family must be 'gaussian' or 'negbinom'.")}
+                    timepointsType = c('auto', 'specified', 'random'),
+                    interval = 2, nReps = 1, timepoints = NULL,
+                    nSamplesPerCond = NULL, rhyFunc = sin,
+                    dispFunc = defaultDispFunc,
+                    family = c('gaussian', 'negbinom')) {
+  family = match.arg(family)
+  timepointsType = match.arg(timepointsType)
 
   if (is.data.frame(exprGroupsList)) {
     exprGroupsList = list(exprGroupsList)
