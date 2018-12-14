@@ -103,16 +103,14 @@ exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
 simData = simphony(exprGroupsList)
 
 # Simulate data for 100 genes, half non-rhythmic and half rhythmic, with
-# amplitudes for rhythmic genes sampled from a distribution whose parameters
-# were estimated, using limma-voom (q <= 0.01) and fitdistrplus, from
-# circadian RNA-seq data from mouse liver (PRJNA297287).
+# amplitudes for rhythmic genes sampled from a log-normal distribution.
 nGenes = 100
 rhyFrac = 0.5
 nRhyGenes = round(rhyFrac * nGenes)
-rhyAmps = 2^rnorm(nRhyGenes, mean = -0.278, sd = 0.563)
+rhyAmps = exp(rnorm(nRhyGenes, mean = 0, sd = 0.25))
 fracGenes = c(1 - rhyFrac, rep(rhyFrac / nRhyGenes, nRhyGenes))
 exprGroups = data.table(amp = c(0, rhyAmps), fracGenes = fracGenes)
-simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
+simData = simphony(exprGroups, nGenes = nGenes)
 
 # Simulate data for 100 rhythmic genes, with baseline log2 expected counts
 # and residual log dispersion sampled from distributions whose parameters
