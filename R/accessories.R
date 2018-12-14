@@ -147,7 +147,7 @@ mergeSimData = function(simData, genes = NULL) {
   if (is.null(genes)) {
     genes = rownames(simData$exprData)}
 
-  d = data.table(simData$exprData, keep.rownames = TRUE)
+  d = data.table(simData$exprData[genes, ], keep.rownames = TRUE)
   setnames(d, 'rn', 'gene')
   d = melt(d, id.vars = 'gene', variable.name = 'sample', value.name = 'expr')
 
