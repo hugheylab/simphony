@@ -35,11 +35,11 @@ Here we create a `data.table` called `exprGroups` that specifies the desired pro
 Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point.
 ```{r}
 set.seed(44)
-exprGroups = data.table(fracGenes = c(0.75, 0.25), amp = c(0, 0.3))
-simData = simphony(exprGroups, nGenes = 200, interval = 2, nReps = 1, family = 'negbinom')
+exprGroups = data.table(fracFeatures = c(0.75, 0.25), amp = c(0, 0.3))
+simData = simphony(exprGroups, nFeatures = 200, interval = 2, nReps = 1, family = 'negbinom')
 ```
 
-The output of `simphony` has three components: `exprData`, `sampleMetadata`, and `geneMetadata`. `exprData` is a matrix that contains the simulated expression values. Each row of corresponds to a gene, each column corresponds to a sample. Since we sampled from the negative binomial family, all expression values are integers.
+The output of `simphony` has three components: `exprData`, `sampleMetadata`, and `featureMetadata`. `exprData` is a matrix that contains the simulated expression values. Each row of corresponds to a gene, each column corresponds to a sample. Since we sampled from the negative binomial family, all expression values are integers.
 ```{r}
 kable(simData$exprData[1:3, 1:3])
 ```
@@ -49,9 +49,9 @@ kable(simData$exprData[1:3, 1:3])
 kable(simData$sampleMetadata[1:3,])
 ```
 
-`geneMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `exprGroups` to which the gene belongs.
+`featureMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `exprGroups` to which the gene belongs.
 ```{r}
-kable(simData$geneMetadata[149:151,]) %>%
+kable(simData$featureMetadata[149:151,]) %>%
   kable_styling(font_size = 12)
 ```
 
@@ -59,22 +59,22 @@ kable(simData$geneMetadata[149:151,]) %>%
 
 Here we plot the simulated time-course for a non-rhythmic gene and a rhythmic gene. We use the `mergeSimData` function to merge the expression values, the sample metadata, and the gene metadata.
 ```{r}
-gmExample = simData$geneMetadata[gene %in% c('gene_150', 'gene_151')]
-dExample = mergeSimData(simData, gmExample$gene)
+fmExample = simData$featureMetadata[feature %in% c('feature_150', 'feature_151')]
+dExample = mergeSimData(simData, fmExample$feature)
 ```
 
 We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the `getExpectedExpr` function. Since we sampled from the negative binomial family, the resulting `mu` column corresponds to the expected log~2~ counts.
 ```{r}
-dExpect = getExpectedExpr(gmExample, 24, times = seq(0, 24, 0.25))
+dExpect = getExpectedExpr(fmExample, 24, times = seq(0, 24, 0.25))
 ```
 
 Then it all comes together with `ggplot`.
 ```{r, fig.width = 6, fig.height = 2.75}
-dExample[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
-dExpect[, geneLabel := paste(gene, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+dExample[, featureLabel := paste(feature, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+dExpect[, featureLabel := paste(feature, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 ggplot(dExample) +
-  facet_wrap(~ geneLabel, nrow = 1) +
+  facet_wrap(~ featureLabel, nrow = 1) +
   geom_line(aes(x = time, y = log2(2^mu + 1)), size = 0.25, data = dExpect) +
   geom_point(aes(x = time, y = log2(expr + 1)), shape = 21, size = 2.5) +
   labs(x = 'Time (h)', y = expression(log[2](counts+1))) +
@@ -100,10 +100,10 @@ rhyLimma = topTable(fit, coef = 2:3, number = Inf)
 
 ## Evaluate accuracy of rhythmic gene detection
 
-First we merge the results from *limma* with the known amplitudes from `geneMetadata`.
+First we merge the results from *limma* with the known amplitudes from `featureMetadata`.
 ```{r}
-rhyLimma$gene = rownames(rhyLimma)
-rhyLimma = merge(data.table(rhyLimma), simData$geneMetadata[, .(gene, amp)], by = 'gene')
+rhyLimma$feature = rownames(rhyLimma)
+rhyLimma = merge(data.table(rhyLimma), simData$featureMetadata[, .(feature, amp)], by = 'feature')
 ```
 
 We can plot the distributions of p-values of rhythmicity for non-rhythmic and rhythmic genes. P-values for non-rhythmic genes are uniformly distributed between 0 and 1, as they should be under the null hypothesis. P-values for rhythmic genes, on the other hand, tend to be closer to 0.

@@ -1,4 +1,4 @@
-setDefaultExprGroups = function(exprGroups, nGenes, dispFunc, rhyFunc, family) {
+setDefaultExprGroups = function(exprGroups, nFeatures, dispFunc, rhyFunc, family) {
   if ('group' %in% colnames(exprGroups)) {
     stop("exprGroups must not have a column named 'group'.")}
 
@@ -64,35 +64,35 @@ getSampleMetadata = function(times) {
   return(sm)}
 
 
-getNGenesPerGroup = function(exprGroups, fracGenes, nGenes) {
-  if ('fracGenes' %in% colnames(exprGroups)) {
-    fracGenes = exprGroups$fracGenes
-  } else if (is.null(fracGenes)) {
-    fracGenes = rep(1 / nrow(exprGroups), nrow(exprGroups))
-  } else if (length(fracGenes) != nrow(exprGroups)) {
-    stop('Length of fracGenes must equal number of rows in exprGroups.')}
+getNFeaturesPerGroup = function(exprGroups, fracFeatures, nFeatures) {
+  if ('fracFeatures' %in% colnames(exprGroups)) {
+    fracFeatures = exprGroups$fracFeatures
+  } else if (is.null(fracFeatures)) {
+    fracFeatures = rep(1 / nrow(exprGroups), nrow(exprGroups))
+  } else if (length(fracFeatures) != nrow(exprGroups)) {
+    stop('Length of fracFeatures must equal number of rows in exprGroups.')}
 
-  nGenesPerGroup = as.integer(fracGenes * nGenes)
-  if (sum(nGenesPerGroup) != nGenes) {
-    nGenesPerGroup[1L:(nGenes - sum(nGenesPerGroup))] =
-      nGenesPerGroup[1L:(nGenes - sum(nGenesPerGroup))] + 1L}
+  nFeaturesPerGroup = as.integer(fracFeatures * nFeatures)
+  if (sum(nFeaturesPerGroup) != nFeatures) {
+    nFeaturesPerGroup[1L:(nFeatures - sum(nFeaturesPerGroup))] =
+      nFeaturesPerGroup[1L:(nFeatures - sum(nFeaturesPerGroup))] + 1L}
 
-  if (any(nGenesPerGroup) == 0) {
-    stop(paste(c('At least one group has no genes. Increase nGenes,',
-                 'reduce the number of groups, or change fracGenes.'),
+  if (any(nFeaturesPerGroup) == 0) {
+    stop(paste(c('At least one group has no features. Increase nFeatures,',
+                 'reduce the number of groups, or change fracFeatures.'),
                collapse = ' '))}
-  return(nGenesPerGroup)}
+  return(nFeaturesPerGroup)}
 
 
-getGeneMetadata = function(exprGroupsList, fracGenes, nGenes) {
-  nGenesPerGroup = getNGenesPerGroup(exprGroupsList[[1]], fracGenes, nGenes)
-  genes = sprintf(sprintf('gene_%%0%dd', floor(log10(nGenes)) + 1), 1:nGenes)
+getFeatureMetadata = function(exprGroupsList, fracFeatures, nFeatures) {
+  nFeaturesPerGroup = getNFeaturesPerGroup(exprGroupsList[[1]], fracFeatures, nFeatures)
+  features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1), 1:nFeatures)
   nConds = length(exprGroupsList)
 
-  gm = foreach(exprGroups = exprGroupsList, cond = 1:nConds, .combine = rbind) %do% {
-    gmNow = exprGroups[rep(1:.N, times = nGenesPerGroup)]
-    gmNow[, cond := ..cond]
-    gmNow[, gene := genes]
-    data.table::setcolorder(gmNow, c('cond', 'group', 'gene'))
-    gmNow}
-  return(gm)}
+  fm = foreach(exprGroups = exprGroupsList, cond = 1:nConds, .combine = rbind) %do% {
+    fmNow = exprGroups[rep(1:.N, times = nFeaturesPerGroup)]
+    fmNow[, cond := ..cond]
+    fmNow[, feature := features]
+    data.table::setcolorder(fmNow, c('cond', 'group', 'feature'))
+    fmNow}
+  return(fm)}
