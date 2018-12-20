@@ -39,12 +39,12 @@
 #' library('data.table')
 #' featureMetadata = data.table(feature = c('feature_1', 'feature_2'), base = 0,
 #'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
-#' abundDt = getExpectedExpr(featureMetadata, times = 6:17)
+#' abundDt = getExpectedAbund(featureMetadata, times = 6:17)
 #'
-#' @seealso `\link{simphony}`, `\link{getSampledExpr}`
+#' @seealso `\link{simphony}`, `\link{getSampledAbund}`
 #'
 #' @export
-getExpectedExpr = function(featureMetadata, period = 24,
+getExpectedAbund = function(featureMetadata, period = 24,
                            times = NULL, sampleMetadata = NULL,
                            byCondGroup = is.null(times)) {
   if (!is.null(times)) {
@@ -88,12 +88,12 @@ getExpectedExpr = function(featureMetadata, period = 24,
 #' set.seed(6022)
 #' abundDt = data.table(feature = 'feature_1', sample = c('sample_1', 'sample_2'),
 #'                     mu = c(0, 5), sd = 1)
-#' abundMat = getSampledExpr(abundDt)
+#' abundMat = getSampledAbund(abundDt)
 #'
-#' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
+#' @seealso `\link{simphony}`, `\link{getExpectedAbund}`
 #'
 #' @export
-getSampledExpr = function(abundDt, family = c('gaussian', 'negbinom'),
+getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom'),
                           inplace = FALSE) {
   family = match.arg(family)
   if (isFALSE(inplace)) {
@@ -136,8 +136,8 @@ getSampledExpr = function(abundDt, family = c('gaussian', 'negbinom'),
 #'
 #' @examples
 #' library('data.table')
-#' abundGroups = data.table(amp = c(0, 1))
-#' simData = simphony(abundGroups)
+#' featureGroups = data.table(amp = c(0, 1))
+#' simData = simphony(featureGroups)
 #' mergedSimData = mergeSimData(simData, simData$featureMetadata$feature[1:2])
 #'
 #' @seealso `\link{simphony}`
@@ -147,7 +147,7 @@ mergeSimData = function(simData, features = NULL) {
   if (is.null(features)) {
     features = rownames(simData$abundData)}
 
-  d = data.table(simData$abundData, keep.rownames = TRUE)
+  d = data.table(simData$abundData[features, ], keep.rownames = TRUE)
   setnames(d, 'rn', 'feature')
   d = melt(d, id.vars = 'feature', variable.name = 'sample', value.name = 'abund')
 
@@ -156,12 +156,12 @@ mergeSimData = function(simData, features = NULL) {
   return(d)}
 
 
-#' Split differential abundGroups
+#' Split differential featureGroups
 #'
-#' Split a diffExprGroups data.frame into a list of two abundGroups data.frames,
+#' Split a diffAbundGroups data.frame into a list of two featureGroups data.frames,
 #' which can then be passed to `simphony()`.
 #'
-#' @param diffExprGroups `data.frame` with optional columns `meanBase`,
+#' @param diffAbundGroups `data.frame` with optional columns `meanBase`,
 #'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
 #'   describing the changes in abundance between two conditions. Each row
 #'   corresponds to a group of features.
@@ -170,18 +170,18 @@ mergeSimData = function(simData, features = NULL) {
 #'   are greater than zero.
 #'
 #' @return List of two `data.table`s with possible columns `base`, `sd`, `amp`,
-#'   and `phase`, depending on the columns in `diffExprGroups`.
+#'   and `phase`, depending on the columns in `diffAbundGroups`.
 #'
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
 #'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
-#' abundGroups = splitDiffExprGroups(dGroups)
+#' featureGroups = splitDiffAbundGroups(dGroups)
 #'
 #' @seealso `\link{simphony}`
 #'
 #' @export
-splitDiffExprGroups = function(diffExprGroups, checkValid = TRUE) {
-  dGroups = data.table(diffExprGroups)
+splitDiffAbundGroups = function(diffAbundGroups, checkValid = TRUE) {
+  dGroups = data.table(diffAbundGroups)
 
   capCols = c('Base', 'Amp', 'Phase', 'Sd')
   cols = tolower(capCols)

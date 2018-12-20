@@ -1,36 +1,36 @@
-setDefaultExprGroups = function(abundGroups, nFeatures, dispFunc, rhyFunc, family) {
-  if ('group' %in% colnames(abundGroups)) {
-    stop("abundGroups must not have a column named 'group'.")}
+setDefaultAbundGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, family) {
+  if ('group' %in% colnames(featureGroups)) {
+    stop("featureGroups must not have a column named 'group'.")}
 
-  abundGroups = data.table(abundGroups)
-  abundGroups[, group := 1:.N]
+  featureGroups = data.table(featureGroups)
+  featureGroups[, group := 1:.N]
 
-  if (nrow(abundGroups) == 0) {
-    stop('abundGroups must have at least one row.') }
+  if (nrow(featureGroups) == 0) {
+    stop('featureGroups must have at least one row.') }
 
-  if (!'amp' %in% colnames(abundGroups)) {
-    abundGroups[, amp := 0]}
+  if (!'amp' %in% colnames(featureGroups)) {
+    featureGroups[, amp := 0]}
 
-  if (!'phase' %in% colnames(abundGroups)) {
-    abundGroups[, phase := 0]}
+  if (!'phase' %in% colnames(featureGroups)) {
+    featureGroups[, phase := 0]}
 
-  if (!'rhyFunc' %in% colnames(abundGroups)) {
-    abundGroups[, rhyFunc := data.table(rhyFunc)]}
+  if (!'rhyFunc' %in% colnames(featureGroups)) {
+    featureGroups[, rhyFunc := data.table(rhyFunc)]}
 
   if (family == 'negbinom') {
-    if (!'dispFunc' %in% colnames(abundGroups)) {
-      abundGroups[, dispFunc := data.table(dispFunc)] }
-    if (!'base' %in% colnames(abundGroups)) {
-      abundGroups[, base := 8]}}
+    if (!'dispFunc' %in% colnames(featureGroups)) {
+      featureGroups[, dispFunc := data.table(dispFunc)] }
+    if (!'base' %in% colnames(featureGroups)) {
+      featureGroups[, base := 8]}}
   else {
-    if (!'sd' %in% colnames(abundGroups)) {
-      abundGroups[, sd := 1]
-    } else if (!all(abundGroups$sd > 0)) {
-      stop('All groups in abundGroups must have standard deviation > 0.')}
-    if (!'base' %in% colnames(abundGroups)) {
-      abundGroups[, base := 0]}}
+    if (!'sd' %in% colnames(featureGroups)) {
+      featureGroups[, sd := 1]
+    } else if (!all(featureGroups$sd >= 0)) {
+      stop('All groups in featureGroups must have standard deviation >= 0.')}
+    if (!'base' %in% colnames(featureGroups)) {
+      featureGroups[, base := 0]}}
 
-  return(abundGroups)}
+  return(featureGroups)}
 
 
 getTimes = function(timepointsType, interval, nReps, timepoints,
@@ -64,13 +64,13 @@ getSampleMetadata = function(times) {
   return(sm)}
 
 
-getNFeaturesPerGroup = function(abundGroups, fracFeatures, nFeatures) {
-  if ('fracFeatures' %in% colnames(abundGroups)) {
-    fracFeatures = abundGroups$fracFeatures
+getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
+  if ('fracFeatures' %in% colnames(featureGroups)) {
+    fracFeatures = featureGroups$fracFeatures
   } else if (is.null(fracFeatures)) {
-    fracFeatures = rep(1 / nrow(abundGroups), nrow(abundGroups))
-  } else if (length(fracFeatures) != nrow(abundGroups)) {
-    stop('Length of fracFeatures must equal number of rows in abundGroups.')}
+    fracFeatures = rep(1 / nrow(featureGroups), nrow(featureGroups))
+  } else if (length(fracFeatures) != nrow(featureGroups)) {
+    stop('Length of fracFeatures must equal number of rows in featureGroups.')}
 
   nFeaturesPerGroup = as.integer(fracFeatures * nFeatures)
   if (sum(nFeaturesPerGroup) != nFeatures) {
@@ -84,13 +84,13 @@ getNFeaturesPerGroup = function(abundGroups, fracFeatures, nFeatures) {
   return(nFeaturesPerGroup)}
 
 
-getFeatureMetadata = function(abundGroupsList, fracFeatures, nFeatures) {
-  nFeaturesPerGroup = getNFeaturesPerGroup(abundGroupsList[[1]], fracFeatures, nFeatures)
+getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
+  nFeaturesPerGroup = getNFeaturesPerGroup(featureGroupsList[[1]], fracFeatures, nFeatures)
   features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1), 1:nFeatures)
-  nConds = length(abundGroupsList)
+  nConds = length(featureGroupsList)
 
-  fm = foreach(abundGroups = abundGroupsList, cond = 1:nConds, .combine = rbind) %do% {
-    fmNow = abundGroups[rep(1:.N, times = nFeaturesPerGroup)]
+  fm = foreach(featureGroups = featureGroupsList, cond = 1:nConds, .combine = rbind) %do% {
+    fmNow = featureGroups[rep(1:.N, times = nFeaturesPerGroup)]
     fmNow[, cond := ..cond]
     fmNow[, feature := features]
     data.table::setcolorder(fmNow, c('cond', 'group', 'feature'))

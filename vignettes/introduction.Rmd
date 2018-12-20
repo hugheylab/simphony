@@ -63,9 +63,9 @@ fmExample = simData$featureMetadata[feature %in% c('feature_150', 'feature_151')
 dExample = mergeSimData(simData, fmExample$feature)
 ```
 
-We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the `getExpectedExpr` function. Since we sampled from the negative binomial family, the resulting `mu` column corresponds to the expected log~2~ counts.
+We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the `getExpectedAbund` function. Since we sampled from the negative binomial family, the resulting `mu` column corresponds to the expected log~2~ counts.
 ```{r}
-dExpect = getExpectedExpr(fmExample, 24, times = seq(0, 24, 0.25))
+dExpect = getExpectedAbund(fmExample, 24, times = seq(0, 24, 0.25))
 ```
 
 Then it all comes together with `ggplot`.
