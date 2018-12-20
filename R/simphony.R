@@ -4,38 +4,38 @@ NULL
 
 
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
-                  'dispFunc', 'exprGroups', 'time', 'expr', '..cond', '.N',
+                  'dispFunc', 'abundGroups', 'time', 'abund', '..cond', '.N',
                   '.dummy', 'feature', 'mu', '..period'))
 
 
-#' Simulate feature expression data
+#' Simulate feature abundance data
 #'
-#' Simulate experiments in which rhythmic and non-rhythmic feature expression is
+#' Simulate experiments in which rhythmic and non-rhythmic feature abundance is
 #' measured at multiple timepoints in one or more conditions.
 #'
-#' @param exprGroupsList `data.frame` or `data.table` (for a single condition)
+#' @param abundGroupsList `data.frame` or `data.table` (for a single condition)
 #'   or list of `data.frame`s or `data.table`s (for multiple conditions), where
 #'   each row corresponds to a group of features to simulate. The following
 #'   columns are all optional:
 #'   \describe{
 #'     \item{fracFeatures}{Fraction of simulated features to allocate to each group.
 #'       Defaults to 1/(number of groups).}
-#'     \item{base}{Average expression. Defaults to 0 if `family` == 'gaussian'
+#'     \item{base}{Average abundance. Defaults to 0 if `family` == 'gaussian'
 #'       and to 8 (mean log2 counts) if `family` == 'negbinom'.}
-#'     \item{sd}{Standard deviation of sampled expression values. Defaults to 1.
+#'     \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
 #'       Only used if `family` == 'gaussian'.}
-#'     \item{dispFunc}{Function to calculate dispersion of sampled expression
-#'       values, given expected expression in counts. Only used if `family` ==
+#'     \item{dispFunc}{Function to calculate dispersion of sampled abundance
+#'       values, given expected abundance in counts. Only used if `family` ==
 #'       'negbinom'.}
-#'     \item{amp}{Amplitude of rhythmic expression. Defaults to 0 (i.e.,
+#'     \item{amp}{Amplitude of rhythmic abundance. Defaults to 0 (i.e.,
 #'       non-rhythmic.}
-#'     \item{phase}{Phase of rhythmic expression, in the same units as `period`.
+#'     \item{phase}{Phase of rhythmic abundance, in the same units as `period`.
 #'       Defaults to 0.}
-#'     \item{rhyFunc}{Function to generate rhythmic expression. Must have a
+#'     \item{rhyFunc}{Function to generate rhythmic abundance. Must have a
 #'       period of 2*pi. Defaults to `sin`.}
 #'   }
 #' @param fracFeatures Fraction of simulated features to allocate to each group.
-#'   Defaults to 1/(number of groups). Only used if the first `exprGroupsList`
+#'   Defaults to 1/(number of groups). Only used if the first `abundGroupsList`
 #'   `data.frame` lacks a `fracFeatures` column.
 #' @param nFeatures Integer for the total number of features to simulate.
 #' @param period Integer for the period of simulated rhythms.
@@ -51,19 +51,19 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @param nSamplesPerCond Integer for the number of samples per condition,
 #'   which will be randomly uniformly spaced between 0 and `period` and
 #'   different for each condition. Only used if timepointsType == 'random'.
-#' @param dispFunc Function to calculate dispersion of sampled expression
-#'   values, given expected expression in counts. Defaults to `defaultDispFunc`.
-#'   Only used if `family` == 'negbinom' and a `data.frame` in `exprGroupsList`
+#' @param dispFunc Function to calculate dispersion of sampled abundance
+#'   values, given expected abundance in counts. Defaults to `defaultDispFunc`.
+#'   Only used if `family` == 'negbinom' and a `data.frame` in `abundGroupsList`
 #'   lacks a `dispFunc` column.
-#' @param rhyFunc Function to generate rhythmic expression. Must have a period
-#'   of 2*pi. Defaults to `sin`. Only used if a `data.frame` in `exprGroupsList`
+#' @param rhyFunc Function to generate rhythmic abundance. Must have a period
+#'   of 2*pi. Defaults to `sin`. Only used if a `data.frame` in `abundGroupsList`
 #'   lacks a `rhyFunc` column.
 #' @param family Character string for the family of distributions from
-#'   which to generate the expression values. Must be 'gaussian' or 'negbinom'.
+#'   which to generate the abundance values. Must be 'gaussian' or 'negbinom'.
 #'
 #' @return List with the following elements:
 #' \describe{
-#'   \item{exprData}{Matrix of expression values (counts, if `family` ==
+#'   \item{abundData}{Matrix of abundance values (counts, if `family` ==
 #'   'negbinom'), with features as rownames and samples as colnames.}
 #'   \item{sampleMetadata}{`data.table` with one row per sample.}
 #'   \item{featureMetadata}{`data.table` with one row per feature per condition.}
@@ -74,19 +74,19 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' library('data.table')
 #'
 #' # Simulate data for features having one of three sets of rhythmic parameters.
-#' exprGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
+#' abundGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
 #'                         rhyFunc = c(cos, cos, sin))
-#' simData = simphony(exprGroups)
+#' simData = simphony(abundGroups)
 #'
 #' # Simulate data for an experiment with specified timepoints and replicates.
-#' exprGroups = data.table(amp = c(0, 1))
-#' simData = simphony(exprGroups, timepointsType = 'specified',
+#' abundGroups = data.table(amp = c(0, 1))
+#' simData = simphony(abundGroups, timepointsType = 'specified',
 #'                    timepoints = rep(seq(0, 6, 2), each = 2))
 #'
 #' # Simulate data for features whose rhythmicity varies between two conditions.
-#' exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
+#' abundGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
 #'                       data.table(amp = c(3, 2), phase = c(0, 3)))
-#' simData = simphony(exprGroupsList)
+#' simData = simphony(abundGroupsList)
 #'
 #' # Simulate data for 100 features, half non-rhythmic and half rhythmic, with
 #' # amplitudes for rhythmic features sampled from a log-normal distribution.
@@ -95,8 +95,8 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' nRhyFeatures = round(rhyFrac * nFeatures)
 #' rhyAmps = exp(rnorm(nRhyFeatures, mean = 0, sd = 0.25))
 #' fracFeatures = c(1 - rhyFrac, rep(rhyFrac / nRhyFeatures, nRhyFeatures))
-#' exprGroups = data.table(amp = c(0, rhyAmps), fracFeatures = fracFeatures)
-#' simData = simphony(exprGroups, nFeatures = nFeatures)
+#' abundGroups = data.table(amp = c(0, rhyAmps), fracFeatures = fracFeatures)
+#' simData = simphony(abundGroups, nFeatures = nFeatures)
 #'
 #' # Simulate data for 100 rhythmic features, with baseline log2 expected counts
 #' # and residual log dispersion sampled from distributions whose parameters
@@ -106,14 +106,14 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' baseLog2Counts = rnorm(nFeatures, mean = 8.63, sd = 2.73)
 #' dispFactors = exp(rnorm(nFeatures, sd = 0.819))
 #' dispFuncs = sapply(dispFactors, function(z) {function(x) defaultDispFunc(x) * z})
-#' exprGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
-#' simData = simphony(exprGroups, nFeatures = nFeatures, family = 'negbinom')
+#' abundGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
+#' simData = simphony(abundGroups, nFeatures = nFeatures, family = 'negbinom')
 #'
 #' @seealso `\link{defaultDispFunc}`, `\link{getExpectedExpr}`,
 #' `\link{getSampledExpr}`, `\link{mergeSimData}`
 #'
 #' @export
-simphony = function(exprGroupsList, fracFeatures = NULL, nFeatures = 10, period = 24,
+simphony = function(abundGroupsList, fracFeatures = NULL, nFeatures = 10, period = 24,
                     timepointsType = c('auto', 'specified', 'random'),
                     interval = 2, nReps = 1, timepoints = NULL,
                     nSamplesPerCond = NULL, rhyFunc = sin,
@@ -122,32 +122,32 @@ simphony = function(exprGroupsList, fracFeatures = NULL, nFeatures = 10, period 
   family = match.arg(family)
   timepointsType = match.arg(timepointsType)
 
-  if (is.data.frame(exprGroupsList)) {
-    exprGroupsList = list(exprGroupsList)
-  } else if (!is.list(exprGroupsList) || !all(sapply(exprGroupsList, is.data.frame))) {
-    stop('exprGroupsList must be a data.frame or a list of data.frames.')}
+  if (is.data.frame(abundGroupsList)) {
+    abundGroupsList = list(abundGroupsList)
+  } else if (!is.list(abundGroupsList) || !all(sapply(abundGroupsList, is.data.frame))) {
+    stop('abundGroupsList must be a data.frame or a list of data.frames.')}
 
-  if (length(unique(sapply(exprGroupsList, nrow))) != 1) {
-    stop('Each exprGroups data.frame must have the same number of rows.')}
+  if (length(unique(sapply(abundGroupsList, nrow))) != 1) {
+    stop('Each abundGroups data.frame must have the same number of rows.')}
 
-  exprGroupsList = foreach(exprGroups = exprGroupsList) %do% {
-    setDefaultExprGroups(exprGroups, nFeatures, dispFunc, rhyFunc, family)}
+  abundGroupsList = foreach(abundGroups = abundGroupsList) %do% {
+    setDefaultExprGroups(abundGroups, nFeatures, dispFunc, rhyFunc, family)}
 
   times = getTimes(timepointsType, interval, nReps, timepoints,
-                   nSamplesPerCond, length(exprGroupsList), period)
+                   nSamplesPerCond, length(abundGroupsList), period)
   sm = getSampleMetadata(times)
-  fm = getFeatureMetadata(exprGroupsList, fracFeatures, nFeatures)
+  fm = getFeatureMetadata(abundGroupsList, fracFeatures, nFeatures)
 
-  exprDt = getExpectedExpr(fm, period, sampleMetadata = sm)
-  exprMat = getSampledExpr(exprDt, family, inplace = TRUE)
+  abundDt = getExpectedExpr(fm, period, sampleMetadata = sm)
+  abundMat = getSampledExpr(abundDt, family, inplace = TRUE)
 
   # call = sys.call()
-  experMetadata = list(exprGroupsList = exprGroupsList, fracFeatures = fracFeatures,
+  experMetadata = list(abundGroupsList = abundGroupsList, fracFeatures = fracFeatures,
                      nFeatures = nFeatures, period = period,
                      timepointsType = timepointsType, interval = interval,
                      nReps = nReps, timepoints = timepoints,
                      nSamplesPerCond = nSamplesPerCond, rhyFunc = rhyFunc,
                      dispFunc = dispFunc, family = family)
 
-  return(list(exprData = exprMat, sampleMetadata = sm, featureMetadata = fm,
+  return(list(abundData = abundMat, sampleMetadata = sm, featureMetadata = fm,
               experMetadata = experMetadata))}

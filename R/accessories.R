@@ -14,9 +14,9 @@
 'defaultDispFunc'
 
 
-#' Calculate expected expression
+#' Calculate expected abundance
 #'
-#' Calculate expected expression for multiple features at multiple timepoints in
+#' Calculate expected abundance for multiple features at multiple timepoints in
 #' multiple conditions.
 #'
 #' @param featureMetadata `data.table` with columns `feature`, `base`, `rhyFunc`,
@@ -24,7 +24,7 @@
 #'   is `TRUE`, then must also have columns `cond` and `group`.
 #' @param period Integer for the period of simulated rhythms.
 #' @param times Numeric vector of the times (in the same units as `period`) at
-#'   which to calculate expected expression for each row in `featureMetadata`.
+#'   which to calculate expected abundance for each row in `featureMetadata`.
 #' @param sampleMetadata `data.table` with columns `sample`, `cond`, and
 #'   `time`. Either `times` or `sampleMetadata` must be provided, and the former
 #'   takes precedence.
@@ -39,7 +39,7 @@
 #' library('data.table')
 #' featureMetadata = data.table(feature = c('feature_1', 'feature_2'), base = 0,
 #'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
-#' exprDt = getExpectedExpr(featureMetadata, times = 6:17)
+#' abundDt = getExpectedExpr(featureMetadata, times = 6:17)
 #'
 #' @seealso `\link{simphony}`, `\link{getSampledExpr}`
 #'
@@ -65,79 +65,79 @@ getExpectedExpr = function(featureMetadata, period = 24,
   return(data.table::copy(d))}
 
 
-#' Sample expression values
+#' Sample abundance values
 #'
-#' Sample feature expression values from the given distributions. This function
+#' Sample feature abundance values from the given distributions. This function
 #' is used internally by `simphony()`, and should not usually need to be
 #' called directly.
 #'
-#' @param exprDt `data.table` of expected expression. If `family` == 'gaussian',
+#' @param abundDt `data.table` of expected abundance. If `family` == 'gaussian',
 #'   required columns are `feature`, `sample`, `mu`, and `sd`. If `family` ==
 #'   'negbinom', required columns are `feature`, `sample`, `mu`, `dispFunc`,
 #'   `cond`, and `group`.
 #' @param family Character string for the family of distributions from which
-#'   to generate the expression values. Must be 'gaussian' or 'negbinom'.
-#' @param inplace Logical for whether to modify `exprDt` in-place, adding a
-#'   column `expr` containing the expression values.
+#'   to generate the abundance values. Must be 'gaussian' or 'negbinom'.
+#' @param inplace Logical for whether to modify `abundDt` in-place, adding a
+#'   column `abund` containing the abundance values.
 #'
-#' @return Matrix of expression values, where rows correspond to features and
+#' @return Matrix of abundance values, where rows correspond to features and
 #'   columns correspond to samples.
 #'
 #' @examples
 #' library('data.table')
 #' set.seed(6022)
-#' exprDt = data.table(feature = 'feature_1', sample = c('sample_1', 'sample_2'),
+#' abundDt = data.table(feature = 'feature_1', sample = c('sample_1', 'sample_2'),
 #'                     mu = c(0, 5), sd = 1)
-#' exprMat = getSampledExpr(exprDt)
+#' abundMat = getSampledExpr(abundDt)
 #'
 #' @seealso `\link{simphony}`, `\link{getExpectedExpr}`
 #'
 #' @export
-getSampledExpr = function(exprDt, family = c('gaussian', 'negbinom'),
+getSampledExpr = function(abundDt, family = c('gaussian', 'negbinom'),
                           inplace = FALSE) {
   family = match.arg(family)
   if (isFALSE(inplace)) {
-    exprDt = data.table(exprDt)}
+    abundDt = data.table(abundDt)}
 
   if (family == 'gaussian') {
-    exprDt[, expr := stats::rnorm(.N, mu, sd)]
+    abundDt[, abund := stats::rnorm(.N, mu, sd)]
   } else {
     # dispFunc is identical for features of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
-    exprDt[, expr := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+    abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]}
 
-  data.table::setorderv(exprDt, c('sample', 'feature'))
-  features = unique(exprDt$feature)
-  samples = unique(exprDt$sample)
-  exprMat = matrix(exprDt$expr, nrow = length(features),
+  data.table::setorderv(abundDt, c('sample', 'feature'))
+  features = unique(abundDt$feature)
+  samples = unique(abundDt$sample)
+  abundMat = matrix(abundDt$abund, nrow = length(features),
                    dimnames = list(features, samples))
-  return(exprMat)}
+  return(abundMat)}
 
 
-#' Merge expression data, feature metadata, and sample metadata
+#' Merge abundance data, feature metadata, and sample metadata
 #'
-#' Merge a simulation's expression data, feature metadata, and sample metadata
+#' Merge a simulation's abundance data, feature metadata, and sample metadata
 #' into one `data.table`. This function is useful for making plots using
 #' ggplot2.
 #'
 #' @param simData List with the following elements, such as returned by
 #' `simphony()`:
 #' \describe{
-#'   \item{exprData}{Matrix of expression values, with rownames for features and
+#'   \item{abundData}{Matrix of abundance values, with rownames for features and
 #'   colnames for samples.}
 #'   \item{sampleMetadata}{`data.table` with columns `sample` and `cond`.}
 #'   \item{featureMetadata}{`data.table` with columns `feature` and `cond`.}
 #' }
-#' @param features Character vector of features for which to get expression data. If
+#' @param features Character vector of features for which to get abundance data. If
 #'   NULL, then all features.
 #'
 #' @return `data.table`.
 #'
 #' @examples
 #' library('data.table')
-#' exprGroups = data.table(amp = c(0, 1))
-#' simData = simphony(exprGroups)
+#' abundGroups = data.table(amp = c(0, 1))
+#' simData = simphony(abundGroups)
 #' mergedSimData = mergeSimData(simData, simData$featureMetadata$feature[1:2])
 #'
 #' @seealso `\link{simphony}`
@@ -145,25 +145,25 @@ getSampledExpr = function(exprDt, family = c('gaussian', 'negbinom'),
 #' @export
 mergeSimData = function(simData, features = NULL) {
   if (is.null(features)) {
-    features = rownames(simData$exprData)}
+    features = rownames(simData$abundData)}
 
-  d = data.table(simData$exprData, keep.rownames = TRUE)
+  d = data.table(simData$abundData, keep.rownames = TRUE)
   setnames(d, 'rn', 'feature')
-  d = melt(d, id.vars = 'feature', variable.name = 'sample', value.name = 'expr')
+  d = melt(d, id.vars = 'feature', variable.name = 'sample', value.name = 'abund')
 
   d = merge(d, simData$sampleMetadata, by = 'sample')
   d = merge(d, simData$featureMetadata, by = c('feature', 'cond'))
   return(d)}
 
 
-#' Split differential exprGroups
+#' Split differential abundGroups
 #'
-#' Split a diffExprGroups data.frame into a list of two exprGroups data.frames,
+#' Split a diffExprGroups data.frame into a list of two abundGroups data.frames,
 #' which can then be passed to `simphony()`.
 #'
 #' @param diffExprGroups `data.frame` with optional columns `meanBase`,
 #'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
-#'   describing the changes in expression between two conditions. Each row
+#'   describing the changes in abundance between two conditions. Each row
 #'   corresponds to a group of features.
 #' @param checkValid Logical for whether to only return rows for which both
 #'   amplitudes are greater than or equal to zero and both standard deviations
@@ -175,7 +175,7 @@ mergeSimData = function(simData, features = NULL) {
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
 #'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
-#' exprGroups = splitDiffExprGroups(dGroups)
+#' abundGroups = splitDiffExprGroups(dGroups)
 #'
 #' @seealso `\link{simphony}`
 #'
