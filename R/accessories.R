@@ -158,10 +158,10 @@ mergeSimData = function(simData, features = NULL) {
 
 #' Split differential featureGroups
 #'
-#' Split a diffAbundGroups data.frame into a list of two featureGroups data.frames,
+#' Split a diffFeatureGroups data.frame into a list of two featureGroups data.frames,
 #' which can then be passed to `simphony()`.
 #'
-#' @param diffAbundGroups `data.frame` with optional columns `meanBase`,
+#' @param diffFeatureGroups `data.frame` with optional columns `meanBase`,
 #'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`
 #'   describing the changes in abundance between two conditions. Each row
 #'   corresponds to a group of features.
@@ -170,18 +170,18 @@ mergeSimData = function(simData, features = NULL) {
 #'   are greater than zero.
 #'
 #' @return List of two `data.table`s with possible columns `base`, `sd`, `amp`,
-#'   and `phase`, depending on the columns in `diffAbundGroups`.
+#'   and `phase`, depending on the columns in `diffFeatureGroups`.
 #'
 #' @examples
 #' dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),
 #'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
-#' featureGroups = splitDiffAbundGroups(dGroups)
+#' featureGroups = splitDiffFeatureGroups(dGroups)
 #'
 #' @seealso `\link{simphony}`
 #'
 #' @export
-splitDiffAbundGroups = function(diffAbundGroups, checkValid = TRUE) {
-  dGroups = data.table(diffAbundGroups)
+splitDiffFeatureGroups = function(diffFeatureGroups, checkValid = TRUE) {
+  dGroups = data.table(diffFeatureGroups)
 
   capCols = c('Base', 'Amp', 'Phase', 'Sd')
   cols = tolower(capCols)

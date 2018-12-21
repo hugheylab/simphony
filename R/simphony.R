@@ -131,7 +131,7 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10, peri
     stop('Each featureGroups data.frame must have the same number of rows.')}
 
   featureGroupsList = foreach(featureGroups = featureGroupsList) %do% {
-    setDefaultAbundGroups(featureGroups, nFeatures, dispFunc, rhyFunc, family)}
+    setDefaultFeatureGroups(featureGroups, nFeatures, dispFunc, rhyFunc, family)}
 
   times = getTimes(timepointsType, interval, nReps, timepoints,
                    nSamplesPerCond, length(featureGroupsList), period)

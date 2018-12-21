@@ -1,4 +1,4 @@
-setDefaultAbundGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, family) {
+setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, family) {
   if ('group' %in% colnames(featureGroups)) {
     stop("featureGroups must not have a column named 'group'.")}
 
