@@ -3,3 +3,4 @@ simphony.Rcheck/
 inst/doc
 .RData
 .Rhistory
+*.tar.gz

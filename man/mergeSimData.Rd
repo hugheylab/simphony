@@ -2,36 +2,36 @@
 % Please edit documentation in R/accessories.R
 \name{mergeSimData}
 \alias{mergeSimData}
-\title{Merge expression data, gene metadata, and sample metadata}
+\title{Merge abundance data, feature metadata, and sample metadata}
 \usage{
-mergeSimData(simData, genes = NULL)
+mergeSimData(simData, features = NULL)
 }
 \arguments{
 \item{simData}{List with the following elements, such as returned by
 \code{simphony()}:
 \describe{
-\item{exprData}{Matrix of expression values, with rownames for genes and
+\item{abundData}{Matrix of abundance values, with rownames for features and
 colnames for samples.}
 \item{sampleMetadata}{\code{data.table} with columns \code{sample} and \code{cond}.}
-\item{geneMetadata}{\code{data.table} with columns \code{gene} and \code{cond}.}
+\item{featureMetadata}{\code{data.table} with columns \code{feature} and \code{cond}.}
 }}
 
-\item{genes}{Character vector of genes for which to get expression data. If
-NULL, then all genes.}
+\item{features}{Character vector of features for which to get abundance data. If
+NULL, then all features.}
 }
 \value{
 \code{data.table}.
 }
 \description{
-Merge a simulation's expression data, gene metadata, and sample metadata
+Merge a simulation's abundance data, feature metadata, and sample metadata
 into one \code{data.table}. This function is useful for making plots using
 ggplot2.
 }
 \examples{
 library('data.table')
-exprGroups = data.table(amp = c(0, 1))
-simData = simphony(exprGroups)
-mergedSimData = mergeSimData(simData, simData$geneMetadata$gene[1:2])
+featureGroups = data.table(amp = c(0, 1))
+simData = simphony(featureGroups)
+mergedSimData = mergeSimData(simData, simData$featureMetadata$feature[1:2])
 
 }
 \seealso{

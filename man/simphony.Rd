@@ -2,42 +2,42 @@
 % Please edit documentation in R/simphony.R
 \name{simphony}
 \alias{simphony}
-\title{Simulate gene expression data}
+\title{Simulate feature abundance data}
 \usage{
-simphony(exprGroupsList, fracGenes = NULL, nGenes = 10, period = 24,
-  timepointsType = c("auto", "specified", "random"), interval = 2,
-  nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
-  rhyFunc = sin, dispFunc = defaultDispFunc, family = c("gaussian",
-  "negbinom"))
+simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
+  period = 24, timepointsType = c("auto", "specified", "random"),
+  interval = 2, nReps = 1, timepoints = NULL,
+  nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = defaultDispFunc,
+  family = c("gaussian", "negbinom"))
 }
 \arguments{
-\item{exprGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
+\item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
 or list of \code{data.frame}s or \code{data.table}s (for multiple conditions), where
-each row corresponds to a group of genes to simulate. The following
+each row corresponds to a group of features to simulate. The following
 columns are all optional:
 \describe{
-\item{fracGenes}{Fraction of simulated genes to allocate to each group.
+\item{fracFeatures}{Fraction of simulated features to allocate to each group.
 Defaults to 1/(number of groups).}
-\item{base}{Average expression. Defaults to 0 if \code{family} == 'gaussian'
+\item{base}{Average abundance. Defaults to 0 if \code{family} == 'gaussian'
 and to 8 (mean log2 counts) if \code{family} == 'negbinom'.}
-\item{sd}{Standard deviation of sampled expression values. Defaults to 1.
+\item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
 Only used if \code{family} == 'gaussian'.}
-\item{dispFunc}{Function to calculate dispersion of sampled expression
-values, given expected expression in counts. Only used if \code{family} ==
+\item{dispFunc}{Function to calculate dispersion of sampled abundance
+values, given expected abundance in counts. Only used if \code{family} ==
 'negbinom'.}
-\item{amp}{Amplitude of rhythmic expression. Defaults to 0 (i.e.,
+\item{amp}{Amplitude of rhythmic abundance. Defaults to 0 (i.e.,
 non-rhythmic.}
-\item{phase}{Phase of rhythmic expression, in the same units as \code{period}.
+\item{phase}{Phase of rhythmic abundance, in the same units as \code{period}.
 Defaults to 0.}
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a
+\item{rhyFunc}{Function to generate rhythmic abundance. Must have a
 period of 2*pi. Defaults to \code{sin}.}
 }}
 
-\item{fracGenes}{Fraction of simulated genes to allocate to each group.
-Defaults to 1/(number of groups). Only used if the first \code{exprGroupsList}
-\code{data.frame} lacks a \code{fracGenes} column.}
+\item{fracFeatures}{Fraction of simulated features to allocate to each group.
+Defaults to 1/(number of groups). Only used if the first \code{featureGroupsList}
+\code{data.frame} lacks a \code{fracFeatures} column.}
 
-\item{nGenes}{Integer for the total number of genes to simulate.}
+\item{nFeatures}{Integer for the total number of features to simulate.}
 
 \item{period}{Integer for the period of simulated rhythms.}
 
@@ -58,73 +58,73 @@ any replicates. Only used if \code{timepointsType} == 'specified'.}
 which will be randomly uniformly spaced between 0 and \code{period} and
 different for each condition. Only used if timepointsType == 'random'.}
 
-\item{rhyFunc}{Function to generate rhythmic expression. Must have a period
-of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{exprGroupsList}
+\item{rhyFunc}{Function to generate rhythmic abundance. Must have a period
+of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{featureGroupsList}
 lacks a \code{rhyFunc} column.}
 
-\item{dispFunc}{Function to calculate dispersion of sampled expression
-values, given expected expression in counts. Defaults to \code{defaultDispFunc}.
-Only used if \code{family} == 'negbinom' and a \code{data.frame} in \code{exprGroupsList}
+\item{dispFunc}{Function to calculate dispersion of sampled abundance
+values, given expected abundance in counts. Defaults to \code{defaultDispFunc}.
+Only used if \code{family} == 'negbinom' and a \code{data.frame} in \code{featureGroupsList}
 lacks a \code{dispFunc} column.}
 
 \item{family}{Character string for the family of distributions from
-which to generate the expression values. Must be 'gaussian' or 'negbinom'.}
+which to generate the abundance values. Must be 'gaussian' or 'negbinom'.}
 }
 \value{
 List with the following elements:
 \describe{
-\item{exprData}{Matrix of expression values (counts, if \code{family} ==
-'negbinom'), with genes as rownames and samples as colnames.}
+\item{abundData}{Matrix of abundance values (counts, if \code{family} ==
+'negbinom'), with features as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
-\item{geneMetadata}{\code{data.table} with one row per gene per condition.}
-\item{simMetadata}{List of arguments that were passed to \code{simphony}.}
+\item{featureMetadata}{\code{data.table} with one row per feature per condition.}
+\item{experMetadata}{List of arguments that were passed to \code{simphony}.}
 }
 }
 \description{
-Simulate experiments in which rhythmic and non-rhythmic gene expression is
+Simulate experiments in which rhythmic and non-rhythmic feature abundance is
 measured at multiple timepoints in one or more conditions.
 }
 \examples{
 library('data.table')
 
-# Simulate data for genes having one of three sets of rhythmic parameters.
-exprGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
+# Simulate data for features having one of three sets of rhythmic parameters.
+featureGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
                         rhyFunc = c(cos, cos, sin))
-simData = simphony(exprGroups)
+simData = simphony(featureGroups)
 
 # Simulate data for an experiment with specified timepoints and replicates.
-exprGroups = data.table(amp = c(0, 1))
-simData = simphony(exprGroups, timepointsType = 'specified',
+featureGroups = data.table(amp = c(0, 1))
+simData = simphony(featureGroups, timepointsType = 'specified',
                    timepoints = rep(seq(0, 6, 2), each = 2))
 
-# Simulate data for genes whose rhythmicity varies between two conditions.
-exprGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
+# Simulate data for features whose rhythmicity varies between two conditions.
+featureGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
                       data.table(amp = c(3, 2), phase = c(0, 3)))
-simData = simphony(exprGroupsList)
+simData = simphony(featureGroupsList)
 
-# Simulate data for 100 genes, half non-rhythmic and half rhythmic, with
-# amplitudes for rhythmic genes sampled from a log-normal distribution.
-nGenes = 100
+# Simulate data for 100 features, half non-rhythmic and half rhythmic, with
+# amplitudes for rhythmic features sampled from a log-normal distribution.
+nFeatures = 100
 rhyFrac = 0.5
-nRhyGenes = round(rhyFrac * nGenes)
-rhyAmps = exp(rnorm(nRhyGenes, mean = 0, sd = 0.25))
-fracGenes = c(1 - rhyFrac, rep(rhyFrac / nRhyGenes, nRhyGenes))
-exprGroups = data.table(amp = c(0, rhyAmps), fracGenes = fracGenes)
-simData = simphony(exprGroups, nGenes = nGenes)
+nRhyFeatures = round(rhyFrac * nFeatures)
+rhyAmps = exp(rnorm(nRhyFeatures, mean = 0, sd = 0.25))
+fracFeatures = c(1 - rhyFrac, rep(rhyFrac / nRhyFeatures, nRhyFeatures))
+featureGroups = data.table(amp = c(0, rhyAmps), fracFeatures = fracFeatures)
+simData = simphony(featureGroups, nFeatures = nFeatures)
 
-# Simulate data for 100 rhythmic genes, with baseline log2 expected counts
+# Simulate data for 100 rhythmic features, with baseline log2 expected counts
 # and residual log dispersion sampled from distributions whose parameters
 # were estimated, using DESeq2 and fitdistrplus, from circadian RNA-seq data
 # from mouse liver (PRJNA297287).
-nGenes = 100
-baseLog2Counts = rnorm(nGenes, mean = 8.63, sd = 2.73)
-dispFactors = exp(rnorm(nGenes, sd = 0.819))
+nFeatures = 100
+baseLog2Counts = rnorm(nFeatures, mean = 8.63, sd = 2.73)
+dispFactors = exp(rnorm(nFeatures, sd = 0.819))
 dispFuncs = sapply(dispFactors, function(z) {function(x) defaultDispFunc(x) * z})
-exprGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
-simData = simphony(exprGroups, nGenes = nGenes, family = 'negbinom')
+featureGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
+simData = simphony(featureGroups, nFeatures = nFeatures, family = 'negbinom')
 
 }
 \seealso{
-\code{\link{defaultDispFunc}}, \code{\link{getExpectedExpr}},
-\code{\link{getSampledExpr}}, \code{\link{mergeSimData}}
+\code{\link{defaultDispFunc}}, \code{\link{getExpectedAbund}},
+\code{\link{getSampledAbund}}, \code{\link{mergeSimData}}
 }
