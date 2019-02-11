@@ -41,6 +41,8 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @param period Integer for the period of simulated rhythms.
 #' @param timepointsType Character string for how to set the timepoints
 #'   for the simulation. Must be 'auto' (default), 'specified', or 'random'.
+#' @param timeRange Optional 2-element vector controlling the range of times to
+#'   sample in simulated data. Defaults to c(0, period).
 #' @param interval Integer for the amount of time between consecutive
 #'   timepoints, in the same units as `period`. The first timepoint is 0. Only
 #'   used if `timepointsType` == 'auto'.
@@ -115,6 +117,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' @export
 simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10, period = 24,
                     timepointsType = c('auto', 'specified', 'random'),
+                    timeRange = c(0, period),
                     interval = 2, nReps = 1, timepoints = NULL,
                     nSamplesPerCond = NULL, rhyFunc = sin,
                     dispFunc = defaultDispFunc,
@@ -133,15 +136,14 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10, peri
   featureGroupsList = foreach(featureGroups = featureGroupsList) %do% {
     setDefaultFeatureGroups(featureGroups, nFeatures, dispFunc, rhyFunc, family)}
 
-  times = getTimes(timepointsType, interval, nReps, timepoints,
-                   nSamplesPerCond, length(featureGroupsList), period)
+  times = getTimes(timepointsType, interval, nReps, timepoints, timeRange,
+                   nSamplesPerCond, length(featureGroupsList))
   sm = getSampleMetadata(times)
   fm = getFeatureMetadata(featureGroupsList, fracFeatures, nFeatures)
 
   abundDt = getExpectedAbund(fm, period, sampleMetadata = sm)
   abundMat = getSampledAbund(abundDt, family, inplace = TRUE)
 
-  # call = sys.call()
   experMetadata = list(featureGroupsList = featureGroupsList, fracFeatures = fracFeatures,
                        nFeatures = nFeatures, period = period,
                        timepointsType = timepointsType, interval = interval,

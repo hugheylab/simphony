@@ -78,21 +78,20 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
   return(featureGroups)}
 
 
-getTimes = function(timepointsType, interval, nReps, timepoints,
-                    nSamplesPerCond, nConds, period) {
+getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
+                    nSamplesPerCond, nConds) {
   if (timepointsType == 'auto') {
-    tt = interval * 0:(period %/% interval - (period %% interval == 0))
+    tt = interval * timeRange[1]:(timeRange[2] %/% interval - (timeRange[2] %% interval == 0))
     tt = rep(tt, each = nReps)
     times = matrix(rep(tt, each = nConds), ncol = length(tt))
   } else if (timepointsType == 'specified') {
     if (is.null(timepoints)) {
       stop("timepoints cannot be NULL, if timepointsType is 'specified'.")}
-    # don't do %%, let rhyFunc figure it out
     times = matrix(rep(timepoints, each = nConds), ncol = length(timepoints))
   } else if (timepointsType == 'random') {
     if (is.null(nSamplesPerCond)) {
       stop("nSamplesPerCond cannot be NULL, if timepointsType is 'random'.")}
-    tt = stats::runif(nSamplesPerCond * nConds, min = 0, max = period)
+    tt = stats::runif(nSamplesPerCond * nConds, min = 0, max = timeRange[2])
     tt = matrix(tt, nrow = nConds)
     times = t(apply(tt, 1, sort))}
   return(times)}
