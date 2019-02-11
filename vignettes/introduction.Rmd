@@ -70,8 +70,8 @@ dExpect = getExpectedAbund(fmExample, 24, times = seq(0, 24, 0.25))
 
 Then it all comes together with `ggplot`.
 ```{r, fig.width = 6, fig.height = 2.75}
-dExample[, featureLabel := paste(feature, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
-dExpect[, featureLabel := paste(feature, ifelse(amp == 0, '(non-rhythmic)', '(rhythmic)'))]
+dExample[, featureLabel := paste(feature, ifelse(amp0 == 0, '(non-rhythmic)', '(rhythmic)'))]
+dExpect[, featureLabel := paste(feature, ifelse(amp0 == 0, '(non-rhythmic)', '(rhythmic)'))]
 
 ggplot(dExample) +
   facet_wrap(~ featureLabel, nrow = 1) +
@@ -103,18 +103,18 @@ rhyLimma = topTable(fit, coef = 2:3, number = Inf)
 First we merge the results from *limma* with the known amplitudes from `featureMetadata`.
 ```{r}
 rhyLimma$feature = rownames(rhyLimma)
-rhyLimma = merge(data.table(rhyLimma), simData$featureMetadata[, .(feature, amp)], by = 'feature')
+rhyLimma = merge(data.table(rhyLimma), simData$featureMetadata[, .(feature, amp0)], by = 'feature')
 ```
 
 We can plot the distributions of p-values of rhythmicity for non-rhythmic and rhythmic genes. P-values for non-rhythmic genes are uniformly distributed between 0 and 1, as they should be under the null hypothesis. P-values for rhythmic genes, on the other hand, tend to be closer to 0.
 ```{r, fig.width = 3.5, fig.height = 3}
 ggplot(rhyLimma) +
-  geom_jitter(aes(x = factor(amp), y = P.Value), shape = 21, width = 0.2) +
+  geom_jitter(aes(x = factor(amp0), y = P.Value), shape = 21, width = 0.2) +
   labs(x = expression('Rhythm amplitude '*(log[2]~counts)), y = 'P-value of rhythmicity')
 ```
 
 Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the *precrec* package).
 ```{r, fig.width = 3, fig.height = 3}
-rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp > 0)
+rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp0 > 0)
 autoplot(rocprc, 'ROC')
 ```

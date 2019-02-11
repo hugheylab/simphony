@@ -13,7 +13,9 @@ test_that('Abundances are sampled from the correct trend', {
   usedPeriod = simData$experMetadata$period
 
   expectedAbund = foreach(r = 1:nrow(simData$abundData), .combine = rbind) %do% {
-    usedAmps[r] * usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod) + usedBase[r]
+    usedAmps[[r]]((2 * pi) * timepoints / usedPeriod) *
+    usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod) +
+    usedBase[[r]]((2 * pi) * timepoints / usedPeriod)
   }
   diff = abs(simData$abundData - expectedAbund)
   expect_true(all(diff == 0))
@@ -49,7 +51,9 @@ test_that('Time-dependent statistics from NBD are as expected', {
       featuresNow = simData$featureMetadata[, group == groupNow]
       params = simData$featureMetadata[featuresNow, ][1, ]
 
-      meanExp = 2 ^ (params$amp * params$rhyFunc[[1]](2 * pi * timeNow / simData$experMetadata$period) + params$base)
+      meanExp = 2 ^ (params$amp[[1]](2 * pi * timeNow / simData$experMetadata$period) *
+                     params$rhyFunc[[1]](2 * pi * timeNow / simData$experMetadata$period) +
+                     params$base[[1]](2 * pi * timeNow / simData$experMetadata$period))
       varExp = meanExp + params$dispFunc[[1]](meanExp) * (meanExp ^ 2)
 
       meanObs = mean(simData$abundData[featuresNow, samplesNow])

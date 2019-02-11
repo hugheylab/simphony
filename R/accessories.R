@@ -45,8 +45,8 @@
 #'
 #' @export
 getExpectedAbund = function(featureMetadata, period = 24,
-                           times = NULL, sampleMetadata = NULL,
-                           byCondGroup = is.null(times)) {
+                            times = NULL, sampleMetadata = NULL,
+                            byCondGroup = is.null(times)) {
   if (!is.null(times)) {
     d = data.table(featureMetadata)[rep(1:.N, each = length(times))]
     d[, time := rep(times, times = nrow(featureMetadata))]
@@ -57,10 +57,12 @@ getExpectedAbund = function(featureMetadata, period = 24,
     stop('Either times or sampleMetadata must not be NULL.')}
 
   if (isTRUE(byCondGroup)) {
-    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+    d[, mu := base[[1]](time) +
+              amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
       by = c('cond', 'group')]
   } else {
-    d[, mu := base + amp * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
+    d[, mu := base[[1]](time) +
+              amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / ..period),
       by = 1:nrow(d)]}
   return(data.table::copy(d))}
 

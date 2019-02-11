@@ -1,4 +1,5 @@
-setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, family) {
+setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
+                                   family) {
   if ('group' %in% colnames(featureGroups)) {
     stop("featureGroups must not have a column named 'group'.")}
 
@@ -9,7 +10,22 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, 
     stop('featureGroups must have at least one row.') }
 
   if (!'amp' %in% colnames(featureGroups)) {
-    featureGroups[, amp := 0]}
+    featureGroups[, amp := list(list(function(x) 0))]
+  } else {
+    if (is.numeric(featureGroups[, amp])) {
+      makefunc = function(x) { x; function(m) x }
+      if (nrow(featureGroups) == 1) {
+        featureGroups[, amp := list(list(makefunc(amp)))]
+      } else {
+        featureGroups[, amp := foreach(a = featureGroups[, amp]) %do% {
+                                           makefunc(a) }]
+      }
+    }
+    else if (sum(unlist(lapply(featureGroups[, amp], function(x) !is.function(x)))) == 0) {}
+    else { stop('Amplitudes must be either numeric values or functions')}
+  }
+
+  featureGroups[, amp0 := sapply(featureGroups[, amp], mapply, 0)]
 
   if (!'phase' %in% colnames(featureGroups)) {
     featureGroups[, phase := 0]}
@@ -21,14 +37,43 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc, 
     if (!'dispFunc' %in% colnames(featureGroups)) {
       featureGroups[, dispFunc := data.table(dispFunc)] }
     if (!'base' %in% colnames(featureGroups)) {
-      featureGroups[, base := 8]}}
+      featureGroups[, base := list(list(function(x) 8))]
+    } else {
+      if (is.numeric(featureGroups[, base])) {
+        makefunc = function(x) { x; function(m) x }
+        if (nrow(featureGroups) == 1) {
+          featureGroups[, base := list(list(makefunc(base)))]
+        } else {
+          featureGroups[, base := foreach(b = featureGroups[, base]) %do% {
+                                            makefunc(b) }]
+        }
+      }
+      else if (sum(unlist(lapply(featureGroups[, base], function(x) !is.function(x)))) == 0) {}
+      else { stop('Bases must be either numeric values or functions')}
+    }
+  }
   else {
     if (!'sd' %in% colnames(featureGroups)) {
       featureGroups[, sd := 1]
     } else if (!all(featureGroups$sd >= 0)) {
       stop('All groups in featureGroups must have standard deviation >= 0.')}
-    if (!'base' %in% colnames(featureGroups)) {
-      featureGroups[, base := 0]}}
+        if (!'base' %in% colnames(featureGroups)) {
+      featureGroups[, base := list(list(function(x) 8))]
+    } else {
+      if (is.numeric(featureGroups[, base])) {
+        makefunc = function(x) { x; function(m) x }
+        if (nrow(featureGroups) == 1) {
+          featureGroups[, base := list(list(makefunc(base)))]
+        } else {
+          featureGroups[, base := foreach(b = featureGroups[, base]) %do% {
+                                            makefunc(b) }]
+        }
+      }
+      else if (sum(unlist(lapply(featureGroups[, base], function(x) !is.function(x)))) == 0) {}
+      else { stop('Bases must be either numeric values or functions')}
+    }
+  }
+  featureGroups[, base0 := sapply(featureGroups[, base], mapply, 0)]
 
   return(featureGroups)}
 
@@ -85,8 +130,10 @@ getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
 
 
 getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
-  nFeaturesPerGroup = getNFeaturesPerGroup(featureGroupsList[[1]], fracFeatures, nFeatures)
-  features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1), 1:nFeatures)
+  nFeaturesPerGroup = getNFeaturesPerGroup(featureGroupsList[[1]], fracFeatures,
+                                           nFeatures)
+  features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1),
+                     1:nFeatures)
   nConds = length(featureGroupsList)
 
   fm = foreach(featureGroups = featureGroupsList, cond = 1:nConds, .combine = rbind) %do% {
