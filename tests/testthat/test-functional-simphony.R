@@ -67,3 +67,9 @@ test_that('Time-dependent statistics from NBD are as expected', {
   rm(featureGroups, simData, samplesNow, featuresNow, params, meanExp, varExp,
      meanObs, varObs)
 })
+
+test_that('Amplitude and base can be passed as functions', {
+  abundGroups = data.table::data.table(amp  = function(t) 5 * 2^(-t/12),
+                           base = function(t) 4 * 2^(-t/12))
+  expect_silent(simphony(abundGroups))
+})

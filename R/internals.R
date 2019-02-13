@@ -51,6 +51,7 @@ setFuncs = function(featureGroups, value, default) {
     else if (sum(unlist(lapply(featureGroups[, get(value)], function(x) !is.function(x)))) == 0) {}
     else {stop(sprintf('%ss must be either numeric values or functions', value))}
   }
+  return(featureGroups)
 }
 
 getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
