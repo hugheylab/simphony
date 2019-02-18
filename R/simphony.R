@@ -5,7 +5,7 @@ NULL
 
 globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dispFunc', 'featureGroups', 'time', 'abund', '..cond', '.N',
-                  '.dummy', 'feature', 'mu', '..period'))
+                  '.dummy', 'feature', 'mu', 'period'))
 
 
 #' Simulate feature abundance data
@@ -31,6 +31,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'       non-rhythmic.}
 #'     \item{phase}{Phase of rhythmic abundance, in the same units as `period`.
 #'       Defaults to 0.}
+#'     \item{period}{Integer for the period of simulated rhythms.}
 #'     \item{rhyFunc}{Function to generate rhythmic abundance. Must have a
 #'       period of 2*pi. Defaults to `sin`.}
 #'   }
@@ -38,11 +39,11 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'   Defaults to 1/(number of groups). Only used if the first `featureGroupsList`
 #'   `data.frame` lacks a `fracFeatures` column.
 #' @param nFeatures Integer for the total number of features to simulate.
-#' @param period Integer for the period of simulated rhythms.
+#' @param 
 #' @param timepointsType Character string for how to set the timepoints
 #'   for the simulation. Must be 'auto' (default), 'specified', or 'random'.
 #' @param timeRange Optional 2-element vector controlling the range of times to
-#'   sample in simulated data. Defaults to c(0, period).
+#'   sample in simulated data. Defaults to c(0, 48).
 #' @param interval Integer for the amount of time between consecutive
 #'   timepoints, in the same units as `period`. The first timepoint is 0. Only
 #'   used if `timepointsType` == 'auto'.
@@ -115,9 +116,9 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #' `\link{getSampledAbund}`, `\link{mergeSimData}`
 #'
 #' @export
-simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10, period = 24,
+simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
                     timepointsType = c('auto', 'specified', 'random'),
-                    timeRange = c(0, period),
+                    timeRange = c(0, 48),
                     interval = 2, nReps = 1, timepoints = NULL,
                     nSamplesPerCond = NULL, rhyFunc = sin,
                     dispFunc = defaultDispFunc,
@@ -141,13 +142,13 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10, peri
   sm = getSampleMetadata(times)
   fm = getFeatureMetadata(featureGroupsList, fracFeatures, nFeatures)
 
-  abundDt = getExpectedAbund(fm, period, sampleMetadata = sm)
+  abundDt = getExpectedAbund(fm, sampleMetadata = sm)
   abundMat = getSampledAbund(abundDt, family, inplace = TRUE)
 
   experMetadata = list(featureGroupsList = featureGroupsList, fracFeatures = fracFeatures,
-                       nFeatures = nFeatures, period = period,
-                       timepointsType = timepointsType, interval = interval,
-                       nReps = nReps, timepoints = timepoints, rhyFunc = rhyFunc,
+                       nFeatures = nFeatures, timepointsType = timepointsType,
+                       interval = interval, nReps = nReps,
+                       timepoints = timepoints, rhyFunc = rhyFunc,
                        nSamplesPerCond = nSamplesPerCond,
                        dispFunc = dispFunc, family = family)
 

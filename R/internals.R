@@ -15,6 +15,9 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
   if (!'phase' %in% colnames(featureGroups)) {
     featureGroups[, phase := 0]}
 
+  if (!'period' %in% colnames(featureGroups)) {
+    featureGroups[, period := 24]}
+
   if (!'rhyFunc' %in% colnames(featureGroups)) {
     featureGroups[, rhyFunc := data.table(rhyFunc)]}
 

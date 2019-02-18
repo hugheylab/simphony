@@ -5,10 +5,10 @@
 \title{Simulate feature abundance data}
 \usage{
 simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
-  period = 24, timepointsType = c("auto", "specified", "random"),
-  timeRange = c(0, period), interval = 2, nReps = 1,
-  timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-  dispFunc = defaultDispFunc, family = c("gaussian", "negbinom"))
+  timepointsType = c("auto", "specified", "random"), timeRange = c(0,
+  48), interval = 2, nReps = 1, timepoints = NULL,
+  nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = defaultDispFunc,
+  family = c("gaussian", "negbinom"))
 }
 \arguments{
 \item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -29,6 +29,7 @@ values, given expected abundance in counts. Only used if \code{family} ==
 non-rhythmic.}
 \item{phase}{Phase of rhythmic abundance, in the same units as \code{period}.
 Defaults to 0.}
+\item{period}{Integer for the period of simulated rhythms.}
 \item{rhyFunc}{Function to generate rhythmic abundance. Must have a
 period of 2*pi. Defaults to \code{sin}.}
 }}
@@ -39,13 +40,11 @@ Defaults to 1/(number of groups). Only used if the first \code{featureGroupsList
 
 \item{nFeatures}{Integer for the total number of features to simulate.}
 
-\item{period}{Integer for the period of simulated rhythms.}
-
 \item{timepointsType}{Character string for how to set the timepoints
 for the simulation. Must be 'auto' (default), 'specified', or 'random'.}
 
 \item{timeRange}{Optional 2-element vector controlling the range of times to
-sample in simulated data. Defaults to c(0, period).}
+sample in simulated data. Defaults to c(0, 48).}
 
 \item{interval}{Integer for the amount of time between consecutive
 timepoints, in the same units as \code{period}. The first timepoint is 0. Only

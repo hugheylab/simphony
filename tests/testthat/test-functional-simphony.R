@@ -6,21 +6,21 @@ test_that('Abundances are sampled from the correct trend', {
   timepoints = seq(0, 22, 0.1)
   simData = simphony(featureGroups, nFeatures = 10, timepoints = timepoints, timepointsType = 'specified')
 
-  usedAbundGroups = simData$experMetadata$featureGroupsList
-  usedAmps = usedAbundGroups[[1]][, amp]
-  usedRhyFunc = usedAbundGroups[[1]][, rhyFunc]
-  usedBase = usedAbundGroups[[1]][, base]
-  usedPeriod = simData$experMetadata$period
+  usedFeatureGroups = simData$experMetadata$featureGroupsList
+  usedAmps = usedFeatureGroups[[1]][, amp]
+  usedRhyFunc = usedFeatureGroups[[1]][, rhyFunc]
+  usedBase = usedFeatureGroups[[1]][, base]
+  usedPeriod = usedFeatureGroups[[1]][, period]
 
   expectedAbund = foreach(r = 1:nrow(simData$abundData), .combine = rbind) %do% {
-    usedAmps[[r]]((2 * pi) * timepoints / usedPeriod) *
-    usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod) +
-    usedBase[[r]]((2 * pi) * timepoints / usedPeriod)
+    usedAmps[[r]]((2 * pi) * timepoints / usedPeriod[r]) *
+    usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod[r]) +
+    usedBase[[r]]((2 * pi) * timepoints / usedPeriod[r])
   }
   diff = abs(simData$abundData - expectedAbund)
   expect_true(all(diff == 0))
 
-  rm(featureGroups, timepoints, simData, usedAbundGroups, usedAmps, usedRhyFunc,
+  rm(featureGroups, timepoints, simData, usedFeatureGroups, usedAmps, usedRhyFunc,
      usedBase, usedPeriod, expectedAbund, diff)
 })
 
@@ -51,9 +51,9 @@ test_that('Time-dependent statistics from NBD are as expected', {
       featuresNow = simData$featureMetadata[, group == groupNow]
       params = simData$featureMetadata[featuresNow, ][1, ]
 
-      meanExp = 2 ^ (params$amp[[1]](2 * pi * timeNow / simData$experMetadata$period) *
-                     params$rhyFunc[[1]](2 * pi * timeNow / simData$experMetadata$period) +
-                     params$base[[1]](2 * pi * timeNow / simData$experMetadata$period))
+      meanExp = 2 ^ (params$amp[[1]](2 * pi * timeNow / params$period[1]) *
+                     params$rhyFunc[[1]](2 * pi * timeNow / params$period[1]) +
+                     params$base[[1]](2 * pi * timeNow / params$period[1]))
       varExp = meanExp + params$dispFunc[[1]](meanExp) * (meanExp ^ 2)
 
       meanObs = mean(simData$abundData[featuresNow, samplesNow])
@@ -69,7 +69,7 @@ test_that('Time-dependent statistics from NBD are as expected', {
 })
 
 test_that('Amplitude and base can be passed as functions', {
-  abundGroups = data.table::data.table(amp  = function(t) 5 * 2^(-t/12),
-                           base = function(t) 4 * 2^(-t/12))
-  expect_silent(simphony(abundGroups))
+  featureGroups = data.table::data.table(amp  = function(t) 5 * 2^(-t/12),
+                                         base = function(t) 4 * 2^(-t/12))
+  expect_silent(simphony(featureGroups))
 })

@@ -21,15 +21,16 @@ test_that('Number of features and samples simulated are predictable', {
   nFeatures = 100
   sampleInterval = 6
   nReps = 3
+  timeRange = c(0, 24)
 
   featureGroupsList = list(data.table::data.table(base = c(1, 2)),
                            data.table::data.table(amp = c(1, 2), phase = c(3, 4)))
-  simData = simphony(featureGroupsList, nFeatures = nFeatures,
+  simData = simphony(featureGroupsList, nFeatures = nFeatures, timeRange = timeRange,
                      interval = sampleInterval, nReps = nReps)
 
   expect_equal(ncol(simData$abundData), nrow(simData$sampleMetadata))
   expect_equal(ncol(simData$abundData),
-               length(featureGroupsList) * nReps * as.integer(24 / sampleInterval))
+               length(featureGroupsList) * nReps * as.integer((timeRange[2] - timeRange[1]) / sampleInterval))
   expect_equal(nrow(simData$abundData), nFeatures)
   expect_equal(nrow(simData$abundData),
                nrow(simData$featureMetadata) / length(featureGroupsList))
@@ -38,9 +39,9 @@ test_that('Number of features and samples simulated are predictable', {
 })
 
 test_that('Appropriate errors are thrown', {
-  badAbundGroupsList = list(data.table::data.table(base = c(1, 2)),
-                            data.table::data.table(base = 1))
-  expect_error(simphony(badAbundGroupsList),
+  badFeatureGroupsList = list(data.table::data.table(base = c(1, 2)),
+                              data.table::data.table(base = 1))
+  expect_error(simphony(badFeatureGroupsList),
                'Each featureGroups data.frame must have the same number of rows.')
-  rm(badAbundGroupsList)
+  rm(badFeatureGroupsList)
 })

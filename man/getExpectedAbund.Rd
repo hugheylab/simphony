@@ -4,15 +4,13 @@
 \alias{getExpectedAbund}
 \title{Calculate expected abundance}
 \usage{
-getExpectedAbund(featureMetadata, period = 24, times = NULL,
-  sampleMetadata = NULL, byCondGroup = is.null(times))
+getExpectedAbund(featureMetadata, times = NULL, sampleMetadata = NULL,
+  byCondGroup = is.null(times))
 }
 \arguments{
 \item{featureMetadata}{\code{data.table} with columns \code{feature}, \code{base}, \code{rhyFunc},
 \code{amp}, and \code{phase}, where every row corresponds to a gen. If \code{byCondGroup}
 is \code{TRUE}, then must also have columns \code{cond} and \code{group}.}
-
-\item{period}{Integer for the period of simulated rhythms.}
 
 \item{times}{Numeric vector of the times (in the same units as \code{period}) at
 which to calculate expected abundance for each row in \code{featureMetadata}.}
@@ -23,6 +21,8 @@ takes precedence.}
 
 \item{byCondGroup}{Logical for whether to speed up the calculation by
 grouping by the columns \code{cond} and \code{group}. Primarily for internal use.}
+
+\item{period}{Integer for the period of simulated rhythms.}
 }
 \value{
 \code{data.table} derived from \code{featureMetadata} (but with more rows),
