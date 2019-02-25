@@ -14,6 +14,9 @@ jobs:
             tar -xvzf git-lfs-linux-amd64-v2.7.0.tar.gz && \
             ./install.sh && \
             git lfs install && \
+            git lfs track "*.rda"
+            git add .gitattributes && \
+            
 
       - checkout
 
