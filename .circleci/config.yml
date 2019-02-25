@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: hugheylab/hugheyverse
 
-    working_directory: ~/repo
+    working_directory: ~
 
     steps:
       - run:
@@ -14,6 +14,8 @@ jobs:
             tar -xvzf git-lfs-linux-amd64-v2.7.0.tar.gz && \
             ./install.sh && \
             git lfs install
+
+      - working_directory: ~/repo
 
       - checkout
 
