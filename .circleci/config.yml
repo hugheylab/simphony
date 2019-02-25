@@ -10,9 +10,9 @@ jobs:
       - run:
           name: Install git LFS
           command: |
-            wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz  && \
-            tar -xvzf git-lfs-linux-amd64-v2.7.0.tar.gz && \
-            ./install.sh && \
+            wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz -P /tmp && \
+            tar -xvzf git-lfs-linux-amd64-v2.7.0.tar.gz -C /tmp && \
+            /tar/install.sh && \
             git lfs install
 
       - checkout
