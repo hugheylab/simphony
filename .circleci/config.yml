@@ -39,7 +39,7 @@ jobs:
             Rscript \
               -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Imports"], "\n"),' \
               -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
-              -e 'install.packages(packages)'
+              -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
 
       - run:
           name: Install required packages from DESCRIPTION Suggests
@@ -47,7 +47,8 @@ jobs:
             Rscript \
               -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Suggests"], "\n"),' \
               -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
-              -e 'install.packages(Filter(function(x) x != "limma", packages));'
+              -e 'packages = Filter(function(x) x != "limma", packages);' \
+              -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
 
       - run:
           name: Install bioconductor-specific packages for Simphony
