@@ -54,7 +54,7 @@ jobs:
           command: |
             Rscript \
               -e 'install.packages("BiocManager");' \
-              -e 'BiocManager::install("limma")'
+              -e 'BiocManager::install("limma")' \
               -e 'BiocManager::install("DESeq2")'
 
       - run:
