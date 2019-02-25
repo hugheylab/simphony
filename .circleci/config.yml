@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: hugheylab/hugheyverse
+      - image: r-base:3.5.2
 
     working_directory: ~/repo
 
@@ -13,7 +13,7 @@ jobs:
           name: Set environmental variables
           command: |
             Rscript --vanilla \
-              -e 'dsc <- read.dcf("DESCRIPTION")' \
+              -e 'dsc = read.dcf("DESCRIPTION")' \
               -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
               -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
               >> ${BASH_ENV}
@@ -24,6 +24,14 @@ jobs:
             Rscript \
               -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
               -e 'devtools::install_deps(dependencies = TRUE)'
+
+      - run:
+          name: Install required packages from DESCRIPTION
+          command: |
+            Rscript \
+              -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Imports"], "\n"),' \
+              -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
+              -e 'install.packages(packages)'
 
       - run:
           name: Build package
