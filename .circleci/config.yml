@@ -19,15 +19,15 @@ jobs:
               >> ${BASH_ENV}
 
       - run:
-        name: Install devtools and dependencies
-        command: |
-          Rscript \
-            -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
-            -e 'devtools::install_deps(dependencies = TRUE)'
+          name: Install devtools and dependencies
+          command: |
+            Rscript \
+              -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
+              -e 'devtools::install_deps(dependencies = TRUE)'
 
       - run:
-        name: Build package
-        command: R CMD build .
+          name: Build package
+          command: R CMD build .
 
       - run:
           name: Check package
