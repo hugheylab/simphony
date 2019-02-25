@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Check package
-          command: R CMD check "${PKG_TARBALL}" --as-cran --no-manual
+          command: R CMD check "${PKG_TARBALL}" --no-manual
 
       - run:
           name: Check failures
