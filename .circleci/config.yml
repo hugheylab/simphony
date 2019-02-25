@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: r-base:3.5.2
+      - image: hugheylab/hugheyverse
 
     working_directory: ~/repo
 
@@ -26,12 +26,27 @@ jobs:
               -e 'devtools::install_deps(dependencies = TRUE)'
 
       - run:
-          name: Install required packages from DESCRIPTION
+          name: Install required packages from DESCRIPTION Imports
           command: |
             Rscript \
               -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Imports"], "\n"),' \
               -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
               -e 'install.packages(packages)'
+
+      - run:
+          name: Install required packages from DESCRIPTION Suggests
+          command: |
+            Rscript \
+              -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Suggests"], "\n"),' \
+              -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
+              -e 'install.packages(Filter(function(x) x != "limma", packages))'
+
+      - run:
+          name: Install required packages from DESCRIPTION Suggests
+          command: |
+            Rscript \
+              -e 'install.packages("BiocManager");' \
+              -e 'BiocManager::install("limma")'
 
       - run:
           name: Build package
