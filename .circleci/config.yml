@@ -13,12 +13,15 @@ jobs:
             wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz  && \
             tar -xvzf git-lfs-linux-amd64-v2.7.0.tar.gz && \
             ./install.sh && \
-            git lfs install && \
-            git lfs track "*.rda"
-            git add .gitattributes && \
-            
+            git lfs install
 
       - checkout
+
+      - run:
+          name: Establish git lfs tracking
+          command: |
+            git lfs track "*.rda" && \
+            git add .gitattributes
 
       - run:
           name: Set environmental variables
