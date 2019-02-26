@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: hugheylab/hugheyverse
+      - image: r-base:3.5.2
 
     working_directory: ~/repo
 
