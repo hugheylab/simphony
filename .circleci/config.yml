@@ -7,7 +7,12 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - run:
+        - run:
+          name: Update and install git
+          command: |
+            apt-get update && apt-get install git
+
+        - run:
           name: Install git LFS
           command: |
             wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz -P /tmp && \
