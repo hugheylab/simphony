@@ -13,6 +13,7 @@ Then add the following line to your `.Rprofile` file (located at "~/.Rprofile"),
 ```R
 drat::addRepo('hugheylab')
 ```
+Alternatively, you can just enter the above command into the R console each time you want to install or update the package.
 
 Now you can install the package.
 ```R
