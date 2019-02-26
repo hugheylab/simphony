@@ -19,12 +19,12 @@
 #' Calculate expected abundance for multiple features at multiple timepoints in
 #' multiple conditions.
 #'
-#' @param featureMetadata `data.table` with columns `feature`, `base`, `rhyFunc`,
-#'   `amp`, and `phase`, where every row corresponds to a gen. If `byCondGroup`
-#'   is `TRUE`, then must also have columns `cond` and `group`.
-#' @param period Integer for the period of simulated rhythms.
-#' @param times Numeric vector of the times (in the same units as `period`) at
-#'   which to calculate expected abundance for each row in `featureMetadata`.
+#' @param featureMetadata `data.table` with columns `feature`, `base`,
+#'   `rhyFunc`, `amp`, `period`, and `phase`, where every row corresponds to a
+#'   gene. If `byCondGroup` is `TRUE`, then must also have columns `cond` and
+#'   `group`.
+#' @param times Numeric vector of the times at which to calculate expected
+#'   abundance for each row in `featureMetadata`.
 #' @param sampleMetadata `data.table` with columns `sample`, `cond`, and
 #'   `time`. Either `times` or `sampleMetadata` must be provided, and the former
 #'   takes precedence.
@@ -48,7 +48,8 @@
 #'
 #' @export
 getExpectedAbund = function(featureMetadata, times = NULL,
-                            sampleMetadata = NULL, byCondGroup = is.null(times)) {
+                            sampleMetadata = NULL,
+                            byCondGroup = is.null(times)) {
   if (!is.null(times)) {
     d = data.table(featureMetadata)[rep(1:.N, each = length(times))]
     d[, time := rep(times, times = nrow(featureMetadata))]
@@ -108,14 +109,14 @@ getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom'),
   } else {
     # dispFunc is identical for features of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
-    abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1/dispFunc[[1]](2^mu)),
+    abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1 / dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]}
 
   data.table::setorderv(abundDt, c('sample', 'feature'))
   features = unique(abundDt$feature)
   samples = unique(abundDt$sample)
   abundMat = matrix(abundDt$abund, nrow = length(features),
-                   dimnames = list(features, samples))
+                    dimnames = list(features, samples))
   return(abundMat)}
 
 
@@ -133,8 +134,8 @@ getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom'),
 #'   \item{sampleMetadata}{`data.table` with columns `sample` and `cond`.}
 #'   \item{featureMetadata}{`data.table` with columns `feature` and `cond`.}
 #' }
-#' @param features Character vector of features for which to get abundance data. If
-#'   NULL, then all features.
+#' @param features Character vector of features for which to get abundance data.
+#'   If NULL, then all features.
 #'
 #' @return `data.table`.
 #'
@@ -152,8 +153,9 @@ mergeSimData = function(simData, features = NULL) {
     features = rownames(simData$abundData)}
 
   d = data.table(simData$abundData[features, ], keep.rownames = TRUE)
-  setnames(d, 'rn', 'feature')
-  d = melt(d, id.vars = 'feature', variable.name = 'sample', value.name = 'abund')
+  data.table::setnames(d, 'rn', 'feature')
+  d = data.table::melt(d, id.vars = 'feature', variable.name = 'sample',
+                       value.name = 'abund')
 
   d = merge(d, simData$sampleMetadata, by = 'sample')
   d = merge(d, simData$featureMetadata, by = c('feature', 'cond'))
@@ -162,8 +164,8 @@ mergeSimData = function(simData, features = NULL) {
 
 #' Split differential featureGroups
 #'
-#' Split a diffFeatureGroups data.frame into a list of two featureGroups data.frames,
-#' which can then be passed to `simphony()`.
+#' Split a diffFeatureGroups data.frame into a list of two featureGroups
+#' data.frames, which can then be passed to `simphony()`.
 #'
 #' @param diffFeatureGroups `data.frame` with optional columns `meanBase`,
 #'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`

@@ -8,12 +8,13 @@ getExpectedAbund(featureMetadata, times = NULL, sampleMetadata = NULL,
   byCondGroup = is.null(times))
 }
 \arguments{
-\item{featureMetadata}{\code{data.table} with columns \code{feature}, \code{base}, \code{rhyFunc},
-\code{amp}, and \code{phase}, where every row corresponds to a gen. If \code{byCondGroup}
-is \code{TRUE}, then must also have columns \code{cond} and \code{group}.}
+\item{featureMetadata}{\code{data.table} with columns \code{feature}, \code{base},
+\code{rhyFunc}, \code{amp}, \code{period}, and \code{phase}, where every row corresponds to a
+gene. If \code{byCondGroup} is \code{TRUE}, then must also have columns \code{cond} and
+\code{group}.}
 
-\item{times}{Numeric vector of the times (in the same units as \code{period}) at
-which to calculate expected abundance for each row in \code{featureMetadata}.}
+\item{times}{Numeric vector of the times at which to calculate expected
+abundance for each row in \code{featureMetadata}.}
 
 \item{sampleMetadata}{\code{data.table} with columns \code{sample}, \code{cond}, and
 \code{time}. Either \code{times} or \code{sampleMetadata} must be provided, and the former
@@ -21,8 +22,6 @@ takes precedence.}
 
 \item{byCondGroup}{Logical for whether to speed up the calculation by
 grouping by the columns \code{cond} and \code{group}. Primarily for internal use.}
-
-\item{period}{Integer for the period of simulated rhythms.}
 }
 \value{
 \code{data.table} derived from \code{featureMetadata} (but with more rows),

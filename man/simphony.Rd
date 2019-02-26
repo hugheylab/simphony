@@ -16,35 +16,39 @@ or list of \code{data.frame}s or \code{data.table}s (for multiple conditions), w
 each row corresponds to a group of features to simulate. The following
 columns are all optional:
 \describe{
-\item{fracFeatures}{Fraction of simulated features to allocate to each group.
-Defaults to 1/(number of groups).}
-\item{base}{Average abundance. Defaults to 0 if \code{family} == 'gaussian'
-and to 8 (mean log2 counts) if \code{family} == 'negbinom'.}
+\item{fracFeatures}{Fraction of simulated features to allocate to each
+group. Defaults to 1/(number of groups).}
+\item{rhyFunc}{Function to generate rhythmic abundance. Must have a
+period of 2*pi. Defaults to \code{sin}.}
+\item{amp}{Amplitude of rhythm. Defaults to 0. Corresponds to
+multiplicative term in front of \code{rhyFunc}. Can be numeric (constant
+over time) or a function (time-dependent). See vignette for examples.}
+\item{period}{Period of rhythm. Defaults to 24.}
+\item{phase}{Phase of rhythm, in the same units as \code{period}. Defaults to
+0. Corresponds to an additive term in \code{rhyFunc}.}
+\item{base}{Baseline abundance, i.e., abundance when \code{rhyFunc} term is 0.
+Defaults to 0 if \code{family} == 'gaussian' and to 8 (mean log2 counts) if
+\code{family} == 'negbinom'. Can be numeric (constant over time) or a
+function (time-dependent). See vignette for examples.}
 \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
 Only used if \code{family} == 'gaussian'.}
 \item{dispFunc}{Function to calculate dispersion of sampled abundance
 values, given expected abundance in counts. Only used if \code{family} ==
 'negbinom'.}
-\item{amp}{Amplitude of rhythmic abundance. Defaults to 0 (i.e.,
-non-rhythmic.}
-\item{phase}{Phase of rhythmic abundance, in the same units as \code{period}.
-Defaults to 0.}
-\item{period}{Integer for the period of simulated rhythms.}
-\item{rhyFunc}{Function to generate rhythmic abundance. Must have a
-period of 2*pi. Defaults to \code{sin}.}
 }}
 
 \item{fracFeatures}{Fraction of simulated features to allocate to each group.
-Defaults to 1/(number of groups). Only used if the first \code{featureGroupsList}
-\code{data.frame} lacks a \code{fracFeatures} column.}
+Defaults to 1/(number of groups). Only used if the first
+\code{featureGroupsList} \code{data.frame} lacks a \code{fracFeatures} column.}
 
 \item{nFeatures}{Integer for the total number of features to simulate.}
 
 \item{timepointsType}{Character string for how to set the timepoints
 for the simulation. Must be 'auto' (default), 'specified', or 'random'.}
 
-\item{timeRange}{Optional 2-element vector controlling the range of times to
-sample in simulated data. Defaults to c(0, 48).}
+\item{timeRange}{Numeric vector for the range of timepoints to use for the
+simulation. Defaults to c(0, 48). Only used if \code{timepointsType} is 'auto'
+or 'random'.}
 
 \item{interval}{Integer for the amount of time between consecutive
 timepoints, in the same units as \code{period}. The first timepoint is 0. Only
@@ -61,13 +65,13 @@ which will be randomly uniformly spaced between 0 and \code{period} and
 different for each condition. Only used if timepointsType == 'random'.}
 
 \item{rhyFunc}{Function to generate rhythmic abundance. Must have a period
-of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in \code{featureGroupsList}
-lacks a \code{rhyFunc} column.}
+of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in
+\code{featureGroupsList} lacks a \code{rhyFunc} column.}
 
 \item{dispFunc}{Function to calculate dispersion of sampled abundance
 values, given expected abundance in counts. Defaults to \code{defaultDispFunc}.
-Only used if \code{family} == 'negbinom' and a \code{data.frame} in \code{featureGroupsList}
-lacks a \code{dispFunc} column.}
+Only used if \code{family} == 'negbinom' and a \code{data.frame} in
+\code{featureGroupsList} lacks a \code{dispFunc} column.}
 
 \item{family}{Character string for the family of distributions from
 which to generate the abundance values. Must be 'gaussian' or 'negbinom'.}
@@ -83,8 +87,8 @@ List with the following elements:
 }
 }
 \description{
-Simulate experiments in which rhythmic and non-rhythmic feature abundance is
-measured at multiple timepoints in one or more conditions.
+Simulate experiments in which abundances of rhythmic and non-rhythmic
+features are measured at multiple timepoints in one or more conditions.
 }
 \examples{
 library('data.table')

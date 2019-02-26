@@ -1,3 +1,5 @@
+^\.circleci$
+^readme\.md$
 ^data-raw$
 ^.*\.Rproj$
 ^\.Rproj\.user$
