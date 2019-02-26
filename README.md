@@ -9,7 +9,7 @@ First install drat.
 install.packages('drat')
 ```
 
-Then add the following line to your `.Rprofile` file (located at "~/.Rprofile"), which gets run every time R starts. See [here](https://csgillespie.github.io/efficientR/3-3-r-startup.html#r-startup) for details.
+Then add the following line to your `.Rprofile` file (typically located at "~/.Rprofile"), which gets run every time R starts. See [here](https://csgillespie.github.io/efficientR/3-3-r-startup.html#r-startup) for details.
 ```R
 drat::addRepo('hugheylab')
 ```
