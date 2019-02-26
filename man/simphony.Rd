@@ -5,8 +5,8 @@
 \title{Simulate feature abundance data}
 \usage{
 simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
-  period = 24, timepointsType = c("auto", "specified", "random"),
-  interval = 2, nReps = 1, timepoints = NULL,
+  timepointsType = c("auto", "specified", "random"), timeRange = c(0,
+  48), interval = 2, nReps = 1, timepoints = NULL,
   nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = defaultDispFunc,
   family = c("gaussian", "negbinom"))
 }
@@ -29,6 +29,7 @@ values, given expected abundance in counts. Only used if \code{family} ==
 non-rhythmic.}
 \item{phase}{Phase of rhythmic abundance, in the same units as \code{period}.
 Defaults to 0.}
+\item{period}{Integer for the period of simulated rhythms.}
 \item{rhyFunc}{Function to generate rhythmic abundance. Must have a
 period of 2*pi. Defaults to \code{sin}.}
 }}
@@ -39,10 +40,11 @@ Defaults to 1/(number of groups). Only used if the first \code{featureGroupsList
 
 \item{nFeatures}{Integer for the total number of features to simulate.}
 
-\item{period}{Integer for the period of simulated rhythms.}
-
 \item{timepointsType}{Character string for how to set the timepoints
 for the simulation. Must be 'auto' (default), 'specified', or 'random'.}
+
+\item{timeRange}{Optional 2-element vector controlling the range of times to
+sample in simulated data. Defaults to c(0, 48).}
 
 \item{interval}{Integer for the amount of time between consecutive
 timepoints, in the same units as \code{period}. The first timepoint is 0. Only
@@ -89,7 +91,7 @@ library('data.table')
 
 # Simulate data for features having one of three sets of rhythmic parameters.
 featureGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
-                        rhyFunc = c(cos, cos, sin))
+                           rhyFunc = c(cos, cos, sin))
 simData = simphony(featureGroups)
 
 # Simulate data for an experiment with specified timepoints and replicates.
@@ -99,7 +101,7 @@ simData = simphony(featureGroups, timepointsType = 'specified',
 
 # Simulate data for features whose rhythmicity varies between two conditions.
 featureGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
-                      data.table(amp = c(3, 2), phase = c(0, 3)))
+                         data.table(amp = c(3, 2), phase = c(0, 3)))
 simData = simphony(featureGroupsList)
 
 # Simulate data for 100 features, half non-rhythmic and half rhythmic, with
