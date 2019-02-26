@@ -37,8 +37,11 @@
 #'
 #' @examples
 #' library('data.table')
-#' featureMetadata = data.table(feature = c('feature_1', 'feature_2'), base = 0,
-#'                           amp = c(0, 1), phase = 0, rhyFunc = sin)
+#' featureMetadata = data.table(feature = c('feature_1', 'feature_2'),
+#'                              base = function(x) 0,
+#'                              amp = c(function(x) 0, function(x) 1),
+#'                              period = 24,
+#'                              phase = 0, rhyFunc = sin)
 #' abundDt = getExpectedAbund(featureMetadata, times = 6:17)
 #'
 #' @seealso `\link{simphony}`, `\link{getSampledAbund}`

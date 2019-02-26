@@ -1,0 +1,76 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: r-base:3.5.2
+
+    working_directory: ~/repo
+
+    steps:
+      - run:
+          name: Update and install git
+          command: apt-get update -y && apt-get install -y git
+
+      - run:
+          name: Install git LFS
+          command: |
+            wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz -P /tmp && \
+            tar -xvzf /tmp/git-lfs-linux-amd64-v2.7.0.tar.gz -C /tmp && \
+            /tmp/install.sh && \
+            git lfs install
+
+      - checkout
+
+      - run:
+          name: Set environmental variables
+          command: |
+            Rscript --vanilla \
+              -e 'dsc = read.dcf("DESCRIPTION")' \
+              -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
+              -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
+              >> ${BASH_ENV}
+
+      - run:
+          name: Install devtools and dependencies
+          command: |
+            Rscript \
+              -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
+              -e 'devtools::install_deps(dependencies = TRUE)'
+
+      - run:
+          name: Install required packages from DESCRIPTION Imports
+          command: |
+            Rscript \
+              -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Imports"], "\n"),' \
+              -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
+              -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
+
+      - run:
+          name: Install required packages from DESCRIPTION Suggests
+          command: |
+            Rscript \
+              -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Suggests"], "\n"),' \
+              -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
+              -e 'packages = Filter(function(x) x != "limma", packages);' \
+              -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
+
+      - run:
+          name: Install bioconductor-specific packages for Simphony
+          command: |
+            Rscript \
+              -e 'install.packages("BiocManager");' \
+              -e 'BiocManager::install("limma")' \
+              -e 'BiocManager::install("DESeq2")'
+
+      - run:
+          name: Build package
+          command: R CMD build .
+
+      - run:
+          name: Check package
+          command: R CMD check "${PKG_TARBALL}" --no-manual
+
+      - run:
+          name: Check failures
+          command: |
+            Rscript -e "message(devtools::check_failures(path = '${RCHECK_DIR}'))"

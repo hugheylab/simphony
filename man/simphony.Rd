@@ -91,7 +91,7 @@ library('data.table')
 
 # Simulate data for features having one of three sets of rhythmic parameters.
 featureGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
-                        rhyFunc = c(cos, cos, sin))
+                           rhyFunc = c(cos, cos, sin))
 simData = simphony(featureGroups)
 
 # Simulate data for an experiment with specified timepoints and replicates.
@@ -101,7 +101,7 @@ simData = simphony(featureGroups, timepointsType = 'specified',
 
 # Simulate data for features whose rhythmicity varies between two conditions.
 featureGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
-                      data.table(amp = c(3, 2), phase = c(0, 3)))
+                         data.table(amp = c(3, 2), phase = c(0, 3)))
 simData = simphony(featureGroupsList)
 
 # Simulate data for 100 features, half non-rhythmic and half rhythmic, with

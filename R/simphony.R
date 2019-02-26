@@ -3,9 +3,10 @@
 NULL
 
 
-globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
+globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
                   'dispFunc', 'featureGroups', 'time', 'abund', '..cond', '.N',
-                  '.dummy', 'feature', 'mu', 'period'))
+                  '.dummy', 'feature', 'mu', 'period', 'defaultDispFunc', 'v',
+                  'melt', 'setnames'))
 
 
 #' Simulate feature abundance data
@@ -39,7 +40,6 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'   Defaults to 1/(number of groups). Only used if the first `featureGroupsList`
 #'   `data.frame` lacks a `fracFeatures` column.
 #' @param nFeatures Integer for the total number of features to simulate.
-#' @param 
 #' @param timepointsType Character string for how to set the timepoints
 #'   for the simulation. Must be 'auto' (default), 'specified', or 'random'.
 #' @param timeRange Optional 2-element vector controlling the range of times to
@@ -78,7 +78,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'
 #' # Simulate data for features having one of three sets of rhythmic parameters.
 #' featureGroups = data.table(amp = c(0, 1, 1), phase = c(0, 0, 6),
-#'                         rhyFunc = c(cos, cos, sin))
+#'                            rhyFunc = c(cos, cos, sin))
 #' simData = simphony(featureGroups)
 #'
 #' # Simulate data for an experiment with specified timepoints and replicates.
@@ -88,7 +88,7 @@ globalVariables(c('base', 'amp', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
 #'
 #' # Simulate data for features whose rhythmicity varies between two conditions.
 #' featureGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
-#'                       data.table(amp = c(3, 2), phase = c(0, 3)))
+#'                          data.table(amp = c(3, 2), phase = c(0, 3)))
 #' simData = simphony(featureGroupsList)
 #'
 #' # Simulate data for 100 features, half non-rhythmic and half rhythmic, with
