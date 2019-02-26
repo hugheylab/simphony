@@ -9,7 +9,19 @@ jobs:
     steps:
       - run:
           name: Update and install git
-          command: apt-get update -y && apt-get install -y git
+          command: |
+            apt-get update -y && \
+            apt-get install -y \
+            curl \
+            git \
+            libcurl4-gnutls-dev \
+            libssh2-1-dev \
+            libssl-dev \
+            libxml2-dev \
+            && apt-get clean \
+            && rm -rf /var/lib/apt/lists/* \
+            && install.r BiocManager \
+            && install.r drat
 
       - run:
           name: Install git LFS
@@ -34,8 +46,7 @@ jobs:
           name: Install devtools and dependencies
           command: |
             Rscript \
-              -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
-              -e 'devtools::install_deps(dependencies = TRUE)'
+              -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")'
 
       - run:
           name: Install required packages from DESCRIPTION Imports
