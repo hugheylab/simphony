@@ -9,7 +9,7 @@ jobs:
     steps:
       - run:
           name: Update and install git
-          command: apt-get update && apt-get install git
+          command: apt-get update -y && apt-get install -y git
 
       - run:
           name: Install git LFS
