@@ -7,10 +7,10 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
   featureGroups[, group := 1:.N]
 
   if (nrow(featureGroups) == 0) {
-    stop('featureGroups must have at least one row.') }
+    stop('featureGroups must have at least one row.')}
 
   featureGroups = setFuncs(featureGroups, 'amp', 0)
-  featureGroups[, amp0 := sapply(featureGroups[, amp], mapply, 0)]
+  featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
 
   if (!'phase' %in% colnames(featureGroups)) {
     featureGroups[, phase := 0]}
@@ -23,44 +23,41 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
 
   if (family == 'negbinom') {
     if (!'dispFunc' %in% colnames(featureGroups)) {
-      featureGroups[, dispFunc := data.table(dispFunc)] }
+      featureGroups[, dispFunc := data.table(dispFunc)]}
     featureGroups = setFuncs(featureGroups, 'base', 8)
-  }
-  else {
+  } else {
     if (!'sd' %in% colnames(featureGroups)) {
       featureGroups[, sd := 1]
     } else if (!all(featureGroups$sd >= 0)) {
       stop('All groups in featureGroups must have standard deviation >= 0.')}
+    featureGroups = setFuncs(featureGroups, 'base', 0)}
 
-    featureGroups = setFuncs(featureGroups, 'base', 0)
-  }
-  featureGroups[, base0 := sapply(featureGroups[, base], mapply, 0)]
+  featureGroups[, base0 := base[[1]](0), by = 1:nrow(featureGroups)]
 
   return(featureGroups)}
 
-setFuncs = function(featureGroups, value, default) {
-  if (!value %in% colnames(featureGroups)) {
-    featureGroups[, (value) := list(list(function(x) default))]
+
+setFuncs = function(featureGroups, varName, defaultValue) {
+  if (!varName %in% colnames(featureGroups)) {
+    featureGroups[, (varName) := list(list(function(x) defaultValue))]
   } else {
-    if (is.numeric(featureGroups[, get(value)])) {
+    if (is.numeric(featureGroups[, get(varName)])) {
       makefunc = function(x) { x; function(m) x }
       if (nrow(featureGroups) == 1) {
-        featureGroups[, (value) := list(list(makefunc(featureGroups[1, get(value)])))]
+        featureGroups[, (varName) := list(list(makefunc(featureGroups[1, get(varName)])))]
       } else {
-        featureGroups[, (value) := foreach(v = featureGroups[, get(value)]) %do% {
-                                          makefunc(v) }]
-      }
-    }
-    else if (sum(unlist(lapply(featureGroups[, get(value)], function(x) !is.function(x)))) == 0) {}
-    else {stop(sprintf('%ss must be either numeric values or functions', value))}
-  }
-  return(featureGroups)
-}
+        featureGroups[, (varName) := foreach(v = featureGroups[, get(varName)]) %do% {makefunc(v)}]}
+    } else if (!all(sapply(featureGroups[, get(varName)], is.function))) {
+      stop(sprintf('%s must be numeric or a list of functions.', varName))}}
+  return(featureGroups)}
+
 
 getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
                     nSamplesPerCond, nConds) {
   if (timepointsType == 'auto') {
-    tt = interval * (timeRange[1] %/% interval - (timeRange[1] %% interval == 0) + 1):(timeRange[2] %/% interval - (timeRange[2] %% interval == 0))
+    t1 = timeRange[1] %/% interval - (timeRange[1] %% interval == 0) + 1
+    t2 = timeRange[2] %/% interval - (timeRange[2] %% interval == 0)
+    tt = interval * t1:t2
     tt = rep(tt, each = nReps)
     times = matrix(rep(tt, each = nConds), ncol = length(tt))
   } else if (timepointsType == 'specified') {

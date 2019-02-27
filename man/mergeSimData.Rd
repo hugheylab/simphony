@@ -16,8 +16,8 @@ colnames for samples.}
 \item{featureMetadata}{\code{data.table} with columns \code{feature} and \code{cond}.}
 }}
 
-\item{features}{Character vector of features for which to get abundance data. If
-NULL, then all features.}
+\item{features}{Character vector of features for which to get abundance data.
+If NULL, then all features.}
 }
 \value{
 \code{data.table}.
