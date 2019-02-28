@@ -152,7 +152,8 @@ mergeSimData = function(simData, features = NULL) {
   if (is.null(features)) {
     features = rownames(simData$abundData)}
 
-  d = data.table(simData$abundData[features, ], keep.rownames = TRUE)
+  d = data.table(simData$abundData[features, , drop = FALSE],
+                 keep.rownames = TRUE)
   data.table::setnames(d, 'rn', 'feature')
   d = data.table::melt(d, id.vars = 'feature', variable.name = 'sample',
                        value.name = 'abund')
