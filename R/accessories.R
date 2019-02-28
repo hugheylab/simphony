@@ -4,7 +4,7 @@
 #' (PRJNA297287), using local regression in DESeq2. In a negative binomial
 #' distribution, variance = mean + mean^2 * dispersion.
 #'
-#' @format A vectorized function with some attributes.
+#' @format A vectorized function.
 #'
 #' @examples
 #' means = 2^(6:10)
