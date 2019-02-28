@@ -23,6 +23,8 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
 
   if (family == 'negbinom') {
     if (!'dispFunc' %in% colnames(featureGroups)) {
+      if (is.null(dispFunc)) {
+        dispFunc = defaultDispFunc}
       featureGroups[, dispFunc := data.table(dispFunc)]}
     featureGroups = setFuncs(featureGroups, 'base', 8)
   } else {
