@@ -119,7 +119,7 @@ featureGroupsList = list(
   data.table(amp = c(3, 2, 2), phase = c(0, 3, 0), period = c(24, 24, 26)))
 simData = simphony(featureGroupsList)
 
-Simulate data from a negative binomial distribution with a higher variance.
+# Simulate data from a negative binomial distribution with a higher variance.
 featureGroups = data.table(amp = 1, base = 6:8)
 dispFunc = function(x) 3 * defaultDispFunc(x)
 simData = simphony(featureGroups, family = 'negbinom', dispFunc = dispFunc)
