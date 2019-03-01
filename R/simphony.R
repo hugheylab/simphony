@@ -70,9 +70,12 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc', '
 #' @return List with the following elements:
 #' \describe{
 #'   \item{abundData}{Matrix of abundance values (counts, if `family` ==
-#'   'negbinom'), with features as rownames and samples as colnames.}
+#'     'negbinom'), with features as rownames and samples as colnames.}
 #'   \item{sampleMetadata}{`data.table` with one row per sample.}
-#'   \item{featureMetadata}{`data.table` with one row per feature per condition.}
+#'   \item{featureMetadata}{`data.table` with one row per feature per condition.
+#'     Columns `amp` and `base` are functions of time. Columns `amp0` and
+#'     `base0` are numeric and correspond to the amplitude and baseline
+#'     abundance at time 0, respectively.}
 #'   \item{experMetadata}{List of arguments that were passed to `simphony`.}
 #' }
 #'

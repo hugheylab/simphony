@@ -82,7 +82,10 @@ List with the following elements:
 \item{abundData}{Matrix of abundance values (counts, if \code{family} ==
 'negbinom'), with features as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
-\item{featureMetadata}{\code{data.table} with one row per feature per condition.}
+\item{featureMetadata}{\code{data.table} with one row per feature per condition.
+Columns \code{amp} and \code{base} are functions of time. Columns \code{amp0} and
+\code{base0} are numeric and correspond to the amplitude and baseline
+abundance at time 0, respectively.}
 \item{experMetadata}{List of arguments that were passed to \code{simphony}.}
 }
 }
