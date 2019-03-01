@@ -3,9 +3,14 @@
 \name{defaultDispFunc}
 \alias{defaultDispFunc}
 \title{Default function for mapping expected counts to dispersion.}
-\format{A vectorized function.}
 \usage{
 defaultDispFunc(x)
+}
+\arguments{
+\item{x}{Numeric vector of mean counts.}
+}
+\value{
+Numeric vector of dispersions.
 }
 \description{
 The function was estimated from circadian RNA-seq data from mouse liver
