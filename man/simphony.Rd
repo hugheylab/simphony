@@ -7,7 +7,7 @@
 simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
   timepointsType = c("auto", "specified", "random"), timeRange = c(0,
   48), interval = 2, nReps = 1, timepoints = NULL,
-  nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = defaultDispFunc,
+  nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = NULL,
   family = c("gaussian", "negbinom"))
 }
 \arguments{
@@ -82,7 +82,10 @@ List with the following elements:
 \item{abundData}{Matrix of abundance values (counts, if \code{family} ==
 'negbinom'), with features as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
-\item{featureMetadata}{\code{data.table} with one row per feature per condition.}
+\item{featureMetadata}{\code{data.table} with one row per feature per condition.
+Columns \code{amp} and \code{base} are functions of time. Columns \code{amp0} and
+\code{base0} are numeric and correspond to the amplitude and baseline
+abundance at time 0, respectively.}
 \item{experMetadata}{List of arguments that were passed to \code{simphony}.}
 }
 }
@@ -101,12 +104,28 @@ simData = simphony(featureGroups)
 # Simulate data for an experiment with specified timepoints and replicates.
 featureGroups = data.table(amp = c(0, 1))
 simData = simphony(featureGroups, timepointsType = 'specified',
-                   timepoints = rep(seq(0, 6, 2), each = 2))
+                   timepoints = c(0, 2, 2, 4, 12, 16, 21))
+
+# Simulate data for an experiment with random timepoints between 0 and 24.
+featureGroups = data.table(amp = c(0, 2))
+simData = simphony(featureGroups, timepointsType = 'random',
+                   timeRange = c(0, 24), nSamplesPerCond = 20)
+
+# Simulate data with time-dependent rhythm amplitude or baseline abundance
+featureGroups = data.table(amp = c(function(x) 1, function(x) 2^(-x / 24)),
+                           base = c(function(x) x / 12, function(x) 0))
+simData = simphony(featureGroups)
 
 # Simulate data for features whose rhythmicity varies between two conditions.
-featureGroupsList = list(data.table(amp = c(1, 2), phase = c(0, -3)),
-                         data.table(amp = c(3, 2), phase = c(0, 3)))
+featureGroupsList = list(
+  data.table(amp = c(1, 2, 2), phase = c(0, -3, 0), period = c(24, 24, 22)),
+  data.table(amp = c(3, 2, 2), phase = c(0, 3, 0), period = c(24, 24, 26)))
 simData = simphony(featureGroupsList)
+
+# Simulate data from a negative binomial distribution with a higher variance.
+featureGroups = data.table(amp = 1, base = 6:8)
+dispFunc = function(x) 3 * defaultDispFunc(x)
+simData = simphony(featureGroups, family = 'negbinom', dispFunc = dispFunc)
 
 # Simulate data for 100 features, half non-rhythmic and half rhythmic, with
 # amplitudes for rhythmic features sampled from a log-normal distribution.

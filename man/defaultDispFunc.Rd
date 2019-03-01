@@ -3,9 +3,9 @@
 \name{defaultDispFunc}
 \alias{defaultDispFunc}
 \title{Default function for mapping expected counts to dispersion.}
-\format{A vectorized function with some attributes.}
+\format{A vectorized function.}
 \usage{
-defaultDispFunc(means)
+defaultDispFunc(x)
 }
 \description{
 The function was estimated from circadian RNA-seq data from mouse liver

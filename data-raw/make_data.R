@@ -1,20 +1,43 @@
 dispFuncs = readRDS('../../projects/simphony_analysis/results/mouse_disp_funcs.rds')
-defaultDispFunc = dispFuncs$local
+locfitDispFunc = dispFuncs$local
 
-##### cut a little fat
-env = environment(defaultDispFunc)
+##### fit a smoothing spline to the locfit curve to speed up load time
 
-ls(env)
-rm('means', 'disps', 'd', 'minDisp', envir = env)
+makeDefaultDispFunc = function(xLoc, yLoc) {
+  ss = smooth.spline(xLoc, yLoc)
+  defaultDispFunc = function(x) {
+    if (any(x <= 0)) {
+      stop('Mean counts must be greater than zero.')}
+    y = 10^predict(ss, log10(x))$y
+    return(y)}
+  return(defaultDispFunc)}
 
-# names(env$fit)
-# env$fit$frame = NULL
-# failed: eva, cell, terms, nvc, mi, , trans
-# ok to remove: box, sty, deriv,
+x = seq(-1, 7, 0.01)
+y = log10(locfitDispFunc(10^x))
+defaultDispFunc = makeDefaultDispFunc(x, y)
+
+plot(x, y, pch = '.')
+lines(x, predict(ss)$y, col = 'blue')
+lines(x, log10(defaultDispFunc(10^x)), col = 'red')
 
 usethis::use_data(defaultDispFunc, internal = FALSE, overwrite = TRUE)
 
-##### check that it still works
+##### cut a little fat
+# env = environment(defaultDispFunc)
+#
+# ls(env)
+# rm('means', 'disps', 'd', 'minDisp', envir = env)
+#
+# # names(env$fit)
+# # env$fit$frame = NULL
+# # failed: eva, cell, terms, nvc, mi, , trans
+# # ok to remove: box, sty, deriv,
+#
+# usethis::use_data(defaultDispFunc, internal = FALSE, overwrite = TRUE)
+#
+##### check that it works
 
 load('data/defaultDispFunc.rda')
-defaultDispFunc(2^(0:20))
+x = seq(-1, 7, 0.01)
+y = log10(defaultDispFunc(10^x))
+plot(x, y, pch = '.')
