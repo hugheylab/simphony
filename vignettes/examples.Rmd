@@ -1,0 +1,183 @@
+---
+title: "Simphony Examples"
+author: "Jordan Singer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = '#>'
+)
+```
+
+### Load Required Packages
+```{r}
+library(data.table)
+library(ggplot2)
+library(kableExtra)
+library(knitr)
+library(simphony)
+```
+
+## Evenly Spaced Timepoints
+```{r}
+featureGroups = data.table(amp = c(0, 3, 6), phase = c(0, 0, 6),
+                           rhyFunc = c(cos, cos, sin), fracFeatures = c(0.1, 0.8, 0.1))
+```
+
+```{r, fig.width = 6, fig.height = 2.75}
+simData = simphony(featureGroups)
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.25))
+plotFeatures = c('feature_01', 'feature_05', 'feature_10')
+
+ggplot() +
+  facet_wrap(~ feature) +
+  geom_line(data = expectedTrend[feature %in% plotFeatures], aes(x = time, y = mu)) +
+  geom_point(data = mergedData[feature %in% plotFeatures], aes(x = time, y = abund)) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+
+ggplot() +
+  geom_point(data = simData$featureMetadata, aes(x = factor(amp0), y = factor(feature))) +
+  labs(x = 'Amplitude', y = 'Feature')
+```
+
+```{r, include = FALSE}
+rm(featureGroups, simData, mergedData, expectedTrend)
+```
+
+## Specified Timepoints
+```{r}
+featureGroups = data.table(amp = c(0, 3))
+```
+
+```{r, fig.width = 6, fig.height = 2.75}
+simData = simphony(featureGroups, timepointsType = 'specified', nFeatures = nrow(featureGroups),
+                   timepoints = c(seq(0, 22, 2), seq(24, 42, 6)))
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.25))
+
+ggplot() +
+  facet_wrap(~ feature) +
+  geom_line(data = expectedTrend, aes(x = time, y = mu)) +
+  geom_point(data = mergedData, aes(x = time, y = abund)) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+```
+
+```{r, include = FALSE}
+rm(featureGroups, simData, mergedData, expectedTrend)
+```
+
+## Random Timepoints
+```{r}
+featureGroups = data.table(amp = c(0, 3))
+```
+
+```{r, fig.width = 6, fig.height = 2.75}
+simData = simphony(featureGroups, timepointsType = 'random', nFeatures = nrow(featureGroups),
+                   timeRange = c(0, 24), nSamplesPerCond = 20)
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 24, 0.25))
+
+ggplot() +
+  facet_wrap(~ feature) +
+  geom_line(data = expectedTrend, aes(x = time, y = mu)) +
+  geom_point(data = mergedData, aes(x = time, y = abund)) +
+  scale_x_continuous(breaks = seq(0, 24, 4)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+```
+
+```{r, include = FALSE}
+rm(featureGroups, simData, mergedData, expectedTrend)
+```
+
+## Time Dependent Amplitude & Base
+```{r}
+featureGroups = data.table(amp =  c(function(t) 3, function(t) 3 * 2^(-t / 24)),
+                           base = c(function(t) t / 12, function(t) 0))
+```
+
+```{r, fig.width = 6, fig.height = 2.75}
+simData = simphony(featureGroups, nFeatures = nrow(featureGroups))
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.25))
+
+ggplot() +
+  facet_wrap(~ feature) +
+  geom_line(data = expectedTrend, aes(x = time, y = mu)) +
+  geom_point(data = mergedData, aes(x = time, y = abund)) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+```
+
+```{r, include = FALSE}
+rm(featureGroups, simData, mergedData, expectedTrend)
+```
+
+## Differential Rhythmicity Between Conditions
+```{r}
+featureGroupsList = list(
+  data.table(amp = c(1, 2, 2), phase = c(0, -3, 0), period = c(24, 24, 22)),
+  data.table(amp = c(3, 2, 2), phase = c(0,  3, 0), period = c(24, 24, 26)))
+```
+
+```{r, fig.width = 6, fig.height = 3.5}
+simData = simphony(featureGroupsList, nFeatures = nrow(featureGroupsList[[1]]))
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.25))
+
+ggplot() +
+  facet_grid(cond ~ feature) +
+  geom_line(data = expectedTrend, aes(x = time, y = mu)) +
+  geom_point(data = mergedData, aes(x = time, y = abund), size = 0.5) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+```
+
+```{r, include = FALSE}
+rm(featureGroupsList, simData, mergedData, expectedTrend)
+```
+
+## Controlling Negative Binomial Dispersion & Base
+```{r}
+featureGroups = data.table(amp = 3, base = c(4, 6, 8))
+dispFunc = function(x) 3 * defaultDispFunc(x)
+```
+
+```{r, fig.width = 6, fig.height = 2.75}
+simData = simphony(featureGroups, interval = 4, family = 'negbinom', nFeatures = nrow(featureGroups),
+                   dispFunc = dispFunc)
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.25))
+
+ggplot(expectedTrend) +
+  facet_wrap(. ~ factor(base0)) +
+  geom_line(data = expectedTrend, aes(x = time, y = mu)) +
+  geom_point(data = mergedData, aes(x = time, y = log2(abund + 1))) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = expression(log[2] * '(abundance + 1)'))
+```
+
+```{r, include = FALSE}
+rm(featureGroups, simData, mergedData, expectedTrend, dispFunc)
+```
