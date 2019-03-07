@@ -45,3 +45,40 @@ test_that('Appropriate errors are thrown', {
                'Each featureGroups data.frame must have the same number of rows.')
   rm(badFeatureGroupsList)
 })
+
+test_that('Condition names are as expected', {
+  featureGroupsList = foreach(cond = 1:20) %do% {
+    data.table(amp = cond)
+  }
+  simData = simphony(featureGroupsList)
+  expectedCondNames = sprintf(sprintf('cond_%%0%dd', floor(log10(20)) + 1),
+                              1:20)
+
+  expect_equal(unique(simData$sampleMetadata[, cond]), expectedCondNames)
+  expect_equal(unique(simData$featureMetadata[, cond]), expectedCondNames)
+
+  rm(featureGroupsList, simData, expectedCondNames)
+})
+
+test_that('Sample names are as expected', {
+  featureGroups = data.table(amp = 1)
+  simData = simphony(featureGroups, timepointsType = 'specified',
+                     timepoints = 1:20)
+  expectedSampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(20)) + 1),
+                            1:20)
+
+  expect_equal(unique(simData$sampleMetadata[, sample]), expectedSampleNames)
+
+  rm(featureGroups, simData, expectedSampleNames)
+})
+
+test_that('Feature names are as expected', {
+  featureGroups = data.table(amp = 1)
+  simData = simphony(featureGroups, nFeatures = 20)
+  expectedFeatureNames = sprintf(sprintf('feature_%%0%dd', floor(log10(20)) + 1),
+                                 1:20)
+
+  expect_equal(unique(simData$featureMetadata[, feature]), expectedFeatureNames)
+
+  rm(featureGroups, simData, expectedFeatureNames)
+})
