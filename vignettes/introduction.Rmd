@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(message = FALSE, collapse = TRUE, comment = '#>', fig.retina = 2)
 ```
 
-*Simphony* is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using *simphony* to benchmark a method for detecting rhythmicity.
+*Simphony* is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using *Simphony* to benchmark a method for detecting rhythmicity.
 
 ## Load the packages we'll use
 
@@ -30,13 +30,13 @@ library(simphony)
 
 ## Simulate the data
 
-Here we create a `data.table` called `abundGroups` that specifies the desired properties of the simulated genes. We want 75% of simulated genes to be non-rhythmic and 25% to have a rhythm amplitude of 1.1. Properties not specified in `abundGroups` will be given their default values.
+Here we create a `data.table` called `featureGroups` that specifies the desired properties of the simulated genes. We want 75% of simulated genes to be non-rhythmic and 25% to have a rhythm amplitude of 1.1. Properties not specified in `featureGroups` will be given their default values.
 
-Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point.
+Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point. We also use the default time range of our simulated data points of between 0 and 48 hours.
 ```{r}
 set.seed(44)
-abundGroups = data.table(fracFeatures = c(0.75, 0.25), amp = c(0, 0.3))
-simData = simphony(abundGroups, nFeatures = 200, interval = 2, nReps = 1, family = 'negbinom')
+featureGroups = data.table(fracFeatures = c(0.75, 0.25), amp = c(0, 0.3))
+simData = simphony(featureGroups, nFeatures = 200, interval = 2, nReps = 1, family = 'negbinom')
 ```
 
 The output of `simphony` has three components: `abundData`, `sampleMetadata`, and `featureMetadata`. `abundData` is a matrix that contains the simulated expression values. Each row of corresponds to a gene, each column corresponds to a sample. Since we sampled from the negative binomial family, all expression values are integers.
@@ -49,7 +49,7 @@ kable(simData$abundData[1:3, 1:3])
 kable(simData$sampleMetadata[1:3,])
 ```
 
-`featureMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `abundGroups` to which the gene belongs.
+`featureMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `featureGroups` to which the gene belongs.
 ```{r}
 kable(simData$featureMetadata[149:151,]) %>%
   kable_styling(font_size = 12)
@@ -65,7 +65,7 @@ dExample = mergeSimData(simData, fmExample$feature)
 
 We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the `getExpectedAbund` function. Since we sampled from the negative binomial family, the resulting `mu` column corresponds to the expected log~2~ counts.
 ```{r}
-dExpect = getExpectedAbund(fmExample, 24, times = seq(0, 24, 0.25))
+dExpect = getExpectedAbund(fmExample, 24, times = seq(0, 48, 0.25))
 ```
 
 Then it all comes together with `ggplot`.
@@ -77,8 +77,8 @@ ggplot(dExample) +
   facet_wrap(~ featureLabel, nrow = 1) +
   geom_line(aes(x = time, y = log2(2^mu + 1)), size = 0.25, data = dExpect) +
   geom_point(aes(x = time, y = log2(abund + 1)), shape = 21, size = 2.5) +
-  labs(x = 'Time (h)', y = expression(log[2](counts+1))) +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  labs(x = 'Time (h)', y = expression(log[2](counts + 1))) +
+  scale_x_continuous(limits = c(0, 48), breaks = seq(0, 48, 8))
 ```
 
 ## Detect rhythmic genes
@@ -86,8 +86,8 @@ ggplot(dExample) +
 We can use the *limma* package to detect rhythmic genes based on a linear model that corresponds to cosinor regression. 
 ```{r}
 sampleMetadata = copy(simData$sampleMetadata)
-sampleMetadata[, timeCos := cos(time * 2*pi / 24)]
-sampleMetadata[, timeSin := sin(time * 2*pi / 24)]
+sampleMetadata[, timeCos := cos(time * 2 * pi / 24)]
+sampleMetadata[, timeSin := sin(time * 2 * pi / 24)]
 design = model.matrix(~ timeCos + timeSin, data = sampleMetadata)
 ```
 
