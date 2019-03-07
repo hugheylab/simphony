@@ -39,8 +39,7 @@ jobs:
           name: Install bioconductor-specific packages for Simphony
           command: |
             Rscript \
-              -e 'BiocManager::install("limma")' \
-              -e 'BiocManager::install("DESeq2")'
+              -e 'BiocManager::install("limma")'
 
       - run:
           name: Build package
