@@ -1,5 +1,5 @@
 ---
-title: "Using Simphony to Benchmark Rhythm Detection"
+title: "Using Simphony to Evaluate Rhythm Detection"
 author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
