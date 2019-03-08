@@ -2,35 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: r-base:3.5.2
+      - image: rocker/tidyverse
 
     working_directory: ~/repo
 
     steps:
-      - run:
-          name: Update and install git
-          command: |
-            apt-get update -y && \
-            apt-get install -y \
-            curl \
-            git \
-            libcurl4-gnutls-dev \
-            libssh2-1-dev \
-            libssl-dev \
-            libxml2-dev \
-            && apt-get clean \
-            && rm -rf /var/lib/apt/lists/* \
-            && install.r BiocManager \
-            && install.r drat
-
-      - run:
-          name: Install git LFS
-          command: |
-            wget https://github.com/git-lfs/git-lfs/releases/download/v2.7.0/git-lfs-linux-amd64-v2.7.0.tar.gz -P /tmp && \
-            tar -xvzf /tmp/git-lfs-linux-amd64-v2.7.0.tar.gz -C /tmp && \
-            /tmp/install.sh && \
-            git lfs install
-
       - checkout
 
       - run:
@@ -41,12 +17,6 @@ jobs:
               -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
               -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
               >> ${BASH_ENV}
-
-      - run:
-          name: Install devtools and dependencies
-          command: |
-            Rscript \
-              -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")'
 
       - run:
           name: Install required packages from DESCRIPTION Imports
@@ -69,9 +39,7 @@ jobs:
           name: Install bioconductor-specific packages for Simphony
           command: |
             Rscript \
-              -e 'install.packages("BiocManager");' \
-              -e 'BiocManager::install("limma")' \
-              -e 'BiocManager::install("DESeq2")'
+              -e 'BiocManager::install("limma")'
 
       - run:
           name: Build package

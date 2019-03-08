@@ -82,9 +82,10 @@ getSampleMetadata = function(times) {
     sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
-    data.table(sample = sampleNames, cond = cond, time = times[cond, ])}
+    condNames = sprintf(sprintf('cond_%%0%dd', floor(log10(nrow(times))) + 1),
+                        cond)
+    data.table(sample = sampleNames, cond = condNames, time = times[cond, ])}
   return(sm)}
-
 
 getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
   if ('fracFeatures' %in% colnames(featureGroups)) {
@@ -115,7 +116,8 @@ getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
 
   fm = foreach(featureGroups = featureGroupsList, cond = 1:nConds, .combine = rbind) %do% {
     fmNow = featureGroups[rep(1:.N, times = nFeaturesPerGroup)]
-    fmNow[, cond := ..cond]
+    fmNow[, cond := sprintf(sprintf('cond_%%0%dd', floor(log10(nConds)) + 1),
+                            ..cond)]
     fmNow[, feature := features]
     data.table::setcolorder(fmNow, c('cond', 'group', 'feature'))
     fmNow}
