@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build:
+    context: drat-deployment
+
     docker:
       - image: rocker/tidyverse
 
@@ -67,9 +69,11 @@ jobs:
               git clone https://github.com/hugheylab/drat;
               cd drat;
               git checkout -b ci-test;
+              git config --global user.email "jakejhughey@gmail.com";
+              git config --global user.name "Jake Hughey";
               Rscript -e "install.packages('drat');";
               Rscript -e "drat::insertPackage('../${PKG_TARBALL}', '.');"
-              git commit -a -m "Updated ${PKG_NAME} to version ${PKG_VERSION}";
+              git commit -a -m "Updated ${PKG_NAME} to version ${PKG_VERSION} via CircleCI";
               git push -q https://${GITHUB_TOKEN}@github.com/hugheylab/drat.git --set-upstream origin ci-test;
             else
               echo "Not deploying source to drat."
