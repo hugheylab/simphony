@@ -58,17 +58,18 @@ jobs:
       - run:
           name: Check failures
           command: |
-            Rscript -e "message(devtools::check_failures(path = '${PKG_NAME}.Rcheck'))"
+            Rscript -e "message(devtools::check_failures(path = 'simphony.Rcheck'))"
 
       - run:
           name: Deploy to drat
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "ci" ]; then
               git clone https://github.com/hugheylab/drat;
               cd drat;
+              git checkout -b ci-test;
               Rscript -e "drat::insertPackage('../${PKG_TARBALL}', '.');"
-              git commit -a -m "Updated ${PKG_NAME} to ${PKG_VERSION}";
-              git push -q https://${GITHUB_TOKEN}@github.com/hugheylab/drat.git;
+              git commit -a -m "Updated simphony";
+              git push -q https://${GITHUB_TOKEN}@github.com/hugheylab/drat.git --set-upstream origin ci-test;
             else
               echo "Not deploying source to drat."
             fi
