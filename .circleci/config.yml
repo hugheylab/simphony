@@ -36,7 +36,7 @@ jobs:
             Rscript \
               -e 'packages = unlist(lapply(strsplit(read.dcf("DESCRIPTION")[,"Suggests"], "\n"),' \
               -e 'function(x) strsplit(x, " ")))[c(TRUE, FALSE, FALSE)];' \
-              -e 'packages = Filter(function(x) x != "limma", packages);' \ # limma needs to be installed via BiocManager in the next step.
+              -e 'packages = Filter(function(x) x != "limma", packages);' \
               -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
 
       - run:
