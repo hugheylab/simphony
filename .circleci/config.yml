@@ -16,13 +16,13 @@ jobs:
               -e 'dsc = read.dcf("DESCRIPTION")' \
               -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
               -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
-              >> ${BASH_ENV} && \
+              >> ${BASH_ENV};
             export PKG_VERSION=`Rscript --vanilla \
               -e 'dsc = read.dcf("DESCRIPTION")' \
-              -e 'cat(dsc[,"Version"])'` && \
+              -e 'cat(dsc[,"Version"])'`;
             export PKG_NAME=`Rscript --vanilla \
               -e 'dsc = read.dcf("DESCRIPTION")' \
-              -e 'cat(dsc[,"Package"])'`
+              -e 'cat(dsc[,"Package"])'`;
 
       - run:
           name: Install required packages from DESCRIPTION Imports
@@ -67,8 +67,9 @@ jobs:
               git clone https://github.com/hugheylab/drat;
               cd drat;
               git checkout -b ci-test;
+              Rscript -e "install.packages('drat');";
               Rscript -e "drat::insertPackage('../${PKG_TARBALL}', '.');"
-              git commit -a -m "Updated simphony";
+              git commit -a -m "Updated ${PKG_NAME} to version ${PKG_VERSION}";
               git push -q https://${GITHUB_TOKEN}@github.com/hugheylab/drat.git --set-upstream origin ci-test;
             else
               echo "Not deploying source to drat."
