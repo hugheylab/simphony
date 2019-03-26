@@ -12,9 +12,11 @@ jobs:
       - run:
           name: Set environmental variables
           command: |
-            export PKG_TARBALL=`Rscript --vanilla \
+            Rscript --vanilla \
               -e 'dsc = read.dcf("DESCRIPTION")' \
-              -e 'cat(sprintf("%s_%s.tar.gz", dsc[,"Package"], dsc[,"Version"]))'` && \
+              -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
+              -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
+              >> ${BASH_ENV} && \
             export PKG_VERSION=`Rscript --vanilla \
               -e 'dsc = read.dcf("DESCRIPTION")' \
               -e 'cat(dsc[,"Version"])'` && \
