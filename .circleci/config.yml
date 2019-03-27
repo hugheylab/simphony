@@ -16,13 +16,9 @@ jobs:
               -e 'dsc = read.dcf("DESCRIPTION")' \
               -e 'cat(sprintf("export PKG_TARBALL=%s_%s.tar.gz\n", dsc[,"Package"], dsc[,"Version"]))' \
               -e 'cat(sprintf("export RCHECK_DIR=%s.Rcheck\n", dsc[,"Package"]))' \
+              -e 'cat(sprintf("export PKG_VERSION=%s\n", dsc[,"Version"]))' \
+              -e 'cat(sprintf("export PKG_NAME=%s\n", dsc[,"Package"]))' \
               >> ${BASH_ENV};
-            export PKG_VERSION=`Rscript --vanilla \
-              -e 'dsc = read.dcf("DESCRIPTION")' \
-              -e 'cat(dsc[,"Version"])'`;
-            export PKG_NAME=`Rscript --vanilla \
-              -e 'dsc = read.dcf("DESCRIPTION")' \
-              -e 'cat(dsc[,"Package"])'`;
 
       - run:
           name: Install required packages from DESCRIPTION Imports
