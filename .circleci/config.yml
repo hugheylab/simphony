@@ -1,8 +1,6 @@
 version: 2
 jobs:
   build:
-    context: drat-deployment
-
     docker:
       - image: rocker/tidyverse
 
@@ -78,3 +76,10 @@ jobs:
             else
               echo "Not deploying source to drat."
             fi
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          context: drat-deployment
