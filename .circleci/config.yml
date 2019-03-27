@@ -38,7 +38,7 @@ jobs:
               -e 'for(package in packages) if (!requireNamespace(package, quietly = TRUE)) install.packages(package)'
 
       - run:
-          name: Install bioconductor-specific packages for Simphony
+          name: Install bioconductor-specific packages
           command: |
             Rscript \
               -e 'BiocManager::install("limma")'
@@ -54,15 +54,14 @@ jobs:
       - run:
           name: Check failures
           command: |
-            Rscript -e "message(devtools::check_failures(path = 'simphony.Rcheck'))"
+            Rscript -e "message(devtools::check_failures(path = '${PKG_NAME}.Rcheck'))"
 
       - run:
           name: Deploy to drat
           command: |
-            if [ "${CIRCLE_BRANCH}" == "ci" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               git clone https://github.com/hugheylab/drat;
               cd drat;
-              git checkout ci-test;
               git remote rm origin;
               git remote add origin https://www.github.com/hugheylab/drat.git;
               git config --global user.email "jakejhughey@gmail.com";
