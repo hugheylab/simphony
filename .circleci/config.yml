@@ -66,15 +66,15 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "ci" ]; then
               git clone https://github.com/hugheylab/drat;
               cd drat;
-              git checkout -b ci-test;
+              git checkout ci-test;
               git remote rm origin;
-              git remote add origin https://jakejh:${GITHUB_TOKEN}@github.com/hugheylab/drat.git;
+              git remote add origin https://www.github.com/hugheylab/drat.git;
               git config --global user.email "jakejhughey@gmail.com";
               git config --global user.name "Jake Hughey";
               Rscript -e "install.packages('drat');";
               Rscript -e "drat::insertPackage('../${PKG_TARBALL}', '.');";
               git commit -a -m "Updated ${PKG_NAME} to version ${PKG_VERSION} via CircleCI";
-              git push -q https://jakejh:${GITHUB_TOKEN}@github.com/hugheylab/drat.git --set-upstream origin ci-test;
+              git push -q https://jakejh:${GITHUB_TOKEN}@github.com/hugheylab/drat.git;
             else
               echo "Not deploying source to drat."
             fi
