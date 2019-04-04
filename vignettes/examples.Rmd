@@ -47,6 +47,23 @@ ggplot() +
   labs(x = 'Amplitude', y = 'Feature')
 ```
 
+## Custom Rhythm Function
+```{r, fig.width = 6, fig.height = 2.75}
+featureGroups = data.table(amp = 6, phase = -3, rhyFunc = function(x) sign(sin(x)))
+
+simData = simphony(featureGroups)
+
+mergedData = mergeSimData(simData)
+expectedTrend = getExpectedAbund(simData$featureMetadata,
+                                 times = seq(0, 48, 0.1))
+
+ggplot() +
+  geom_line(data = expectedTrend[feature %in% plotFeatures], aes(x = time, y = mu)) +
+  geom_point(data = mergedData[feature %in% plotFeatures], aes(x = time, y = abund)) +
+  scale_x_continuous(breaks = seq(0, 48, 8)) +
+  labs(x = 'Time (h)', y = 'Abundance')
+```
+
 ## Specified Timepoints
 ```{r, fig.width = 6, fig.height = 2.75}
 featureGroups = data.table(amp = c(0, 3))
@@ -82,23 +99,6 @@ ggplot() +
   geom_line(data = expectedTrend, aes(x = time, y = mu)) +
   geom_point(data = mergedData, aes(x = time, y = abund)) +
   scale_x_continuous(breaks = seq(0, 24, 4)) +
-  labs(x = 'Time (h)', y = 'Abundance')
-```
-
-## Custom Rhythm Function
-```{r, fig.width = 6, fig.height = 2.75}
-featureGroups = data.table(amp = 6, phase = -3, rhyFunc = function(x) sign(sin(x)))
-
-simData = simphony(featureGroups)
-
-mergedData = mergeSimData(simData)
-expectedTrend = getExpectedAbund(simData$featureMetadata,
-                                 times = seq(0, 48, 1))
-
-ggplot() +
-  geom_line(data = expectedTrend[feature %in% plotFeatures], aes(x = time, y = mu)) +
-  geom_point(data = mergedData[feature %in% plotFeatures], aes(x = time, y = abund)) +
-  scale_x_continuous(breaks = seq(0, 48, 8)) +
   labs(x = 'Time (h)', y = 'Abundance')
 ```
 
