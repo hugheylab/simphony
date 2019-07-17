@@ -1,7 +1,7 @@
 # simphony
 [![CircleCI](https://circleci.com/gh/hugheylab/simphony.svg?style=shield)](https://circleci.com/gh/hugheylab/simphony)
 
-`simphony` is an R package for simulating large-scale, rhythmic data, particularly rhythmic transcriptome data. For technical details on how we designed and validated `simphony`, check out the [preprint](https://doi.org/10.1101/497859) and the [accompanying results](https://figshare.com/s/549da44928b243df47d5).
+`simphony` is an R package for simulating large-scale, rhythmic data, particularly rhythmic transcriptome data. For technical details on how we designed and validated `simphony`, check out the [paper](https://doi.org/10.7717/peerj.6985) and the [accompanying results](https://doi.org/10.6084/m9.figshare.7441355).
 
 ## Installation
 First install drat.
