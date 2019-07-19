@@ -68,7 +68,8 @@ jobs:
               git config --global user.name "Jake Hughey";
               Rscript -e "install.packages('drat');";
               Rscript -e "drat::insertPackage('../${PKG_TARBALL}', '.');";
-              git commit -a -m "Updated ${PKG_NAME} to version ${PKG_VERSION} via CircleCI";
+              git add src/contrib/;
+              git commit -m "Updated ${PKG_NAME} to version ${PKG_VERSION} via CircleCI";
               git push -q https://jakejh:${GITHUB_TOKEN}@github.com/hugheylab/drat.git;
             else
               echo "Not deploying source to drat."
