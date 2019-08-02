@@ -8,7 +8,7 @@ simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
   timepointsType = c("auto", "specified", "random"), timeRange = c(0,
   48), interval = 2, nReps = 1, timepoints = NULL,
   nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = NULL,
-  family = c("gaussian", "negbinom"))
+  family = c("gaussian", "negbinom", "bernoulli", "poisson"))
 }
 \arguments{
 \item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -27,13 +27,14 @@ over time) or a function (time-dependent). See vignette for examples.}
 \item{phase}{Phase of rhythm, in the same units as \code{period}. Defaults to
 0. Corresponds to an additive term in \code{rhyFunc}.}
 \item{base}{Baseline abundance, i.e., abundance when \code{rhyFunc} term is 0.
-Defaults to 0 if \code{family} == 'gaussian' and to 8 (mean log2 counts) if
-\code{family} == 'negbinom'. Can be numeric (constant over time) or a
-function (time-dependent). See vignette for examples.}
+Depending on \code{family}, defaults to 0 ('gaussian') and to 8 ('negbinom',
+mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
+(constant over time) or a function (time-dependent). See vignette for
+examples.}
 \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
-Only used if \code{family} == 'gaussian'.}
+Only used if \code{family} is 'gaussian'.}
 \item{dispFunc}{Function to calculate dispersion of sampled abundance
-values, given expected abundance in counts. Only used if \code{family} ==
+values, given expected abundance in counts. Only used if \code{family} is
 'negbinom'.}
 }}
 
@@ -52,17 +53,17 @@ or 'random'.}
 
 \item{interval}{Integer for the amount of time between consecutive
 timepoints, in the same units as \code{period}. The first timepoint is 0. Only
-used if \code{timepointsType} == 'auto'.}
+used if \code{timepointsType} is 'auto'.}
 
 \item{nReps}{Integer for the number of replicates per timepoint. Only used
-if \code{timepointsType} == 'auto'.}
+if \code{timepointsType} is 'auto'.}
 
 \item{timepoints}{Numeric vector of exact timepoints to simulate, including
-any replicates. Only used if \code{timepointsType} == 'specified'.}
+any replicates. Only used if \code{timepointsType} is 'specified'.}
 
 \item{nSamplesPerCond}{Integer for the number of samples per condition,
 which will be randomly uniformly spaced between 0 and \code{period} and
-different for each condition. Only used if timepointsType == 'random'.}
+different for each condition. Only used if timepointsType is 'random'.}
 
 \item{rhyFunc}{Function to generate rhythmic abundance. Must have a period
 of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in
@@ -70,16 +71,16 @@ of 2*pi. Defaults to \code{sin}. Only used if a \code{data.frame} in
 
 \item{dispFunc}{Function to calculate dispersion of sampled abundance
 values, given expected abundance in counts. Defaults to \code{defaultDispFunc}.
-Only used if \code{family} == 'negbinom' and a \code{data.frame} in
+Only used if \code{family} is 'negbinom' and a \code{data.frame} in
 \code{featureGroupsList} lacks a \code{dispFunc} column.}
 
-\item{family}{Character string for the family of distributions from
-which to generate the abundance values. Must be 'gaussian' or 'negbinom'.}
+\item{family}{Character string for the family of distributions from which to
+sample the abundance values.}
 }
 \value{
 List with the following elements:
 \describe{
-\item{abundData}{Matrix of abundance values (counts, if \code{family} ==
+\item{abundData}{Matrix of abundance values (counts, if \code{family} is
 'negbinom'), with features as rownames and samples as colnames.}
 \item{sampleMetadata}{\code{data.table} with one row per sample.}
 \item{featureMetadata}{\code{data.table} with one row per feature per condition.

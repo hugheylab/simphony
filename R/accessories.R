@@ -78,12 +78,13 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' is used internally by `simphony()`, and should not usually need to be
 #' called directly.
 #'
-#' @param abundDt `data.table` of expected abundance. If `family` == 'gaussian',
-#'   required columns are `feature`, `sample`, `mu`, and `sd`. If `family` ==
+#' @param abundDt `data.table` of expected abundance. If `family` is 'gaussian',
+#'   required columns are `feature`, `sample`, `mu`, and `sd`. If `family` is
 #'   'negbinom', required columns are `feature`, `sample`, `mu`, `dispFunc`,
-#'   `cond`, and `group`.
+#'   `cond`, and `group`. If `family` is 'bernoulli' or 'poisson', required
+#'   columns are `feature`, `sample`, and `mu`.
 #' @param family Character string for the family of distributions from which
-#'   to generate the abundance values. Must be 'gaussian' or 'negbinom'.
+#'   to sample the abundance values.
 #' @param inplace Logical for whether to modify `abundDt` in-place, adding a
 #'   column `abund` containing the abundance values.
 #'
@@ -100,19 +101,26 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' @seealso `\link{simphony}`, `\link{getExpectedAbund}`
 #'
 #' @export
-getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom'),
-                          inplace = FALSE) {
+getSampledAbund = function(abundDt,
+                           family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'),
+                           inplace = FALSE) {
   family = match.arg(family)
   if (isFALSE(inplace)) {
     abundDt = data.table(abundDt)}
 
   if (family == 'gaussian') {
     abundDt[, abund := stats::rnorm(.N, mu, sd)]
-  } else {
+  } else if (family == 'negbinom') {
     # dispFunc is identical for features of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
     abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1 / dispFunc[[1]](2^mu)),
-           by = c('cond', 'group')]}
+           by = c('cond', 'group')]
+  } else if (family == 'bernoulli') {
+    # will output NA and a warning for mu < 0 or mu > 1
+    abundDt[, abund := stats::rbinom(.N, 1, mu)]
+  } else if (family == 'poisson') {
+    # will output NA and a warning for mu < 0
+    abundDt[, abund := stats::rpois(.N, mu)]}
 
   data.table::setorderv(abundDt, c('sample', 'feature'))
   features = unique(abundDt$feature)

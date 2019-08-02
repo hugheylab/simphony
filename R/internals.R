@@ -1,5 +1,8 @@
 setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
-                                   family) {
+                                   family, defaultAmp = 0, defaultPhase = 0,
+                                   defaultPeriod = 24, defaultSd = 1,
+                                   defaultBaseGaussian = 0, defaultBaseNegbinom = 8,
+                                   defaultBaseBernoulli = 0.5, defaultBasePoisson = 1) {
   if ('group' %in% colnames(featureGroups)) {
     stop("featureGroups must not have a column named 'group'.")}
 
@@ -9,33 +12,36 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
   if (nrow(featureGroups) == 0) {
     stop('featureGroups must have at least one row.')}
 
-  featureGroups = setFuncs(featureGroups, 'amp', 0)
+  featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
   featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
 
   if (!'phase' %in% colnames(featureGroups)) {
-    featureGroups[, phase := 0]}
+    featureGroups[, phase := defaultPhase]}
 
   if (!'period' %in% colnames(featureGroups)) {
-    featureGroups[, period := 24]}
+    featureGroups[, period := defaultPeriod]}
 
   if (!'rhyFunc' %in% colnames(featureGroups)) {
     featureGroups[, rhyFunc := data.table(rhyFunc)]}
 
-  if (family == 'negbinom') {
+  if (family == 'gaussian') {
+    if (!'sd' %in% colnames(featureGroups)) {
+      featureGroups[, sd := defaultSd]
+    } else if (!all(featureGroups$sd >= 0)) {
+      stop('All groups in featureGroups must have standard deviation >= 0.')}
+    featureGroups = setFuncs(featureGroups, 'base', defaultBaseGaussian)
+  } else if (family == 'negbinom') {
     if (!'dispFunc' %in% colnames(featureGroups)) {
       if (is.null(dispFunc)) {
         dispFunc = defaultDispFunc}
       featureGroups[, dispFunc := data.table(dispFunc)]}
-    featureGroups = setFuncs(featureGroups, 'base', 8)
-  } else {
-    if (!'sd' %in% colnames(featureGroups)) {
-      featureGroups[, sd := 1]
-    } else if (!all(featureGroups$sd >= 0)) {
-      stop('All groups in featureGroups must have standard deviation >= 0.')}
-    featureGroups = setFuncs(featureGroups, 'base', 0)}
+    featureGroups = setFuncs(featureGroups, 'base', defaultBaseNegbinom)
+  } else if (family == 'bernoulli') {
+    featureGroups = setFuncs(featureGroups, 'base', defaultBaseBernoulli)
+  } else if (family == 'poisson') {
+    featureGroups = setFuncs(featureGroups, 'base', defaultBasePoisson)}
 
   featureGroups[, base0 := base[[1]](0), by = 1:nrow(featureGroups)]
-
   return(featureGroups)}
 
 
@@ -44,7 +50,7 @@ setFuncs = function(featureGroups, varName, defaultValue) {
     featureGroups[, (varName) := list(list(function(x) defaultValue))]
   } else {
     if (is.numeric(featureGroups[, get(varName)])) {
-      makefunc = function(x) { x; function(m) x }
+      makefunc = function(x) {x; function(m) x}
       if (nrow(featureGroups) == 1) {
         featureGroups[, (varName) := list(list(makefunc(featureGroups[1, get(varName)])))]
       } else {
@@ -82,10 +88,10 @@ getSampleMetadata = function(times) {
     sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
-    condNames = sprintf(sprintf('cond_%%0%dd', floor(log10(nrow(times))) + 1),
-                        cond)
+    condNames = sprintf(sprintf('cond_%%0%dd', floor(log10(nrow(times))) + 1), cond)
     data.table(sample = sampleNames, cond = condNames, time = times[cond, ])}
   return(sm)}
+
 
 getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
   if ('fracFeatures' %in% colnames(featureGroups)) {
@@ -116,8 +122,7 @@ getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
 
   fm = foreach(featureGroups = featureGroupsList, cond = 1:nConds, .combine = rbind) %do% {
     fmNow = featureGroups[rep(1:.N, times = nFeaturesPerGroup)]
-    fmNow[, cond := sprintf(sprintf('cond_%%0%dd', floor(log10(nConds)) + 1),
-                            ..cond)]
+    fmNow[, cond := sprintf(sprintf('cond_%%0%dd', floor(log10(nConds)) + 1), ..cond)]
     fmNow[, feature := features]
     data.table::setcolorder(fmNow, c('cond', 'group', 'feature'))
     fmNow}

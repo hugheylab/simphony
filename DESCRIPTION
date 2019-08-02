@@ -1,6 +1,6 @@
 Package: simphony
 Title: Simulating large-scale, rhythmic data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
   "Darwin Fu <darwinyfu@gmail.com> [ctb]",

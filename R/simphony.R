@@ -3,9 +3,10 @@
 NULL
 
 
-globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc', 'sd', 'cond',
-                  'dispFunc', 'featureGroups', 'time', 'abund', '..cond', '.N',
-                  '.dummy', 'feature', 'mu', 'period', 'defaultDispFunc', 'v'))
+globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
+                  'sd', 'cond', 'dispFunc', 'featureGroups', 'time', 'abund',
+                  '..cond', '.N', '.dummy', 'feature', 'mu', 'period', 'v',
+                  'defaultDispFunc'))
 
 
 #' Simulate feature abundance data
@@ -29,13 +30,14 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc', '
 #'     \item{phase}{Phase of rhythm, in the same units as `period`. Defaults to
 #'       0. Corresponds to an additive term in `rhyFunc`.}
 #'     \item{base}{Baseline abundance, i.e., abundance when `rhyFunc` term is 0.
-#'       Defaults to 0 if `family` == 'gaussian' and to 8 (mean log2 counts) if
-#'       `family` == 'negbinom'. Can be numeric (constant over time) or a
-#'       function (time-dependent). See vignette for examples.}
+#'       Depending on `family`, defaults to 0 ('gaussian') and to 8 ('negbinom',
+#'       mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
+#'       (constant over time) or a function (time-dependent). See vignette for
+#'       examples.}
 #'     \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
-#'       Only used if `family` == 'gaussian'.}
+#'       Only used if `family` is 'gaussian'.}
 #'     \item{dispFunc}{Function to calculate dispersion of sampled abundance
-#'       values, given expected abundance in counts. Only used if `family` ==
+#'       values, given expected abundance in counts. Only used if `family` is
 #'       'negbinom'.}
 #'   }
 #' @param fracFeatures Fraction of simulated features to allocate to each group.
@@ -49,27 +51,27 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc', '
 #'   or 'random'.
 #' @param interval Integer for the amount of time between consecutive
 #'   timepoints, in the same units as `period`. The first timepoint is 0. Only
-#'   used if `timepointsType` == 'auto'.
+#'   used if `timepointsType` is 'auto'.
 #' @param nReps Integer for the number of replicates per timepoint. Only used
-#'   if `timepointsType` == 'auto'.
+#'   if `timepointsType` is 'auto'.
 #' @param timepoints Numeric vector of exact timepoints to simulate, including
-#'   any replicates. Only used if `timepointsType` == 'specified'.
+#'   any replicates. Only used if `timepointsType` is 'specified'.
 #' @param nSamplesPerCond Integer for the number of samples per condition,
 #'   which will be randomly uniformly spaced between 0 and `period` and
-#'   different for each condition. Only used if timepointsType == 'random'.
+#'   different for each condition. Only used if timepointsType is 'random'.
 #' @param dispFunc Function to calculate dispersion of sampled abundance
 #'   values, given expected abundance in counts. Defaults to `defaultDispFunc`.
-#'   Only used if `family` == 'negbinom' and a `data.frame` in
+#'   Only used if `family` is 'negbinom' and a `data.frame` in
 #'   `featureGroupsList` lacks a `dispFunc` column.
 #' @param rhyFunc Function to generate rhythmic abundance. Must have a period
 #'   of 2*pi. Defaults to `sin`. Only used if a `data.frame` in
 #'   `featureGroupsList` lacks a `rhyFunc` column.
-#' @param family Character string for the family of distributions from
-#'   which to generate the abundance values. Must be 'gaussian' or 'negbinom'.
+#' @param family Character string for the family of distributions from which to
+#'   sample the abundance values.
 #'
 #' @return List with the following elements:
 #' \describe{
-#'   \item{abundData}{Matrix of abundance values (counts, if `family` ==
+#'   \item{abundData}{Matrix of abundance values (counts, if `family` is
 #'     'negbinom'), with features as rownames and samples as colnames.}
 #'   \item{sampleMetadata}{`data.table` with one row per sample.}
 #'   \item{featureMetadata}{`data.table` with one row per feature per condition.
@@ -142,7 +144,8 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
                     timepointsType = c('auto', 'specified', 'random'),
                     timeRange = c(0, 48), interval = 2, nReps = 1,
                     timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-                    dispFunc = NULL, family = c('gaussian', 'negbinom')) {
+                    dispFunc = NULL,
+                    family = c('gaussian', 'negbinom', 'bernoulli', 'poisson')) {
   family = match.arg(family)
   timepointsType = match.arg(timepointsType)
 
