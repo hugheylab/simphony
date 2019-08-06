@@ -15,7 +15,7 @@ Numeric vector of dispersions.
 \description{
 The function was estimated from circadian RNA-seq data from mouse liver
 (PRJNA297287), using local regression in DESeq2. In a negative binomial
-distribution, variance = mean + mean^2 * dispersion.
+distribution, \eqn{variance = mean + mean^2 * dispersion}.
 }
 \examples{
 means = 2^(6:10)

@@ -1,11 +1,13 @@
 Package: simphony
 Title: Simulating large-scale, rhythmic data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
   "Darwin Fu <darwinyfu@gmail.com> [ctb]",
   "Jake Hughey <jakejhughey@gmail.com> [ctb]"))
-Description: A tool for simulating rhythmic data, especially transcriptome data.
+Description: A tool for simulating rhythmic data: transcriptome data using
+  Gaussian or negative binomial distributions, and behavioral activity data
+  using Bernoulli or Poisson distributions.
 Depends: R (>= 3.4)
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony

@@ -4,17 +4,21 @@
 \alias{getSampledAbund}
 \title{Sample abundance values}
 \usage{
-getSampledAbund(abundDt, family = c("gaussian", "negbinom"),
-  inplace = FALSE)
+getSampledAbund(abundDt, family = c("gaussian", "negbinom", "bernoulli",
+  "poisson"), inplace = FALSE)
 }
 \arguments{
-\item{abundDt}{\code{data.table} of expected abundance. If \code{family} == 'gaussian',
-required columns are \code{feature}, \code{sample}, \code{mu}, and \code{sd}. If \code{family} ==
+\item{abundDt}{\code{data.table} of expected abundance. If \code{family} is 'gaussian',
+required columns are \code{feature}, \code{sample}, \code{mu}, and \code{sd}. If \code{family} is
 'negbinom', required columns are \code{feature}, \code{sample}, \code{mu}, \code{dispFunc},
-\code{cond}, and \code{group}.}
+\code{cond}, and \code{group}. If \code{family} is 'bernoulli' or 'poisson', required
+columns are \code{feature}, \code{sample}, and \code{mu}.}
 
 \item{family}{Character string for the family of distributions from which
-to generate the abundance values. Must be 'gaussian' or 'negbinom'.}
+to sample the abundance values. \code{simphony} will give a warning if it tries
+to sample from a distribution outside the region in which the distribution
+is defined: \eqn{\mu < 0} for negative binomial and Poisson, and
+\eqn{\mu < 0} or \eqn{\mu > 1} for Bernoulli.}
 
 \item{inplace}{Logical for whether to modify \code{abundDt} in-place, adding a
 column \code{abund} containing the abundance values.}
