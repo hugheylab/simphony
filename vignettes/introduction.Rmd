@@ -1,10 +1,10 @@
 ---
-title: "Using Simphony to Evaluate Rhythm Detection"
+title: "Using simphony to evaluate rhythm detection"
 author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using Simphony to Benchmark Rhythm Detection}
+  %\VignetteIndexEntry{Using simphony to evaluate rhythm detection}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
