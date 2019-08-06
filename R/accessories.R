@@ -2,7 +2,7 @@
 #'
 #' The function was estimated from circadian RNA-seq data from mouse liver
 #' (PRJNA297287), using local regression in DESeq2. In a negative binomial
-#' distribution, variance = mean + mean^2 * dispersion.
+#' distribution, \eqn{variance = mean + mean^2 * dispersion}.
 #'
 #' @param x Numeric vector of mean counts.
 #'
@@ -84,7 +84,10 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #'   `cond`, and `group`. If `family` is 'bernoulli' or 'poisson', required
 #'   columns are `feature`, `sample`, and `mu`.
 #' @param family Character string for the family of distributions from which
-#'   to sample the abundance values.
+#'   to sample the abundance values. `simphony` will give a warning if it tries
+#'   to sample from a distribution outside the region in which the distribution
+#'   is defined: \eqn{\mu < 0} for negative binomial and Poisson, and
+#'   \eqn{\mu < 0} or \eqn{\mu > 1} for Bernoulli.
 #' @param inplace Logical for whether to modify `abundDt` in-place, adding a
 #'   column `abund` containing the abundance values.
 #'
@@ -101,8 +104,8 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' @seealso `\link{simphony}`, `\link{getExpectedAbund}`
 #'
 #' @export
-getSampledAbund = function(abundDt,
-                           family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'),
+getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom',
+                                               'bernoulli', 'poisson'),
                            inplace = FALSE) {
   family = match.arg(family)
   if (isFALSE(inplace)) {
@@ -113,6 +116,7 @@ getSampledAbund = function(abundDt,
   } else if (family == 'negbinom') {
     # dispFunc is identical for features of the same group in the same condition
     # this is the way I've figured out how to call functions that are columns
+    # will output NaN and a warning for mu < 0
     abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1 / dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]
   } else if (family == 'bernoulli') {

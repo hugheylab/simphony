@@ -22,7 +22,7 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #'     \item{fracFeatures}{Fraction of simulated features to allocate to each
 #'       group. Defaults to 1/(number of groups).}
 #'     \item{rhyFunc}{Function to generate rhythmic abundance. Must have a
-#'       period of 2*pi. Defaults to `sin`.}
+#'       period of \eqn{2\pi}. Defaults to `sin`.}
 #'     \item{amp}{Amplitude of rhythm. Defaults to 0. Corresponds to
 #'       multiplicative term in front of `rhyFunc`. Can be numeric (constant
 #'       over time) or a function (time-dependent). See vignette for examples.}
@@ -64,10 +64,13 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #'   Only used if `family` is 'negbinom' and a `data.frame` in
 #'   `featureGroupsList` lacks a `dispFunc` column.
 #' @param rhyFunc Function to generate rhythmic abundance. Must have a period
-#'   of 2*pi. Defaults to `sin`. Only used if a `data.frame` in
+#'   of \eqn{2\pi}. Defaults to `sin`. Only used if a `data.frame` in
 #'   `featureGroupsList` lacks a `rhyFunc` column.
 #' @param family Character string for the family of distributions from which to
-#'   sample the abundance values.
+#'   sample the abundance values. `simphony` will give a warning if it tries to
+#'   sample from a distribution outside the region in which the distribution is
+#'   defined: \eqn{\mu < 0} for negative binomial and Poisson, and \eqn{\mu < 0}
+#'   or \eqn{\mu > 1} for Bernoulli.
 #'
 #' @return List with the following elements:
 #' \describe{
@@ -114,6 +117,14 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #' featureGroups = data.table(amp = 1, base = 6:8)
 #' dispFunc = function(x) 3 * defaultDispFunc(x)
 #' simData = simphony(featureGroups, family = 'negbinom', dispFunc = dispFunc)
+#'
+#' # Simulate data at high temporal resolution from a Poisson distribution that
+#' # alternates between two states.
+#' featureGroups = data.table(amp = 1, base = 0,
+#'                            rhyFunc = function(x) ifelse(x %% (2 * pi) < pi, 0.5, 4))
+#'
+#' simData = simphony(featureGroups, timeRange = c(0, 24 * 4), interval = 0.1,
+#'                    nReps = 1, family = 'poisson')
 #'
 #' # Simulate data for 100 features, half non-rhythmic and half rhythmic, with
 #' # amplitudes for rhythmic features sampled from a log-normal distribution.

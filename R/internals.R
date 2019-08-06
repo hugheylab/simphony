@@ -3,14 +3,14 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
                                    defaultPeriod = 24, defaultSd = 1,
                                    defaultBaseGaussian = 0, defaultBaseNegbinom = 8,
                                    defaultBaseBernoulli = 0.5, defaultBasePoisson = 1) {
+  if (nrow(featureGroups) == 0) {
+    stop('featureGroups must have at least one row.')}
+
   if ('group' %in% colnames(featureGroups)) {
     stop("featureGroups must not have a column named 'group'.")}
 
   featureGroups = data.table(featureGroups)
   featureGroups[, group := 1:.N]
-
-  if (nrow(featureGroups) == 0) {
-    stop('featureGroups must have at least one row.')}
 
   featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
   featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
