@@ -4,8 +4,11 @@
 \alias{getSampledAbund}
 \title{Sample abundance values}
 \usage{
-getSampledAbund(abundDt, family = c("gaussian", "negbinom", "bernoulli",
-  "poisson"), inplace = FALSE)
+getSampledAbund(
+  abundDt,
+  family = c("gaussian", "negbinom", "bernoulli", "poisson"),
+  inplace = FALSE
+)
 }
 \arguments{
 \item{abundDt}{\code{data.table} of expected abundance. If \code{family} is 'gaussian',
@@ -41,5 +44,5 @@ abundMat = getSampledAbund(abundDt)
 
 }
 \seealso{
-\code{\link{simphony}}, \code{\link{getExpectedAbund}}
+\code{\link[=simphony]{simphony()}}, \code{\link[=getExpectedAbund]{getExpectedAbund()}}
 }

@@ -35,5 +35,5 @@ mergedSimData = mergeSimData(simData, simData$featureMetadata$feature[1:2])
 
 }
 \seealso{
-\code{\link{simphony}}
+\code{\link[=simphony]{simphony()}}
 }

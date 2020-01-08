@@ -1,6 +1,6 @@
 Package: simphony
 Title: Simulating large-scale, rhythmic data
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: as.person(c(
   "Jordan Singer <jordan.m.singer@gmail.com> [aut, cre]",
   "Darwin Fu <darwinyfu@gmail.com> [ctb]",
@@ -25,5 +25,5 @@ Suggests:
   precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
   testthat (>= 2.0.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr

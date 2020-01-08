@@ -4,8 +4,12 @@
 \alias{getExpectedAbund}
 \title{Calculate expected abundance}
 \usage{
-getExpectedAbund(featureMetadata, times = NULL, sampleMetadata = NULL,
-  byCondGroup = is.null(times))
+getExpectedAbund(
+  featureMetadata,
+  times = NULL,
+  sampleMetadata = NULL,
+  byCondGroup = is.null(times)
+)
 }
 \arguments{
 \item{featureMetadata}{\code{data.table} with columns \code{feature}, \code{base},
@@ -43,5 +47,5 @@ abundDt = getExpectedAbund(featureMetadata, times = 6:17)
 
 }
 \seealso{
-\code{\link{simphony}}, \code{\link{getSampledAbund}}
+\code{\link[=simphony]{simphony()}}, \code{\link[=getSampledAbund]{getSampledAbund()}}
 }

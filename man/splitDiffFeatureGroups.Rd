@@ -31,5 +31,5 @@ featureGroups = splitDiffFeatureGroups(dGroups)
 
 }
 \seealso{
-\code{\link{simphony}}
+\code{\link[=simphony]{simphony()}}
 }

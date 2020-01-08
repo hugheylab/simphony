@@ -4,11 +4,20 @@
 \alias{simphony}
 \title{Simulate feature abundance data}
 \usage{
-simphony(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
-  timepointsType = c("auto", "specified", "random"), timeRange = c(0,
-  48), interval = 2, nReps = 1, timepoints = NULL,
-  nSamplesPerCond = NULL, rhyFunc = sin, dispFunc = NULL,
-  family = c("gaussian", "negbinom", "bernoulli", "poisson"))
+simphony(
+  featureGroupsList,
+  fracFeatures = NULL,
+  nFeatures = 10,
+  timepointsType = c("auto", "specified", "random"),
+  timeRange = c(0, 48),
+  interval = 2,
+  nReps = 1,
+  timepoints = NULL,
+  nSamplesPerCond = NULL,
+  rhyFunc = sin,
+  dispFunc = NULL,
+  family = c("gaussian", "negbinom", "bernoulli", "poisson")
+)
 }
 \arguments{
 \item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
@@ -27,7 +36,7 @@ over time) or a function (time-dependent). See vignette for examples.}
 \item{phase}{Phase of rhythm, in the same units as \code{period}. Defaults to
 0. Corresponds to an additive term in \code{rhyFunc}.}
 \item{base}{Baseline abundance, i.e., abundance when \code{rhyFunc} term is 0.
-Depending on \code{family}, defaults to 0 ('gaussian') and to 8 ('negbinom',
+Depending on \code{family}, defaults to 0 ('gaussian'), 8 ('negbinom',
 mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
 (constant over time) or a function (time-dependent). See vignette for
 examples.}
@@ -162,6 +171,6 @@ simData = simphony(featureGroups, nFeatures = nFeatures, family = 'negbinom')
 
 }
 \seealso{
-\code{\link{defaultDispFunc}}, \code{\link{getExpectedAbund}},
-\code{\link{getSampledAbund}}, \code{\link{mergeSimData}}
+\code{\link[=defaultDispFunc]{defaultDispFunc()}}, \code{\link[=getExpectedAbund]{getExpectedAbund()}}, \code{\link[=getSampledAbund]{getSampledAbund()}},
+\code{\link[=mergeSimData]{mergeSimData()}}
 }

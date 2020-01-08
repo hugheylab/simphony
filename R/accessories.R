@@ -12,7 +12,9 @@
 #' means = 2^(6:10)
 #' dispersions = defaultDispFunc(means)
 #'
-#' @seealso `\link{simphony}`
+#' @usage defaultDispFunc(x)
+#'
+#' @seealso [simphony()]
 'defaultDispFunc'
 
 
@@ -46,7 +48,7 @@
 #'                              phase = 0, rhyFunc = sin)
 #' abundDt = getExpectedAbund(featureMetadata, times = 6:17)
 #'
-#' @seealso `\link{simphony}`, `\link{getSampledAbund}`
+#' @seealso [simphony()], [getSampledAbund()]
 #'
 #' @export
 getExpectedAbund = function(featureMetadata, times = NULL,
@@ -101,7 +103,7 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #'                     mu = c(0, 5), sd = 1)
 #' abundMat = getSampledAbund(abundDt)
 #'
-#' @seealso `\link{simphony}`, `\link{getExpectedAbund}`
+#' @seealso [simphony()], [getExpectedAbund()]
 #'
 #' @export
 getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom',
@@ -159,7 +161,7 @@ getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom',
 #' simData = simphony(featureGroups)
 #' mergedSimData = mergeSimData(simData, simData$featureMetadata$feature[1:2])
 #'
-#' @seealso `\link{simphony}`
+#' @seealso [simphony()]
 #'
 #' @export
 mergeSimData = function(simData, features = NULL) {
@@ -198,7 +200,7 @@ mergeSimData = function(simData, features = NULL) {
 #'                      meanPhase = c(0, 0, 0, 0), dPhase = c(0, 3, 0, 3))
 #' featureGroups = splitDiffFeatureGroups(dGroups)
 #'
-#' @seealso `\link{simphony}`
+#' @seealso [simphony()]
 #'
 #' @export
 splitDiffFeatureGroups = function(diffFeatureGroups, checkValid = TRUE) {

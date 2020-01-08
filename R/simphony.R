@@ -147,8 +147,8 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #' featureGroups = data.table(base = baseLog2Counts, dispFunc = dispFuncs, amp = 1)
 #' simData = simphony(featureGroups, nFeatures = nFeatures, family = 'negbinom')
 #'
-#' @seealso `\link{defaultDispFunc}`, `\link{getExpectedAbund}`,
-#' `\link{getSampledAbund}`, `\link{mergeSimData}`
+#' @seealso [defaultDispFunc()], [getExpectedAbund()], [getSampledAbund()],
+#'   [mergeSimData()]
 #'
 #' @export
 simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
@@ -179,12 +179,12 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
   abundDt = getExpectedAbund(fm, sampleMetadata = sm)
   abundMat = getSampledAbund(abundDt, family, inplace = TRUE)
 
-  experMetadata = list(featureGroupsList = featureGroupsList, fracFeatures = fracFeatures,
-                       nFeatures = nFeatures, timepointsType = timepointsType,
+  experMetadata = list(featureGroupsList = featureGroupsList,
+                       fracFeatures = fracFeatures, nFeatures = nFeatures,
+                       timepointsType = timepointsType, timeRange = timeRange,
                        interval = interval, nReps = nReps,
-                       timepoints = timepoints, rhyFunc = rhyFunc,
-                       nSamplesPerCond = nSamplesPerCond,
-                       dispFunc = dispFunc, family = family)
+                       timepoints = timepoints, nSamplesPerCond = nSamplesPerCond,
+                       rhyFunc = rhyFunc, dispFunc = dispFunc, family = family)
 
   return(list(abundData = abundMat, sampleMetadata = sm, featureMetadata = fm,
               experMetadata = experMetadata))}
