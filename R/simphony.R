@@ -30,7 +30,7 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #'     \item{phase}{Phase of rhythm, in the same units as `period`. Defaults to
 #'       0. Corresponds to an additive term in `rhyFunc`.}
 #'     \item{base}{Baseline abundance, i.e., abundance when `rhyFunc` term is 0.
-#'       Depending on `family`, defaults to 0 ('gaussian') and to 8 ('negbinom',
+#'       Depending on `family`, defaults to 0 ('gaussian'), 8 ('negbinom',
 #'       mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
 #'       (constant over time) or a function (time-dependent). See vignette for
 #'       examples.}

@@ -5,7 +5,7 @@
 
 ## Installation
 
-First add the hugheylab repository to your repos. There are a couple ways to do this.
+First add the hugheylab repository to your repos. There are multiple ways to do this.
 
 If you use RStudio, go to Tools -> Global Options... -> Packages -> Add... (under Secondary repositories), then enter the following values.
 
