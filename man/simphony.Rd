@@ -60,7 +60,7 @@ for the simulation. Must be 'auto' (default), 'specified', or 'random'.}
 simulation. Defaults to c(0, 48). Only used if \code{timepointsType} is 'auto'
 or 'random'.}
 
-\item{interval}{Integer for the amount of time between consecutive
+\item{interval}{Number for the amount of time between consecutive
 timepoints, in the same units as \code{period}. The first timepoint is 0. Only
 used if \code{timepointsType} is 'auto'.}
 

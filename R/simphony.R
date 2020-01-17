@@ -49,7 +49,7 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #' @param timeRange Numeric vector for the range of timepoints to use for the
 #'   simulation. Defaults to c(0, 48). Only used if `timepointsType` is 'auto'
 #'   or 'random'.
-#' @param interval Integer for the amount of time between consecutive
+#' @param interval Number for the amount of time between consecutive
 #'   timepoints, in the same units as `period`. The first timepoint is 0. Only
 #'   used if `timepointsType` is 'auto'.
 #' @param nReps Integer for the number of replicates per timepoint. Only used
