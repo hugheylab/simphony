@@ -63,6 +63,7 @@ setFuncs = function(featureGroups, varName, defaultValue) {
 getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
                     nSamplesPerCond, nConds) {
   if (timepointsType == 'auto') {
+    stopifnot(is.numeric(timeRange), length(timeRange) == 2, diff(timeRange) > 0)
     t1 = timeRange[1] %/% interval - (timeRange[1] %% interval == 0) + 1
     t2 = timeRange[2] %/% interval - (timeRange[2] %% interval == 0)
     tt = interval * t1:t2
@@ -73,6 +74,7 @@ getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
       stop("timepoints cannot be NULL, if timepointsType is 'specified'.")}
     times = matrix(rep(timepoints, each = nConds), ncol = length(timepoints))
   } else if (timepointsType == 'random') {
+    stopifnot(is.numeric(timeRange), length(timeRange) == 2, diff(timeRange) > 0)
     if (is.null(nSamplesPerCond)) {
       stop("nSamplesPerCond cannot be NULL, if timepointsType is 'random'.")}
     tt = stats::runif(nSamplesPerCond * nConds, min = timeRange[1], max = timeRange[2])
