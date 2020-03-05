@@ -85,6 +85,8 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #'   'negbinom', required columns are `feature`, `sample`, `mu`, `dispFunc`,
 #'   `cond`, and `group`. If `family` is 'bernoulli' or 'poisson', required
 #'   columns are `feature`, `sample`, and `mu`.
+#' @param logOdds Logical for whether `mu` corresponds to log-odds. Only used if
+#'   `family` is 'bernoulli'.
 #' @param family Character string for the family of distributions from which
 #'   to sample the abundance values. `simphony` will give a warning if it tries
 #'   to sample from a distribution outside the region in which the distribution
@@ -106,8 +108,8 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' @seealso [simphony()], [getExpectedAbund()]
 #'
 #' @export
-getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom',
-                                               'bernoulli', 'poisson'),
+getSampledAbund = function(abundDt, logOdds = FALSE,
+                           family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'),
                            inplace = FALSE) {
   family = match.arg(family)
   if (isFALSE(inplace)) {
@@ -122,8 +124,11 @@ getSampledAbund = function(abundDt, family = c('gaussian', 'negbinom',
     abundDt[, abund := stats::rnbinom(.N, mu = 2^mu, size = 1 / dispFunc[[1]](2^mu)),
            by = c('cond', 'group')]
   } else if (family == 'bernoulli') {
-    # will output NA and a warning for mu < 0 or mu > 1
-    abundDt[, abund := stats::rbinom(.N, 1, mu)]
+    if (isTRUE(logOdds)) {
+      abundDt[, abund := stats::rbinom(.N, 1, 1 / (1 + exp(-mu)))]
+    } else {
+      # will output NA and a warning for mu < 0 or mu > 1
+      abundDt[, abund := stats::rbinom(.N, 1, mu)]}
   } else if (family == 'poisson') {
     # will output NA and a warning for mu < 0
     abundDt[, abund := stats::rpois(.N, mu)]}

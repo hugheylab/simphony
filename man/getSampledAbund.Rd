@@ -6,6 +6,7 @@
 \usage{
 getSampledAbund(
   abundDt,
+  logOdds = FALSE,
   family = c("gaussian", "negbinom", "bernoulli", "poisson"),
   inplace = FALSE
 )
@@ -16,6 +17,9 @@ required columns are \code{feature}, \code{sample}, \code{mu}, and \code{sd}. If
 'negbinom', required columns are \code{feature}, \code{sample}, \code{mu}, \code{dispFunc},
 \code{cond}, and \code{group}. If \code{family} is 'bernoulli' or 'poisson', required
 columns are \code{feature}, \code{sample}, and \code{mu}.}
+
+\item{logOdds}{Logical for whether \code{mu} corresponds to log-odds. Only used if
+\code{family} is 'bernoulli'.}
 
 \item{family}{Character string for the family of distributions from which
 to sample the abundance values. \code{simphony} will give a warning if it tries

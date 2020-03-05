@@ -31,9 +31,10 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #'       0. Corresponds to an additive term in `rhyFunc`.}
 #'     \item{base}{Baseline abundance, i.e., abundance when `rhyFunc` term is 0.
 #'       Depending on `family`, defaults to 0 ('gaussian'), 8 ('negbinom',
-#'       mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
-#'       (constant over time) or a function (time-dependent). See vignette for
-#'       examples.}
+#'       mean log2 counts), 0 ('bernoulli' with `logOdds` as `TRUE`),
+#'       0.5 ('bernoulli' if `logOdds` as `FALSE`), or 1 ('poisson'). Can be
+#'       numeric (constant over time) or a function (time-dependent). See
+#'       vignette for examples.}
 #'     \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
 #'       Only used if `family` is 'gaussian'.}
 #'     \item{dispFunc}{Function to calculate dispersion of sampled abundance
@@ -59,13 +60,15 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #' @param nSamplesPerCond Integer for the number of samples per condition,
 #'   which will be randomly uniformly spaced between 0 and `period` and
 #'   different for each condition. Only used if timepointsType is 'random'.
+#' @param rhyFunc Function to generate rhythmic abundance. Must have a period
+#'   of \eqn{2\pi}. Defaults to `sin`. Only used if a `data.frame` in
+#'   `featureGroupsList` lacks a `rhyFunc` column.
 #' @param dispFunc Function to calculate dispersion of sampled abundance
 #'   values, given expected abundance in counts. Defaults to `defaultDispFunc`.
 #'   Only used if `family` is 'negbinom' and a `data.frame` in
 #'   `featureGroupsList` lacks a `dispFunc` column.
-#' @param rhyFunc Function to generate rhythmic abundance. Must have a period
-#'   of \eqn{2\pi}. Defaults to `sin`. Only used if a `data.frame` in
-#'   `featureGroupsList` lacks a `rhyFunc` column.
+#' @param logOdds Logical for whether the rhythmic function corresponds to
+#'   log-odds. Only used if `family` is 'bernoulli'.
 #' @param family Character string for the family of distributions from which to
 #'   sample the abundance values. `simphony` will give a warning if it tries to
 #'   sample from a distribution outside the region in which the distribution is
@@ -155,7 +158,7 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
                     timepointsType = c('auto', 'specified', 'random'),
                     timeRange = c(0, 48), interval = 2, nReps = 1,
                     timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-                    dispFunc = NULL,
+                    dispFunc = NULL, logOdds = FALSE,
                     family = c('gaussian', 'negbinom', 'bernoulli', 'poisson')) {
   family = match.arg(family)
   timepointsType = match.arg(timepointsType)
@@ -169,7 +172,7 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
     stop('Each featureGroups data.frame must have the same number of rows.')}
 
   featureGroupsList = foreach(featureGroups = featureGroupsList) %do% {
-    setDefaultFeatureGroups(featureGroups, nFeatures, dispFunc, rhyFunc, family)}
+    setDefaultFeatureGroups(featureGroups, nFeatures, rhyFunc, dispFunc, logOdds, family)}
 
   times = getTimes(timepointsType, interval, nReps, timepoints, timeRange,
                    nSamplesPerCond, length(featureGroupsList))
@@ -177,14 +180,15 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
   fm = getFeatureMetadata(featureGroupsList, fracFeatures, nFeatures)
 
   abundDt = getExpectedAbund(fm, sampleMetadata = sm)
-  abundMat = getSampledAbund(abundDt, family, inplace = TRUE)
+  abundMat = getSampledAbund(abundDt, logOdds, family, inplace = TRUE)
 
   experMetadata = list(featureGroupsList = featureGroupsList,
                        fracFeatures = fracFeatures, nFeatures = nFeatures,
                        timepointsType = timepointsType, timeRange = timeRange,
                        interval = interval, nReps = nReps,
                        timepoints = timepoints, nSamplesPerCond = nSamplesPerCond,
-                       rhyFunc = rhyFunc, dispFunc = dispFunc, family = family)
+                       rhyFunc = rhyFunc, dispFunc = dispFunc,
+                       logOdds = logOdds, family = family)
 
   return(list(abundData = abundMat, sampleMetadata = sm, featureMetadata = fm,
               experMetadata = experMetadata))}

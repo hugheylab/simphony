@@ -16,6 +16,7 @@ simphony(
   nSamplesPerCond = NULL,
   rhyFunc = sin,
   dispFunc = NULL,
+  logOdds = FALSE,
   family = c("gaussian", "negbinom", "bernoulli", "poisson")
 )
 }
@@ -37,9 +38,10 @@ over time) or a function (time-dependent). See vignette for examples.}
 0. Corresponds to an additive term in \code{rhyFunc}.}
 \item{base}{Baseline abundance, i.e., abundance when \code{rhyFunc} term is 0.
 Depending on \code{family}, defaults to 0 ('gaussian'), 8 ('negbinom',
-mean log2 counts), 0.5 ('bernoulli'), or 1 ('poisson'). Can be numeric
-(constant over time) or a function (time-dependent). See vignette for
-examples.}
+mean log2 counts), 0 ('bernoulli' with \code{logOdds} as \code{TRUE}),
+0.5 ('bernoulli' if \code{logOdds} as \code{FALSE}), or 1 ('poisson'). Can be
+numeric (constant over time) or a function (time-dependent). See
+vignette for examples.}
 \item{sd}{Standard deviation of sampled abundance values. Defaults to 1.
 Only used if \code{family} is 'gaussian'.}
 \item{dispFunc}{Function to calculate dispersion of sampled abundance
@@ -82,6 +84,9 @@ of \eqn{2\pi}. Defaults to \code{sin}. Only used if a \code{data.frame} in
 values, given expected abundance in counts. Defaults to \code{defaultDispFunc}.
 Only used if \code{family} is 'negbinom' and a \code{data.frame} in
 \code{featureGroupsList} lacks a \code{dispFunc} column.}
+
+\item{logOdds}{Logical for whether the rhythmic function corresponds to
+log-odds. Only used if \code{family} is 'bernoulli'.}
 
 \item{family}{Character string for the family of distributions from which to
 sample the abundance values. \code{simphony} will give a warning if it tries to

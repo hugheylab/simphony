@@ -1,8 +1,8 @@
-setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
-                                   family, defaultAmp = 0, defaultPhase = 0,
+setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
+                                   logOdds, family, defaultAmp = 0, defaultPhase = 0,
                                    defaultPeriod = 24, defaultSd = 1,
                                    defaultBaseGaussian = 0, defaultBaseNegbinom = 8,
-                                   defaultBaseBernoulli = 0.5, defaultBasePoisson = 1) {
+                                   defaultBaseBernoulli = c(0, 0.5), defaultBasePoisson = 1) {
   if (nrow(featureGroups) == 0) {
     stop('featureGroups must have at least one row.')}
 
@@ -37,7 +37,10 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, dispFunc, rhyFunc,
       featureGroups[, dispFunc := data.table(dispFunc)]}
     featureGroups = setFuncs(featureGroups, 'base', defaultBaseNegbinom)
   } else if (family == 'bernoulli') {
-    featureGroups = setFuncs(featureGroups, 'base', defaultBaseBernoulli)
+    if (isTRUE(logOdds)) {
+      featureGroups = setFuncs(featureGroups, 'base', defaultBaseBernoulli[1])
+    } else {
+      featureGroups = setFuncs(featureGroups, 'base', defaultBaseBernoulli[2])}
   } else if (family == 'poisson') {
     featureGroups = setFuncs(featureGroups, 'base', defaultBasePoisson)}
 
