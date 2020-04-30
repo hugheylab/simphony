@@ -13,19 +13,19 @@ vignette: >
 knitr::opts_chunk$set(message = FALSE, collapse = TRUE, comment = '#>', fig.retina = 2)
 ```
 
-*Simphony* is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using *Simphony* to benchmark a method for detecting rhythmicity.
+`simphony` is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using it to benchmark a method for detecting rhythmicity.
 
 ## Load the packages we'll use
 
-Internally, *simphony* uses the *data.table* package, which provides an enhanced version of the standard R `data.frame`. We'll use *data.table* for this example as well.
+Internally, `simphony` uses the `data.table` package, which provides an enhanced version of the standard R `data.frame`. We'll use `data.table` for this example as well.
 ```{r}
-library(data.table)
-library(ggplot2)
-library(kableExtra)
-library(knitr)
-library(limma)
-library(precrec)
-library(simphony)
+library('data.table')
+library('ggplot2')
+library('kableExtra')
+library('knitr')
+library('limma')
+library('precrec')
+library('simphony')
 ```
 
 ## Simulate the data
@@ -51,7 +51,7 @@ kable(simData$sampleMetadata[1:3,])
 
 `featureMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `featureGroups` to which the gene belongs.
 ```{r}
-kable(simData$featureMetadata[149:151,]) %>%
+kable(simData$featureMetadata[149:151, !'dispFunc']) %>%
   kable_styling(font_size = 12)
 ```
 
@@ -83,7 +83,7 @@ ggplot(dExample) +
 
 ## Detect rhythmic genes
 
-We can use the *limma* package to detect rhythmic genes based on a linear model that corresponds to cosinor regression. 
+We can use the `limma` package to detect rhythmic genes based on a linear model that corresponds to cosinor regression. 
 ```{r}
 sampleMetadata = copy(simData$sampleMetadata)
 sampleMetadata[, timeCos := cos(time * 2 * pi / 24)]
@@ -91,7 +91,7 @@ sampleMetadata[, timeSin := sin(time * 2 * pi / 24)]
 design = model.matrix(~ timeCos + timeSin, data = sampleMetadata)
 ```
 
-Here we follow the typical *limma* workflow: fit the linear model for each gene, run empirical Bayes, and extract the relevant summary statistics. We pass *lmFit* the log~2~ transformed counts.
+Here we follow the typical `limma` workflow: fit the linear model for each gene, run empirical Bayes, and extract the relevant summary statistics. We pass `lmFit` the log~2~ transformed counts.
 ```{r}
 fit = lmFit(log2(simData$abundData + 1), design)
 fit = eBayes(fit, trend = TRUE)
@@ -100,7 +100,7 @@ rhyLimma = topTable(fit, coef = 2:3, number = Inf)
 
 ## Evaluate accuracy of rhythmic gene detection
 
-First we merge the results from *limma* with the known amplitudes from `featureMetadata`.
+First we merge the results from `limma` with the known amplitudes from `featureMetadata`.
 ```{r}
 rhyLimma$feature = rownames(rhyLimma)
 rhyLimma = merge(data.table(rhyLimma), simData$featureMetadata[, .(feature, amp0)], by = 'feature')
@@ -113,7 +113,7 @@ ggplot(rhyLimma) +
   labs(x = expression('Rhythm amplitude '*(log[2]~counts)), y = 'P-value of rhythmicity')
 ```
 
-Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the *precrec* package).
+Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the `precrec` package).
 ```{r, fig.width = 3, fig.height = 3}
 rocprc = evalmod(scores = -log(rhyLimma$P.Value), labels = rhyLimma$amp0 > 0)
 autoplot(rocprc, 'ROC')
