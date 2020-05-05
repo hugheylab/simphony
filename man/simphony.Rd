@@ -21,10 +21,10 @@ simphony(
 )
 }
 \arguments{
-\item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single condition)
-or list of \code{data.frame}s or \code{data.table}s (for multiple conditions), where
-each row corresponds to a group of features to simulate. The following
-columns are all optional:
+\item{featureGroupsList}{\code{data.frame} or \code{data.table} (for a single
+condition) or list of \code{data.frame}s or \code{data.table}s (for multiple
+conditions), where each row corresponds to a group of features to simulate.
+The following columns are all optional:
 \describe{
 \item{fracFeatures}{Fraction of simulated features to allocate to each
 group. Defaults to 1/(number of groups).}

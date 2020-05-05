@@ -8,7 +8,7 @@ mergeSimData(simData, features = NULL)
 }
 \arguments{
 \item{simData}{List with the following elements, such as returned by
-\code{simphony()}:
+\code{\link[=simphony]{simphony()}}:
 \describe{
 \item{abundData}{Matrix of abundance values, with rownames for features and
 colnames for samples.}
@@ -17,7 +17,7 @@ colnames for samples.}
 }}
 
 \item{features}{Character vector of features for which to get abundance data.
-If NULL, then all features.}
+If \code{NULL}, then all features.}
 }
 \value{
 \code{data.table}.

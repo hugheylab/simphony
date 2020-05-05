@@ -4,7 +4,9 @@
 \name{defaultDispFunc}
 \alias{defaultDispFunc}
 \title{Default function for mapping expected counts to dispersion.}
-\format{An object of class \code{function} of length 1.}
+\format{
+An object of class \code{function} of length 1.
+}
 \usage{
 defaultDispFunc(x)
 }
@@ -16,7 +18,7 @@ Numeric vector of dispersions.
 }
 \description{
 The function was estimated from circadian RNA-seq data from mouse liver
-(PRJNA297287), using local regression in DESeq2. In a negative binomial
+(PRJNA297287), using local regression in \code{DESeq2}. In a negative binomial
 distribution, \eqn{variance = mean + mean^2 * dispersion}.
 }
 \examples{

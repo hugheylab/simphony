@@ -1,6 +1,5 @@
 ---
 title: "Using simphony to evaluate rhythm detection"
-author: "Jordan Singer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

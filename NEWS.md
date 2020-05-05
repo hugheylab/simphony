@@ -1,3 +1,3 @@
-# simphony 0.1.5
-
-* Added a `NEWS.md` file to track changes to the package.
+# simphony 0.1.6
+* Added `pkgdown` site.
+* Updated documentation.

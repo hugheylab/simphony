@@ -1,7 +1,7 @@
 #' Default function for mapping expected counts to dispersion.
 #'
 #' The function was estimated from circadian RNA-seq data from mouse liver
-#' (PRJNA297287), using local regression in DESeq2. In a negative binomial
+#' (PRJNA297287), using local regression in `DESeq2`. In a negative binomial
 #' distribution, \eqn{variance = mean + mean^2 * dispersion}.
 #'
 #' @param x Numeric vector of mean counts.
@@ -77,7 +77,7 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' Sample abundance values
 #'
 #' Sample feature abundance values from the given distributions. This function
-#' is used internally by `simphony()`, and should not usually need to be
+#' is used internally by [simphony()], and should not usually need to be
 #' called directly.
 #'
 #' @param abundDt `data.table` of expected abundance. If `family` is 'gaussian',
@@ -148,15 +148,15 @@ getSampledAbund = function(abundDt, logOdds = FALSE,
 #' ggplot2.
 #'
 #' @param simData List with the following elements, such as returned by
-#' `simphony()`:
+#'   [simphony()]:
 #' \describe{
 #'   \item{abundData}{Matrix of abundance values, with rownames for features and
-#'   colnames for samples.}
+#'     colnames for samples.}
 #'   \item{sampleMetadata}{`data.table` with columns `sample` and `cond`.}
 #'   \item{featureMetadata}{`data.table` with columns `feature` and `cond`.}
 #' }
 #' @param features Character vector of features for which to get abundance data.
-#'   If NULL, then all features.
+#'   If `NULL`, then all features.
 #'
 #' @return `data.table`.
 #'
@@ -187,7 +187,7 @@ mergeSimData = function(simData, features = NULL) {
 #' Split differential featureGroups
 #'
 #' Split a diffFeatureGroups data.frame into a list of two featureGroups
-#' data.frames, which can then be passed to `simphony()`.
+#' data.frames, which can then be passed to [simphony()].
 #'
 #' @param diffFeatureGroups `data.frame` with optional columns `meanBase`,
 #'   `dBase`, `meanSd`, `dSd`, `meanAmp`, `dAmp`, `meanPhase`, and `dPhase`

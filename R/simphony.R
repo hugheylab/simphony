@@ -14,10 +14,10 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #' Simulate experiments in which abundances of rhythmic and non-rhythmic
 #' features are measured at multiple timepoints in one or more conditions.
 #'
-#' @param featureGroupsList `data.frame` or `data.table` (for a single condition)
-#'   or list of `data.frame`s or `data.table`s (for multiple conditions), where
-#'   each row corresponds to a group of features to simulate. The following
-#'   columns are all optional:
+#' @param featureGroupsList `data.frame` or `data.table` (for a single
+#'   condition) or list of `data.frame`s or `data.table`s (for multiple
+#'   conditions), where each row corresponds to a group of features to simulate.
+#'   The following columns are all optional:
 #'   \describe{
 #'     \item{fracFeatures}{Fraction of simulated features to allocate to each
 #'       group. Defaults to 1/(number of groups).}

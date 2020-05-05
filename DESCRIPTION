@@ -1,6 +1,6 @@
 Package: simphony
 Title: Simulating large-scale, rhythmic data
-Version: 0.1.5
+Version: 0.1.6
 Authors@R: as.person(c(
   "Jake Hughey <jakejhughey@gmail.com> [aut, cre]",
   "Jordan Singer <jordan.m.singer@gmail.com> [aut]",
@@ -25,6 +25,6 @@ Suggests:
   precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
   testthat (>= 2.0.0)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 BugReports: https://github.com/hugheylab/simphony/issues

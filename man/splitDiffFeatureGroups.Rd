@@ -22,7 +22,7 @@ and \code{phase}, depending on the columns in \code{diffFeatureGroups}.
 }
 \description{
 Split a diffFeatureGroups data.frame into a list of two featureGroups
-data.frames, which can then be passed to \code{simphony()}.
+data.frames, which can then be passed to \code{\link[=simphony]{simphony()}}.
 }
 \examples{
 dGroups = data.frame(meanAmp = c(1, 1, 1, 1), dAmp = c(1, 1, 2, 2),

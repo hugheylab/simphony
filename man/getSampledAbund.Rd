@@ -36,7 +36,7 @@ columns correspond to samples.
 }
 \description{
 Sample feature abundance values from the given distributions. This function
-is used internally by \code{simphony()}, and should not usually need to be
+is used internally by \code{\link[=simphony]{simphony()}}, and should not usually need to be
 called directly.
 }
 \examples{

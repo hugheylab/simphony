@@ -73,7 +73,7 @@ features are measured at multiple timepoints in one or more conditions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
       </span>
     </div>
 
@@ -84,9 +84,6 @@ features are measured at multiple timepoints in one or more conditions." />
     <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
-</li>
-<li>
-  <a href="../articles/simphony.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -161,10 +158,10 @@ features are measured at multiple timepoints in one or more conditions.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>featureGroupsList</th>
-      <td><p><code>data.frame</code> or <code>data.table</code> (for a single condition)
-or list of <code>data.frame</code>s or <code>data.table</code>s (for multiple conditions), where
-each row corresponds to a group of features to simulate. The following
-columns are all optional:</p><dl'>
+      <td><p><code>data.frame</code> or <code>data.table</code> (for a single
+condition) or list of <code>data.frame</code>s or <code>data.table</code>s (for multiple
+conditions), where each row corresponds to a group of features to simulate.
+The following columns are all optional:</p><dl'>
 <dt>fracFeatures</dt><dd><p>Fraction of simulated features to allocate to each
 group. Defaults to 1/(number of groups).</p></dd>
 <dt>rhyFunc</dt><dd><p>Function to generate rhythmic abundance. Must have a
