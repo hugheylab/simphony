@@ -1,4 +1,5 @@
 Package: simphony
+Type: Package
 Title: Simulating large-scale, rhythmic data
 Version: 0.1.6
 Authors@R: as.person(c(
@@ -8,12 +9,13 @@ Authors@R: as.person(c(
 Description: A tool for simulating rhythmic data: transcriptome data using
   Gaussian or negative binomial distributions, and behavioral activity data
   using Bernoulli or Poisson distributions.
-Depends: R (>= 3.4)
-Roxygen: list(markdown = TRUE)
 URL: https://github.com/hugheylab/simphony
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.0
+Roxygen: list(markdown = TRUE)
+Depends: R (>= 3.4)
 Imports:
   data.table (>= 1.11.4),
   foreach (>= 1.4.4)
@@ -25,6 +27,4 @@ Suggests:
   precrec (>= 0.9.1),
   rmarkdown (>= 1.9),
   testthat (>= 2.0.0)
-RoxygenNote: 7.1.0
 VignetteBuilder: knitr
-BugReports: https://github.com/hugheylab/simphony/issues
