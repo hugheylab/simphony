@@ -37,7 +37,9 @@ jobs:
       - run:
           name: Check failures
           command: |
-            Rscript -e "message(devtools::check_failures(path = '${PKG_NAME}.Rcheck'))"
+            Rscript \
+            -e "message(devtools::check_failures(path = '${PKG_NAME}.Rcheck'))" \
+            -e "covr::package_coverage()"
 
       - run:
           name: Deploy to drat
