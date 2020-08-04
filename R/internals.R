@@ -112,9 +112,8 @@ getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
       nFeaturesPerGroup[1L:(nFeatures - sum(nFeaturesPerGroup))] + 1L}
 
   if (any(nFeaturesPerGroup) == 0) {
-    stop(paste(c('At least one group has no features. Increase nFeatures,',
-                 'reduce the number of groups, or change fracFeatures.'),
-               collapse = ' '))}
+    stop(paste('At least one group has no features. Increase nFeatures,',
+               'reduce the number of groups, or change fracFeatures.'))}
   return(nFeaturesPerGroup)}
 
 
