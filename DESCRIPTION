@@ -1,7 +1,7 @@
 Package: simphony
 Type: Package
 Title: Simulating large-scale, rhythmic data
-Version: 0.1.7
+Version: 0.1.8
 Authors@R: as.person(c(
   "Jake Hughey <jakejhughey@gmail.com> [aut, cre]",
   "Jordan Singer <jordan.m.singer@gmail.com> [aut]",

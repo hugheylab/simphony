@@ -1,4 +1,4 @@
-#' @importFrom data.table data.table ":="
+#' @importFrom data.table data.table ":=" set
 #' @importFrom foreach foreach "%do%"
 NULL
 

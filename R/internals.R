@@ -13,7 +13,9 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
   featureGroups[, group := 1:.N]
 
   featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
-  featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
+  for (i in 1:nrow(featureGroups)) {
+    set(featureGroups, i, 'amp0', featureGroups$amp[[i]](0))}
+  # featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
 
   if (!'phase' %in% colnames(featureGroups)) {
     featureGroups[, phase := defaultPhase]}
@@ -44,7 +46,9 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
   } else if (family == 'poisson') {
     featureGroups = setFuncs(featureGroups, 'base', defaultBasePoisson)}
 
-  featureGroups[, base0 := base[[1]](0), by = 1:nrow(featureGroups)]
+  for (i in 1:nrow(featureGroups)) {
+    set(featureGroups, i, 'base0', featureGroups$base[[i]](0))}
+  # featureGroups[, base0 := base[[1]](0), by = 1:nrow(featureGroups)]
   return(featureGroups)}
 
 

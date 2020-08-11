@@ -68,9 +68,12 @@ getExpectedAbund = function(featureMetadata, times = NULL,
         amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / period),
       by = c('cond', 'group')]
   } else {
-    d[, mu := base[[1]](time) +
-        amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / period),
-      by = 1:nrow(d)]}
+    for (i in 1:nrow(d)) {
+      set(d, i, 'mu', d$base[[i]](d$time[i]) + d$amp[[i]](d$time[i]) *
+            d$rhyFunc[[i]]((d$time[i] + d$phase[i]) * 2 * pi / d$period[i]))}}
+    # d[, mu := base[[1]](time) +
+    #     amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / period),
+    #   by = 1:nrow(d)]}
   return(data.table::copy(d))}
 
 
