@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
       </span>
     </div>
 
@@ -82,12 +82,12 @@
 
       
 
-      </header><script src="introduction_files/kePrint-0.0.1/kePrint.js"></script><div class="row">
+      </header><script src="introduction_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="introduction_files/kePrint-0.0.1/kePrint.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using simphony to evaluate rhythm detection</h1>
             
-            <h4 class="date">2020-05-05</h4>
+            <h4 class="date">2020-08-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hugheylab/simphony/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -282,7 +282,7 @@ feature_149
 0.75
 </td>
 <td style="text-align:left;">
-function (m) x
+function (m) , x
 </td>
 <td style="text-align:right;">
 0.0
@@ -297,7 +297,7 @@ function (m) x
 .Primitive(“sin”)
 </td>
 <td style="text-align:left;">
-function (x) defaultValue
+function (x) , defaultValue
 </td>
 <td style="text-align:right;">
 8
@@ -317,7 +317,7 @@ feature_150
 0.75
 </td>
 <td style="text-align:left;">
-function (m) x
+function (m) , x
 </td>
 <td style="text-align:right;">
 0.0
@@ -332,7 +332,7 @@ function (m) x
 .Primitive(“sin”)
 </td>
 <td style="text-align:left;">
-function (x) defaultValue
+function (x) , defaultValue
 </td>
 <td style="text-align:right;">
 8
@@ -352,7 +352,7 @@ feature_151
 0.25
 </td>
 <td style="text-align:left;">
-function (m) x
+function (m) , x
 </td>
 <td style="text-align:right;">
 0.3
@@ -367,7 +367,7 @@ function (m) x
 .Primitive(“sin”)
 </td>
 <td style="text-align:left;">
-function (x) defaultValue
+function (x) , defaultValue
 </td>
 <td style="text-align:right;">
 8
@@ -421,7 +421,7 @@ function (x) defaultValue
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="st">'Rhythm amplitude '</span>*(<span class="no">log</span>[<span class="fl">2</span>]~<span class="no">counts</span>)), <span class="kw">y</span> <span class="kw">=</span> <span class="st">'P-value of rhythmicity'</span>)</pre></body></html></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-13-1.png" width="336"></p>
 <p>Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the <code>precrec</code> package).</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">rocprc</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/precrec/man/evalmod.html">evalmod</a></span>(<span class="kw">scores</span> <span class="kw">=</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">rhyLimma</span>$<span class="no">P.Value</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="no">rhyLimma</span>$<span class="no">amp0</span> <span class="kw">&gt;</span> <span class="fl">0</span>)
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">rocprc</span> <span class="kw">=</span> <span class="fu"><a href="https://takayasaito.github.io/precrec/reference/evalmod.html">evalmod</a></span>(<span class="kw">scores</span> <span class="kw">=</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">rhyLimma</span>$<span class="no">P.Value</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="no">rhyLimma</span>$<span class="no">amp0</span> <span class="kw">&gt;</span> <span class="fl">0</span>)
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span>(<span class="no">rocprc</span>, <span class="st">'ROC'</span>)</pre></body></html></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-14-1.png" width="288"></p>
 </div>
