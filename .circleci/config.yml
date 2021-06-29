@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: rocker/tidyverse:4.0.5
+      - image: rocker/tidyverse:4.1.0
 
     working_directory: ~/repo
 
@@ -24,7 +24,8 @@ jobs:
           command: |
             Rscript \
               -e 'repos = BiocManager::repositories("https://hugheylab.github.io/drat/")' \
-              -e 'devtools::install_dev_deps(dependencies = TRUE, repos = repos, upgrade = TRUE)'
+              -e 'devtools::install_dev_deps(dependencies = TRUE, repos = repos, upgrade = TRUE)' \
+              -e 'install.packages("covr")'
 
       - run:
           name: Build package
@@ -32,17 +33,12 @@ jobs:
 
       - run:
           name: Check package
-          command: R CMD check ${PKG_TARBALL} --no-manual
-
+          command: R CMD check ${PKG_TARBALL} --no-manual --no-tests
+          
       - run:
-          name: Check coverage percentage
+          name: Run tests and calculate code coverage
           command: |
-            Rscript \
-              -e "covr::package_coverage()"
-
-      - run:
-          name: Calculate code coverage
-          command: r -e 'tryCatch(covr::codecov(), error = function(e) warning(e))'
+            Rscript -e 'covr::codecov(quiet = FALSE)'
 
       - run:
           name: Deploy to drat
