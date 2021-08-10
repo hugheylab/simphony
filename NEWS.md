@@ -1,8 +1,8 @@
 # simphony 0.1.9
-* Removed requirement of `globalVariables` for check to pass without notes.
+* Revised code to not need `globalVariables()` in order to pass R CMD check.
 
 # simphony 0.1.8
-* Switched to using `data.table::set` in a few places for speed
+* Switched to using `data.table::set` in a few places for speed.
 
 # simphony 0.1.7
 * Changed whitespace.
