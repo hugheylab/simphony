@@ -2,12 +2,7 @@
 #' @importFrom foreach foreach "%do%"
 NULL
 
-
-globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
-                  'sd', 'cond', 'dispFunc', 'featureGroups', 'time', 'abund',
-                  '..cond', '.N', '.dummy', 'feature', 'mu', 'period', 'v',
-                  'defaultDispFunc'))
-
+globalVariables('defaultDispFunc')
 
 #' Simulate feature abundance data
 #'
@@ -160,6 +155,7 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
                     timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
                     dispFunc = NULL, logOdds = FALSE,
                     family = c('gaussian', 'negbinom', 'bernoulli', 'poisson')) {
+  featureGroups = NULL
   family = match.arg(family)
   timepointsType = match.arg(timepointsType)
 

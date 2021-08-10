@@ -3,6 +3,7 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
                                    defaultPeriod = 24, defaultSd = 1,
                                    defaultBaseGaussian = 0, defaultBaseNegbinom = 8,
                                    defaultBaseBernoulli = c(0, 0.5), defaultBasePoisson = 1) {
+  group = .N = phase = period = sd = NULL
   if (nrow(featureGroups) == 0) {
     stop('featureGroups must have at least one row.')}
 
@@ -53,6 +54,7 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
 
 
 setFuncs = function(featureGroups, varName, defaultValue) {
+  v = NULL
   if (!varName %in% colnames(featureGroups)) {
     featureGroups[, (varName) := list(list(function(x) defaultValue))]
   } else {
@@ -91,6 +93,7 @@ getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
 
 
 getSampleMetadata = function(times) {
+  cond = NULL
   nSamplesPerCond = ncol(times)
   nSamples = prod(dim(times))
   sm = foreach(cond = 1:nrow(times), .combine = rbind) %do% {
@@ -122,6 +125,7 @@ getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
 
 
 getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
+  featureGroups = .N = cond = ..cond = feature = NULL
   nFeaturesPerGroup = getNFeaturesPerGroup(featureGroupsList[[1]], fracFeatures,
                                            nFeatures)
   features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1),

@@ -54,6 +54,7 @@
 getExpectedAbund = function(featureMetadata, times = NULL,
                             sampleMetadata = NULL,
                             byCondGroup = is.null(times)) {
+  .N = time = mu = base = amp = rhyFunc = phase = period = NULL
   if (!is.null(times)) {
     d = data.table(featureMetadata)[rep(1:.N, each = length(times))]
     d[, time := rep(times, times = nrow(featureMetadata))]
@@ -114,6 +115,7 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 getSampledAbund = function(abundDt, logOdds = FALSE,
                            family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'),
                            inplace = FALSE) {
+  abund = .N = mu = sd = dispFunc = NULL
   family = match.arg(family)
   if (isFALSE(inplace)) {
     abundDt = data.table(abundDt)}
@@ -212,6 +214,7 @@ mergeSimData = function(simData, features = NULL) {
 #'
 #' @export
 splitDiffFeatureGroups = function(diffFeatureGroups, checkValid = TRUE) {
+  .dummy = NULL
   dGroups = data.table(diffFeatureGroups)
 
   capCols = c('Base', 'Amp', 'Phase', 'Sd')
