@@ -73,7 +73,7 @@ multiple conditions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ multiple conditions." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -110,7 +110,7 @@ multiple conditions." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/hugheylab/simphony/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -137,12 +137,12 @@ multiple conditions." />
 multiple conditions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getExpectedAbund</span>(
-  <span class='no'>featureMetadata</span>,
-  <span class='kw'>times</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sampleMetadata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>byCondGroup</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>times</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>getExpectedAbund</span><span class='op'>(</span>
+  <span class='va'>featureMetadata</span>,
+  times <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sampleMetadata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  byCondGroup <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>times</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,13 +182,15 @@ will use the negative binomial family, <code>mu</code> corresponds to log2 count
     <div class='dont-index'><p><code><a href='simphony.html'>simphony()</a></code>, <code><a href='getSampledAbund.html'>getSampledAbund()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'data.table'</span>)
-<span class='no'>featureMetadata</span> <span class='kw'>=</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>feature</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'feature_1'</span>, <span class='st'>'feature_2'</span>),
-                             <span class='kw'>base</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fl'>0</span>,
-                             <span class='kw'>amp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>function</span>(<span class='no'>x</span>) <span class='fl'>0</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fl'>1</span>),
-                             <span class='kw'>period</span> <span class='kw'>=</span> <span class='fl'>24</span>,
-                             <span class='kw'>phase</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>rhyFunc</span> <span class='kw'>=</span> <span class='no'>sin</span>)
-<span class='no'>abundDt</span> <span class='kw'>=</span> <span class='fu'>getExpectedAbund</span>(<span class='no'>featureMetadata</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>6</span>:<span class='fl'>17</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://r-datatable.com'>'data.table'</a></span><span class='op'>)</span>
+<span class='va'>featureMetadata</span> <span class='op'>=</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>feature <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'feature_1'</span>, <span class='st'>'feature_2'</span><span class='op'>)</span>,
+                             base <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fl'>0</span>,
+                             amp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fl'>0</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fl'>1</span><span class='op'>)</span>,
+                             period <span class='op'>=</span> <span class='fl'>24</span>,
+                             phase <span class='op'>=</span> <span class='fl'>0</span>, rhyFunc <span class='op'>=</span> <span class='va'>sin</span><span class='op'>)</span>
+<span class='va'>abundDt</span> <span class='op'>=</span> <span class='fu'>getExpectedAbund</span><span class='op'>(</span><span class='va'>featureMetadata</span>, times <span class='op'>=</span> <span class='fl'>6</span><span class='op'>:</span><span class='fl'>17</span><span class='op'>)</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -204,7 +206,7 @@ will use the negative binomial family, <code>mu</code> corresponds to log2 count
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

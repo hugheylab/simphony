@@ -51,9 +51,12 @@
 #' @seealso [simphony()], [getSampledAbund()]
 #'
 #' @export
-getExpectedAbund = function(featureMetadata, times = NULL,
-                            sampleMetadata = NULL,
-                            byCondGroup = is.null(times)) {
+getExpectedAbund = function(
+  featureMetadata, times = NULL, sampleMetadata = NULL,
+  byCondGroup = is.null(times)) {
+
+  .N = time = mu = base = amp = rhyFunc = phase = period = NULL
+
   if (!is.null(times)) {
     d = data.table(featureMetadata)[rep(1:.N, each = length(times))]
     d[, time := rep(times, times = nrow(featureMetadata))]
@@ -71,9 +74,7 @@ getExpectedAbund = function(featureMetadata, times = NULL,
     for (i in 1:nrow(d)) {
       set(d, i, 'mu', d$base[[i]](d$time[i]) + d$amp[[i]](d$time[i]) *
             d$rhyFunc[[i]]((d$time[i] + d$phase[i]) * 2 * pi / d$period[i]))}}
-    # d[, mu := base[[1]](time) +
-    #     amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / period),
-    #   by = 1:nrow(d)]}
+
   return(data.table::copy(d))}
 
 
@@ -111,9 +112,11 @@ getExpectedAbund = function(featureMetadata, times = NULL,
 #' @seealso [simphony()], [getExpectedAbund()]
 #'
 #' @export
-getSampledAbund = function(abundDt, logOdds = FALSE,
-                           family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'),
-                           inplace = FALSE) {
+getSampledAbund = function(
+  abundDt, logOdds = FALSE,
+  family = c('gaussian', 'negbinom', 'bernoulli', 'poisson'), inplace = FALSE) {
+
+  abund = .N = mu = sd = dispFunc = NULL
   family = match.arg(family)
   if (isFALSE(inplace)) {
     abundDt = data.table(abundDt)}
@@ -212,6 +215,7 @@ mergeSimData = function(simData, features = NULL) {
 #'
 #' @export
 splitDiffFeatureGroups = function(diffFeatureGroups, checkValid = TRUE) {
+  .dummy = NULL
   dGroups = data.table(diffFeatureGroups)
 
   capCols = c('Base', 'Amp', 'Phase', 'Sd')

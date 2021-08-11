@@ -3,12 +3,6 @@
 NULL
 
 
-globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
-                  'sd', 'cond', 'dispFunc', 'featureGroups', 'time', 'abund',
-                  '..cond', '.N', '.dummy', 'feature', 'mu', 'period', 'v',
-                  'defaultDispFunc'))
-
-
 #' Simulate feature abundance data
 #'
 #' Simulate experiments in which abundances of rhythmic and non-rhythmic
@@ -154,12 +148,14 @@ globalVariables(c('base', 'amp', 'base0', 'amp0', 'phase', 'group', 'rhyFunc',
 #'   [mergeSimData()]
 #'
 #' @export
-simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
-                    timepointsType = c('auto', 'specified', 'random'),
-                    timeRange = c(0, 48), interval = 2, nReps = 1,
-                    timepoints = NULL, nSamplesPerCond = NULL, rhyFunc = sin,
-                    dispFunc = NULL, logOdds = FALSE,
-                    family = c('gaussian', 'negbinom', 'bernoulli', 'poisson')) {
+simphony = function(
+  featureGroupsList, fracFeatures = NULL, nFeatures = 10,
+  timepointsType = c('auto', 'specified', 'random'), timeRange = c(0, 48),
+  interval = 2, nReps = 1, timepoints = NULL, nSamplesPerCond = NULL,
+  rhyFunc = sin, dispFunc = NULL, logOdds = FALSE,
+  family = c('gaussian', 'negbinom', 'bernoulli', 'poisson')) {
+
+  featureGroups = NULL
   family = match.arg(family)
   timepointsType = match.arg(timepointsType)
 
@@ -182,13 +178,12 @@ simphony = function(featureGroupsList, fracFeatures = NULL, nFeatures = 10,
   abundDt = getExpectedAbund(fm, sampleMetadata = sm)
   abundMat = getSampledAbund(abundDt, logOdds, family, inplace = TRUE)
 
-  experMetadata = list(featureGroupsList = featureGroupsList,
-                       fracFeatures = fracFeatures, nFeatures = nFeatures,
-                       timepointsType = timepointsType, timeRange = timeRange,
-                       interval = interval, nReps = nReps,
-                       timepoints = timepoints, nSamplesPerCond = nSamplesPerCond,
-                       rhyFunc = rhyFunc, dispFunc = dispFunc,
-                       logOdds = logOdds, family = family)
+  experMetadata = list(
+    featureGroupsList = featureGroupsList, fracFeatures = fracFeatures,
+    nFeatures = nFeatures, timepointsType = timepointsType,
+    timeRange = timeRange, interval = interval, nReps = nReps,
+    timepoints = timepoints, nSamplesPerCond = nSamplesPerCond,
+    rhyFunc = rhyFunc, dispFunc = dispFunc, logOdds = logOdds, family = family)
 
   return(list(abundData = abundMat, sampleMetadata = sm, featureMetadata = fm,
               experMetadata = experMetadata))}

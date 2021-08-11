@@ -74,7 +74,7 @@ ggplot2." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@ ggplot2." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -111,7 +111,7 @@ ggplot2." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/hugheylab/simphony/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -139,7 +139,7 @@ into one <code>data.table</code>. This function is useful for making plots using
 ggplot2.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mergeSimData</span>(<span class='no'>simData</span>, <span class='kw'>features</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>mergeSimData</span><span class='op'>(</span><span class='va'>simData</span>, features <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,7 +147,7 @@ ggplot2.</p>
     <tr>
       <th>simData</th>
       <td><p>List with the following elements, such as returned by
-<code><a href='simphony.html'>simphony()</a></code>:</p><dl'>
+<code><a href='simphony.html'>simphony()</a></code>:</p><dl>
 <dt>abundData</dt><dd><p>Matrix of abundance values, with rownames for features and
 colnames for samples.</p></dd>
 <dt>sampleMetadata</dt><dd><p><code>data.table</code> with columns <code>sample</code> and <code>cond</code>.</p></dd>
@@ -170,10 +170,12 @@ If <code>NULL</code>, then all features.</p></td>
     <div class='dont-index'><p><code><a href='simphony.html'>simphony()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'data.table'</span>)
-<span class='no'>featureGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>amp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>))
-<span class='no'>simData</span> <span class='kw'>=</span> <span class='fu'><a href='simphony.html'>simphony</a></span>(<span class='no'>featureGroups</span>)
-<span class='no'>mergedSimData</span> <span class='kw'>=</span> <span class='fu'>mergeSimData</span>(<span class='no'>simData</span>, <span class='no'>simData</span>$<span class='no'>featureMetadata</span>$<span class='no'>feature</span>[<span class='fl'>1</span>:<span class='fl'>2</span>])</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://r-datatable.com'>'data.table'</a></span><span class='op'>)</span>
+<span class='va'>featureGroups</span> <span class='op'>=</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>amp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>simData</span> <span class='op'>=</span> <span class='fu'><a href='simphony.html'>simphony</a></span><span class='op'>(</span><span class='va'>featureGroups</span><span class='op'>)</span>
+<span class='va'>mergedSimData</span> <span class='op'>=</span> <span class='fu'>mergeSimData</span><span class='op'>(</span><span class='va'>simData</span>, <span class='va'>simData</span><span class='op'>$</span><span class='va'>featureMetadata</span><span class='op'>$</span><span class='va'>feature</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -189,7 +191,7 @@ If <code>NULL</code>, then all features.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

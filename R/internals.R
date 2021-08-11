@@ -1,8 +1,10 @@
-setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
-                                   logOdds, family, defaultAmp = 0, defaultPhase = 0,
-                                   defaultPeriod = 24, defaultSd = 1,
-                                   defaultBaseGaussian = 0, defaultBaseNegbinom = 8,
-                                   defaultBaseBernoulli = c(0, 0.5), defaultBasePoisson = 1) {
+setDefaultFeatureGroups = function(
+  featureGroups, nFeatures, rhyFunc, dispFunc, logOdds, family, defaultAmp = 0,
+  defaultPhase = 0, defaultPeriod = 24, defaultSd = 1, defaultBaseGaussian = 0,
+  defaultBaseNegbinom = 8, defaultBaseBernoulli = c(0, 0.5),
+  defaultBasePoisson = 1) {
+
+  group = .N = phase = period = sd = NULL
   if (nrow(featureGroups) == 0) {
     stop('featureGroups must have at least one row.')}
 
@@ -15,7 +17,6 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
   featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
   for (i in 1:nrow(featureGroups)) {
     set(featureGroups, i, 'amp0', featureGroups$amp[[i]](0))}
-  # featureGroups[, amp0 := amp[[1]](0), by = 1:nrow(featureGroups)]
 
   if (!'phase' %in% colnames(featureGroups)) {
     featureGroups[, phase := defaultPhase]}
@@ -35,7 +36,7 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
   } else if (family == 'negbinom') {
     if (!'dispFunc' %in% colnames(featureGroups)) {
       if (is.null(dispFunc)) {
-        dispFunc = defaultDispFunc}
+        dispFunc = simphony::defaultDispFunc}
       featureGroups[, dispFunc := data.table(dispFunc)]}
     featureGroups = setFuncs(featureGroups, 'base', defaultBaseNegbinom)
   } else if (family == 'bernoulli') {
@@ -48,11 +49,12 @@ setDefaultFeatureGroups = function(featureGroups, nFeatures, rhyFunc, dispFunc,
 
   for (i in 1:nrow(featureGroups)) {
     set(featureGroups, i, 'base0', featureGroups$base[[i]](0))}
-  # featureGroups[, base0 := base[[1]](0), by = 1:nrow(featureGroups)]
+
   return(featureGroups)}
 
 
 setFuncs = function(featureGroups, varName, defaultValue) {
+  v = NULL
   if (!varName %in% colnames(featureGroups)) {
     featureGroups[, (varName) := list(list(function(x) defaultValue))]
   } else {
@@ -91,6 +93,7 @@ getTimes = function(timepointsType, interval, nReps, timepoints, timeRange,
 
 
 getSampleMetadata = function(times) {
+  cond = NULL
   nSamplesPerCond = ncol(times)
   nSamples = prod(dim(times))
   sm = foreach(cond = 1:nrow(times), .combine = rbind) %do% {
@@ -122,6 +125,7 @@ getNFeaturesPerGroup = function(featureGroups, fracFeatures, nFeatures) {
 
 
 getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
+  featureGroups = .N = cond = ..cond = feature = NULL
   nFeaturesPerGroup = getNFeaturesPerGroup(featureGroupsList[[1]], fracFeatures,
                                            nFeatures)
   features = sprintf(sprintf('feature_%%0%dd', floor(log10(nFeatures)) + 1),
