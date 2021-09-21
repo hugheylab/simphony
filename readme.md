@@ -30,12 +30,6 @@ if (!requireNamespace('BiocManager', quietly = TRUE))
 BiocManager::install('simphony', site_repository = 'https://hugheylab.github.io/drat/')
 ```
 
-There's also a [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies installed.
-
-```bash
-docker pull hugheylab/hugheyverse
-```
-
 ## Usage
 
 For an introduction to the package, read the [introductory vignette](https://simphony.hugheylab.org/articles/introduction.html). To explore more of simphony's capabilities, check out the [example vignette](https://simphony.hugheylab.org/articles/examples.html). For more details, check out the [reference documentation](https://simphony.hugheylab.org/reference/index.html).
