@@ -1,6 +1,6 @@
 # simphony
 
-[![CircleCI](https://circleci.com/gh/hugheylab/simphony.svg?style=shield)](https://circleci.com/gh/hugheylab/simphony)
+[![check-coverage-deploy](https://github.com/hugheylab/simphony/workflows/check-coverage-deploy/badge.svg)](https://github.com/hugheylab/simphony/actions)
 [![codecov](https://codecov.io/gh/hugheylab/simphony/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/simphony)
 
 `simphony` simulates large-scale, rhythmic data, including transcriptome data and behavioral activity data. For technical details on how we designed and validated `simphony`, check out the [paper](https://doi.org/10.7717/peerj.6985) and the [accompanying results](https://doi.org/10.6084/m9.figshare.7441355).
