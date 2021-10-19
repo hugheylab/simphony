@@ -1,3 +1,6 @@
+# simphony 0.1.10
+* Removed use of `get()` in `data.table`, which is deprecated.
+
 # simphony 0.1.9
 * Revised code to not need `globalVariables()` in order to pass R CMD check.
 

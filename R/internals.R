@@ -58,13 +58,17 @@ setFuncs = function(featureGroups, varName, defaultValue) {
   if (!varName %in% colnames(featureGroups)) {
     featureGroups[, (varName) := list(list(function(x) defaultValue))]
   } else {
-    if (is.numeric(featureGroups[, get(varName)])) {
+    if (is.numeric(featureGroups[[varName]])) {
+    # if (is.numeric(featureGroups[, get(varName)])) {
       makefunc = function(x) {x; function(m) x}
       if (nrow(featureGroups) == 1) {
-        featureGroups[, (varName) := list(list(makefunc(featureGroups[1, get(varName)])))]
+        featureGroups[, (varName) := list(list(makefunc(featureGroups[[varName]][1L])))]
+        # featureGroups[, (varName) := list(list(makefunc(featureGroups[1, get(varName)])))]
       } else {
-        featureGroups[, (varName) := foreach(v = featureGroups[, get(varName)]) %do% {makefunc(v)}]}
-    } else if (!all(sapply(featureGroups[, get(varName)], is.function))) {
+        featureGroups[, (varName) := foreach(v = featureGroups[[varName]]) %do% {makefunc(v)}]}
+        # featureGroups[, (varName) := foreach(v = featureGroups[, get(varName)]) %do% {makefunc(v)}]}
+    } else if (!all(sapply(featureGroups[[varName]], is.function))) {
+    # } else if (!all(sapply(featureGroups[, get(varName)], is.function))) {
       stop(sprintf('%s must be numeric or a list of functions.', varName))}}
   return(featureGroups)}
 
