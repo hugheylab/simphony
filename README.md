@@ -2,33 +2,35 @@
 
 [![check-deploy](https://github.com/hugheylab/simphony/workflows/check-deploy/badge.svg)](https://github.com/hugheylab/simphony/actions)
 [![codecov](https://codecov.io/gh/hugheylab/simphony/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/simphony)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ebfe10a6-7cd8-416b-969f-eb0160f665b2/deploy-status)](https://app.netlify.com/sites/hungry-johnson-e23843/deploys)
 
 `simphony` simulates large-scale, rhythmic data, including transcriptome data and behavioral activity data. For technical details on how we designed and validated `simphony`, check out the [paper](https://doi.org/10.7717/peerj.6985) and the [accompanying results](https://doi.org/10.6084/m9.figshare.7441355).
 
 ## Installation
 
-If you use RStudio, go to Tools -> Global Options... -> Packages -> Add... (under Secondary repositories), then enter:
+1. Install [`BiocManager`](https://cran.r-project.org/package=BiocManager).
 
-- Name: hugheylab
-- Url: https://hugheylab.github.io/drat/
+    ```r
+    if (!requireNamespace('BiocManager', quietly = TRUE))
+      install.packages('BiocManager')
+    ```
 
-You only have to do this once. Then you can install or update the package by entering:
+1. If you use RStudio, go to Tools → Global Options... → Packages → Add... (under Secondary repositories), then enter:
 
-```R
-if (!requireNamespace('BiocManager', quietly = TRUE))
-  install.packages('BiocManager')
+    - Name: hugheylab
+    - Url: https://hugheylab.github.io/drat/
 
-BiocManager::install('simphony')
-```
+    You only have to do this once. Then you can install or update the package by entering:
 
-Alternatively, you can install or update the package by entering:
+    ```r
+    BiocManager::install('simphony')
+    ```
 
-```R
-if (!requireNamespace('BiocManager', quietly = TRUE))
-  install.packages('BiocManager')
+    Alternatively, you can install or update the package by entering:
 
-BiocManager::install('simphony', site_repository = 'https://hugheylab.github.io/drat/')
-```
+    ```r
+    BiocManager::install('simphony', site_repository = 'https://hugheylab.github.io/drat/')
+    ```
 
 ## Usage
 

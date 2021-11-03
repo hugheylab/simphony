@@ -9,7 +9,7 @@ Authors@R: as.person(c(
 Description: A tool for simulating rhythmic data: transcriptome data using
   Gaussian or negative binomial distributions, and behavioral activity data
   using Bernoulli or Poisson distributions.
-URL: https://github.com/hugheylab/simphony
+URL: https://simphony.hugheylab.org, https://github.com/hugheylab/simphony
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
