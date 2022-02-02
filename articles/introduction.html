@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -67,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/hugheylab/simphony/">
+  <a href="https://github.com/hugheylab/simphony/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,9 +84,9 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using simphony to evaluate rhythm detection</h1>
             
-            <h4 class="date">2021-11-17</h4>
+            <h4 data-toc-skip class="date">2022-02-02</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/hugheylab/simphony/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/hugheylab/simphony/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
 
     </div>
@@ -98,31 +94,31 @@
     
     
 <p><code>simphony</code> is a framework for simulating rhythmic data, especially gene expression data. Here we show an example of using it to benchmark a method for detecting rhythmicity.</p>
-<div id="load-the-packages-well-use" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-the-packages-well-use" class="anchor"></a>Load the packages we’ll use</h2>
+<div class="section level2">
+<h2 id="load-the-packages-well-use">Load the packages we’ll use<a class="anchor" aria-label="anchor" href="#load-the-packages-well-use"></a>
+</h2>
 <p>Internally, <code>simphony</code> uses the <code>data.table</code> package, which provides an enhanced version of the standard R <code>data.frame</code>. We’ll use <code>data.table</code> for this example as well.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com">'data.table'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org">'ggplot2'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://haozhu233.github.io/kableExtra/">'kableExtra'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://yihui.org/knitr/">'knitr'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://bioinf.wehi.edu.au/limma">'limma'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://evalclass.github.io/precrec/">'precrec'</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://simphony.hugheylab.org">'simphony'</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">'ggplot2'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">'kableExtra'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://yihui.org/knitr/" class="external-link">'knitr'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://bioinf.wehi.edu.au/limma" class="external-link">'limma'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/evalclass/precrec" class="external-link">'precrec'</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://simphony.hugheylab.org">'simphony'</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="simulate-the-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simulate-the-data" class="anchor"></a>Simulate the data</h2>
+<div class="section level2">
+<h2 id="simulate-the-data">Simulate the data<a class="anchor" aria-label="anchor" href="#simulate-the-data"></a>
+</h2>
 <p>Here we create a <code>data.table</code> called <code>featureGroups</code> that specifies the desired properties of the simulated genes. We want 75% of simulated genes to be non-rhythmic and 25% to have a rhythm amplitude of 1.1. Properties not specified in <code>featureGroups</code> will be given their default values.</p>
 <p>Our simulated experiment will have 200 genes. Expression values will be sampled from the negative binomial family, which models read counts from next-generation sequencing data. The interval between time points will be 2 (default period of 24), with one replicate per time point. We also use the default time range of our simulated data points of between 0 and 48 hours.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">44</span><span class="op">)</span>
-<span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span>fracFeatures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span>, amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">44</span><span class="op">)</span>
+<span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>fracFeatures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span>, amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>
 <span class="va">simData</span> <span class="op">=</span> <span class="fu"><a href="../reference/simphony.html">simphony</a></span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="fl">200</span>, interval <span class="op">=</span> <span class="fl">2</span>, nReps <span class="op">=</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="st">'negbinom'</span><span class="op">)</span></code></pre></div>
 <p>The output of <code>simphony</code> has three components: <code>abundData</code>, <code>sampleMetadata</code>, and <code>featureMetadata</code>. <code>abundData</code> is a matrix that contains the simulated expression values. Each row of corresponds to a gene, each column corresponds to a sample. Since we sampled from the negative binomial family, all expression values are integers.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">abundData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">abundData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -184,7 +180,7 @@ feature_003
 </table>
 <p><code>sampleMetadata</code> is a <code>data.table</code> that contains the condition (<code>cond</code>) and time for each sample. Here we simulated one condition, so <code>cond</code> is 1 for all samples.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -235,9 +231,9 @@ cond_1
 </table>
 <p><code>featureMetadata</code> is a <code>data.table</code> that contains the properties of each simulated gene in each condition. The <code>group</code> column corresponds to the row in <code>featureGroups</code> to which the gene belongs.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span><span class="fl">149</span><span class="op">:</span><span class="fl">151</span>, <span class="op">!</span><span class="st">'dispFunc'</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span>font_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></code></pre></div>
-<table class="table table">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span><span class="fl">149</span><span class="op">:</span><span class="fl">151</span>, <span class="op">!</span><span class="st">'dispFunc'</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>font_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></code></pre></div>
+<table class="table table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 cond
@@ -382,61 +378,61 @@ function (x) , defaultValue
 </tbody>
 </table>
 </div>
-<div id="plot-the-simulated-time-course-for-selected-genes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-the-simulated-time-course-for-selected-genes" class="anchor"></a>Plot the simulated time-course for selected genes</h2>
+<div class="section level2">
+<h2 id="plot-the-simulated-time-course-for-selected-genes">Plot the simulated time-course for selected genes<a class="anchor" aria-label="anchor" href="#plot-the-simulated-time-course-for-selected-genes"></a>
+</h2>
 <p>Here we plot the simulated time-course for a non-rhythmic gene and a rhythmic gene. We use the <code>mergeSimData</code> function to merge the expression values, the sample metadata, and the gene metadata.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fmExample</span> <span class="op">=</span> <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span><span class="va">feature</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'feature_150'</span>, <span class="st">'feature_151'</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">fmExample</span> <span class="op">=</span> <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span><span class="va">feature</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'feature_150'</span>, <span class="st">'feature_151'</span><span class="op">)</span><span class="op">]</span>
 <span class="va">dExample</span> <span class="op">=</span> <span class="fu"><a href="../reference/mergeSimData.html">mergeSimData</a></span><span class="op">(</span><span class="va">simData</span>, <span class="va">fmExample</span><span class="op">$</span><span class="va">feature</span><span class="op">)</span></code></pre></div>
 <p>We also want to compare the simulated expression values with their underlying distributions over time, for which we can use the <code>getExpectedAbund</code> function. Since we sampled from the negative binomial family, the resulting <code>mu</code> column corresponds to the expected log<sub>2</sub> counts.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dExpect</span> <span class="op">=</span> <span class="fu"><a href="../reference/getExpectedAbund.html">getExpectedAbund</a></span><span class="op">(</span><span class="va">fmExample</span>, <span class="fl">24</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">dExpect</span> <span class="op">=</span> <span class="fu"><a href="../reference/getExpectedAbund.html">getExpectedAbund</a></span><span class="op">(</span><span class="va">fmExample</span>, <span class="fl">24</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Then it all comes together with <code>ggplot</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dExample</span><span class="op">[</span>, <span class="va">featureLabel</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">feature</span>, <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html">ifelse</a></span><span class="op">(</span><span class="va">amp0</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">'(non-rhythmic)'</span>, <span class="st">'(rhythmic)'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
-<span class="va">dExpect</span><span class="op">[</span>, <span class="va">featureLabel</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">feature</span>, <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html">ifelse</a></span><span class="op">(</span><span class="va">amp0</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">'(non-rhythmic)'</span>, <span class="st">'(rhythmic)'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">dExample</span><span class="op">[</span>, <span class="va">featureLabel</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">feature</span>, <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">amp0</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">'(non-rhythmic)'</span>, <span class="st">'(rhythmic)'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="va">dExpect</span><span class="op">[</span>, <span class="va">featureLabel</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">feature</span>, <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">amp0</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">'(non-rhythmic)'</span>, <span class="st">'(rhythmic)'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dExample</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">featureLabel</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">2</span><span class="op">^</span><span class="va">mu</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.25</span>, data <span class="op">=</span> <span class="va">dExpect</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">'Time (h)'</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">(</span><span class="va">counts</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dExample</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">featureLabel</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fl">2</span><span class="op">^</span><span class="va">mu</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.25</span>, data <span class="op">=</span> <span class="va">dExpect</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">'Time (h)'</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">(</span><span class="va">counts</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
-<div id="detect-rhythmic-genes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#detect-rhythmic-genes" class="anchor"></a>Detect rhythmic genes</h2>
+<div class="section level2">
+<h2 id="detect-rhythmic-genes">Detect rhythmic genes<a class="anchor" aria-label="anchor" href="#detect-rhythmic-genes"></a>
+</h2>
 <p>We can use the <code>limma</code> package to detect rhythmic genes based on a linear model that corresponds to cosinor regression.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sampleMetadata</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">)</span>
-<span class="va">sampleMetadata</span><span class="op">[</span>, <span class="va">timeCos</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">cos</a></span><span class="op">(</span><span class="va">time</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">]</span>
-<span class="va">sampleMetadata</span><span class="op">[</span>, <span class="va">timeSin</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">time</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">]</span>
-<span class="va">design</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">timeCos</span> <span class="op">+</span> <span class="va">timeSin</span>, data <span class="op">=</span> <span class="va">sampleMetadata</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">sampleMetadata</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">)</span>
+<span class="va">sampleMetadata</span><span class="op">[</span>, <span class="va">timeCos</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">time</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">]</span>
+<span class="va">sampleMetadata</span><span class="op">[</span>, <span class="va">timeSin</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">time</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">]</span>
+<span class="va">design</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">timeCos</span> <span class="op">+</span> <span class="va">timeSin</span>, data <span class="op">=</span> <span class="va">sampleMetadata</span><span class="op">)</span></code></pre></div>
 <p>Here we follow the typical <code>limma</code> workflow: fit the linear model for each gene, run empirical Bayes, and extract the relevant summary statistics. We pass <code>lmFit</code> the log<sub>2</sub> transformed counts.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/lmFit.html">lmFit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">abundData</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="va">design</span><span class="op">)</span>
-<span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/ebayes.html">eBayes</a></span><span class="op">(</span><span class="va">fit</span>, trend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">rhyLimma</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/toptable.html">topTable</a></span><span class="op">(</span><span class="va">fit</span>, coef <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, number <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/lmFit.html" class="external-link">lmFit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">abundData</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="va">design</span><span class="op">)</span>
+<span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></span><span class="op">(</span><span class="va">fit</span>, trend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">rhyLimma</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/toptable.html" class="external-link">topTable</a></span><span class="op">(</span><span class="va">fit</span>, coef <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, number <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="evaluate-accuracy-of-rhythmic-gene-detection" class="section level2">
-<h2 class="hasAnchor">
-<a href="#evaluate-accuracy-of-rhythmic-gene-detection" class="anchor"></a>Evaluate accuracy of rhythmic gene detection</h2>
+<div class="section level2">
+<h2 id="evaluate-accuracy-of-rhythmic-gene-detection">Evaluate accuracy of rhythmic gene detection<a class="anchor" aria-label="anchor" href="#evaluate-accuracy-of-rhythmic-gene-detection"></a>
+</h2>
 <p>First we merge the results from <code>limma</code> with the known amplitudes from <code>featureMetadata</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rhyLimma</span><span class="op">$</span><span class="va">feature</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span>
-<span class="va">rhyLimma</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span>, <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">feature</span>, <span class="va">amp0</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">'feature'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">rhyLimma</span><span class="op">$</span><span class="va">feature</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span>
+<span class="va">rhyLimma</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span>, <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">feature</span>, <span class="va">amp0</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">'feature'</span><span class="op">)</span></code></pre></div>
 <p>We can plot the distributions of p-values of rhythmicity for non-rhythmic and rhythmic genes. P-values for non-rhythmic genes are uniformly distributed between 0 and 1, as they should be under the null hypothesis. P-values for rhythmic genes, on the other hand, tend to be closer to 0.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">amp0</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">P.Value</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, width <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="st">'Rhythm amplitude '</span><span class="op">*</span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">'P-value of rhythmicity'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">geom_jitter</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">amp0</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">P.Value</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, width <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">'Rhythm amplitude '</span><span class="op">*</span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">'P-value of rhythmicity'</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-13-1.png" width="336"></p>
 <p>Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the <code>precrec</code> package).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rocprc</span> <span class="op">=</span> <span class="fu"><a href="https://evalclass.github.io/precrec/reference/evalmod.html">evalmod</a></span><span class="op">(</span>scores <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">$</span><span class="va">P.Value</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">rhyLimma</span><span class="op">$</span><span class="va">amp0</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">rocprc</span>, <span class="st">'ROC'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">rocprc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/precrec/man/evalmod.html" class="external-link">evalmod</a></span><span class="op">(</span>scores <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">$</span><span class="va">P.Value</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">rhyLimma</span><span class="op">$</span><span class="va">amp0</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">rocprc</span>, <span class="st">'ROC'</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-14-1.png" width="288"></p>
 </div>
   </div>
@@ -452,11 +448,13 @@ function (x) , defaultValue
 
 
       <footer><div class="copyright">
-  <p>Developed by Jake Hughey, Jordan Singer.</p>
+  <p></p>
+<p>Developed by Jake Hughey, Jordan Singer.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -464,6 +462,8 @@ function (x) , defaultValue
 
   
 
+
+  
 
   </body>
 </html>
