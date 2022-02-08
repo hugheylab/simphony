@@ -1,11 +1,10 @@
 Package: simphony
 Type: Package
-Title: Simulating large-scale, rhythmic data
+Title: Simulating Large-Scale, Rhythmic Data
 Version: 1.0.0
-Authors@R: as.person(c(
-  "Jake Hughey <jakejhughey@gmail.com> [aut, cre]",
-  "Jordan Singer <jordan.m.singer@gmail.com> [aut]",
-  "Darwin Fu <darwinyfu@gmail.com> [ctb]"))
+Authors@R: c(person('Jake', 'Hughey', , 'jakejhughey@gmail.com', c('aut', 'cre')),
+  person('Jordan', 'Singer', , 'jordan.m.singer@gmail.com', 'aut'),
+  person('Darwin', 'Fu', , 'darwinyfu@gmail.com', 'ctb'))
 Description: A tool for simulating rhythmic data: transcriptome data using
   Gaussian or negative binomial distributions, and behavioral activity data
   using Bernoulli or Poisson distributions. See Singer et al. (2019)

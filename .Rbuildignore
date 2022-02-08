@@ -5,6 +5,5 @@
 ^\.Rproj\.user$
 ^_pkgdown\.yml$
 ^docs$
-^\.circleci$
-^NEWS\.md$
 ^\.github$
+^cran-comments\.md$
