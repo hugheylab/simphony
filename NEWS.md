@@ -1,3 +1,6 @@
+# simphony 1.0.0
+* Solidified the current version as official 1.0.0 release.
+
 # simphony 0.1.10
 * Removed use of `get()` in `data.table`, which is deprecated.
 
