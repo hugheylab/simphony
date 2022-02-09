@@ -3,10 +3,19 @@
 [![check-deploy](https://github.com/hugheylab/simphony/workflows/check-deploy/badge.svg)](https://github.com/hugheylab/simphony/actions)
 [![codecov](https://codecov.io/gh/hugheylab/simphony/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/simphony)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ebfe10a6-7cd8-416b-969f-eb0160f665b2/deploy-status)](https://app.netlify.com/sites/hungry-johnson-e23843/deploys)
+[![CRAN Status](https://www.r-pkg.org/badges/version/simphony)](https://cran.r-project.org/package=simphony)
 
 `simphony` simulates large-scale, rhythmic data, including transcriptome data and behavioral activity data. For technical details on how we designed and validated `simphony`, check out the [paper](https://doi.org/10.7717/peerj.6985) and the [accompanying results](https://doi.org/10.6084/m9.figshare.7441355).
 
 ## Installation
+
+### Option 1: CRAN
+
+```r
+install.packages('simphony')
+```
+
+### Option 2: Hughey Lab Drat Repository
 
 1. Install [`BiocManager`](https://cran.r-project.org/package=BiocManager).
 
