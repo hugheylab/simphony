@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using simphony’s various options</h1>
             
-            <h4 data-toc-skip class="date">2022-04-06</h4>
+            <h4 data-toc-skip class="date">2022-04-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hugheylab/simphony/blob/HEAD/vignettes/examples.Rmd" class="external-link"><code>vignettes/examples.Rmd</code></a></small>
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -189,7 +189,7 @@
 <h2 id="time-dependent-amplitude-and-base">Time-dependent amplitude and base<a class="anchor" aria-label="anchor" href="#time-dependent-amplitude-and-base"></a>
 </h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="fl">3</span>, <span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="fl">3</span> <span class="op">*</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="op">-</span><span class="va">tt</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="fl">3</span>, <span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="fl">3</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">^</span> <span class="op">(</span><span class="op">-</span><span class="va">tt</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">)</span>,
                            base <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="va">tt</span> <span class="op">/</span> <span class="fl">12</span>, <span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">simData</span> <span class="op">=</span> <span class="fu"><a href="../reference/simphony.html">simphony</a></span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span><span class="op">)</span>

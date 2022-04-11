@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">simphony</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using simphony to evaluate rhythm detection</h1>
             
-            <h4 data-toc-skip class="date">2022-04-06</h4>
+            <h4 data-toc-skip class="date">2022-04-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hugheylab/simphony/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -180,7 +180,7 @@ feature_003
 </table>
 <p><code>sampleMetadata</code> is a <code>data.table</code> that contains the condition (<code>cond</code>) and time for each sample. Here we simulated one condition, so <code>cond</code> is 1 for all samples.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">simData</span><span class="op">$</span><span class="va">sampleMetadata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -427,7 +427,7 @@ function (x) , defaultValue
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">rhyLimma</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">geom_jitter</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">amp0</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">P.Value</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, width <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">'Rhythm amplitude '</span><span class="op">*</span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">'P-value of rhythmicity'</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">'Rhythm amplitude '</span> <span class="op">*</span> <span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">~</span> <span class="va">counts</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">'P-value of rhythmicity'</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-13-1.png" width="336"></p>
 <p>Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the <code>precrec</code> package).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
