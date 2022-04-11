@@ -1,4 +1,4 @@
-# simphony 1.0.0
+# simphony 1.0.1
 * Updated to match lab style standards.
 
 # simphony 1.0.0

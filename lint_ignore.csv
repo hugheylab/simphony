@@ -1,0 +1,5 @@
+filename,line_number,message,line
+R/accessories.R,58,Variable and function name style should be camelCase.,.N = time = mu = base = amp = rhyFunc = phase = period = NULL
+R/accessories.R,119,Variable and function name style should be camelCase.,abund = .N = mu = sd = dispFunc = NULL
+R/internals.R,7,Variable and function name style should be camelCase.,group = .N = phase = period = sd = NULL
+R/internals.R,132,Variable and function name style should be camelCase.,featureGroups = .N = cond = ..cond = feature = NULL

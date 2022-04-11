@@ -7,3 +7,4 @@
 ^docs$
 ^\.github$
 ^cran-comments\.md$
+^lint_ignore\.csv$
