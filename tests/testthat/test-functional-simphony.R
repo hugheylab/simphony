@@ -12,7 +12,7 @@ test_that('Abundances are sampled from the correct trend', {
   usedBase = usedFeatureGroups[[1]][, base]
   usedPeriod = usedFeatureGroups[[1]][, period]
 
-  expectedAbund = foreach(r = 1:nrow(simData$abundData), .combine = rbind) %do% {
+  expectedAbund = foreach(r = seq_len(nrow(simData$abundData)), .combine = rbind) %do% {
     usedAmps[[r]]((2 * pi) * timepoints / usedPeriod[r]) *
     usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod[r]) +
     usedBase[[r]]((2 * pi) * timepoints / usedPeriod[r])
@@ -44,10 +44,10 @@ test_that('Time-dependent statistics from NBD are as expected', {
   featureGroups = data.table::data.table(amp = 3, base = 4:8)
   simData = simphony(featureGroups, nFeatures = 5, nReps = 4000, family = 'negbinom')
 
-  for(timeNow in unique(simData$sampleMetadata$time)) {
+  for (timeNow in unique(simData$sampleMetadata$time)) {
     samplesNow = simData$sample[, time == timeNow]
 
-    for(groupNow in unique(simData$featureMetadata$group)) {
+    for (groupNow in unique(simData$featureMetadata$group)) {
       featuresNow = simData$featureMetadata[, group == groupNow]
       params = simData$featureMetadata[featuresNow, ][1, ]
 
@@ -69,7 +69,7 @@ test_that('Time-dependent statistics from NBD are as expected', {
 })
 
 test_that('Amplitude and base can be passed as functions', {
-  featureGroups = data.table::data.table(amp  = function(t) 5 * 2^(-t/12),
-                                         base = function(t) 4 * 2^(-t/12))
+  featureGroups = data.table::data.table(amp  = function(t) 5 * 2 ^ (-t / 12),
+                                         base = function(t) 4 * 2 ^ (-t / 12))
   expect_silent(simphony(featureGroups))
 })

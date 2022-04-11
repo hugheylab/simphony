@@ -96,7 +96,7 @@ ggplot() +
 
 ## Time-dependent amplitude and base
 ```{r, fig.width = 6, fig.height = 2.75}
-featureGroups = data.table(amp =  c(function(tt) 3, function(tt) 3 * 2^(-tt / 24)),
+featureGroups = data.table(amp =  c(function(tt) 3, function(tt) 3 * 2 ^ (-tt / 24)),
                            base = c(function(tt) tt / 12, function(tt) 0))
 
 simData = simphony(featureGroups, nFeatures = nrow(featureGroups))

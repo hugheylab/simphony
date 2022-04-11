@@ -71,7 +71,7 @@ getExpectedAbund = function(
         amp[[1]](time) * rhyFunc[[1]]((time + phase) * 2 * pi / period),
       by = c('cond', 'group')]
   } else {
-    for (i in 1:nrow(d)) {
+    for (i in seq_len(nrow(d))) {
       set(d, i, 'mu', d$base[[i]](d$time[i]) + d$amp[[i]](d$time[i]) *
             d$rhyFunc[[i]]((d$time[i] + d$phase[i]) * 2 * pi / d$period[i]))}}
 
@@ -225,7 +225,7 @@ splitDiffFeatureGroups = function(diffFeatureGroups, checkValid = TRUE) {
 
   d1 = data.table(.dummy = rep(1, nrow(dGroups)))
   d2 = data.table(.dummy = rep(1, nrow(dGroups)))
-  for (ii in 1:length(cols)) {
+  for (ii in seq_len(length(cols))) {
     if (all(c(meanCols[ii], dCols[ii]) %in% colnames(dGroups))) {
       d1[[cols[ii]]] = dGroups[[meanCols[ii]]] - 0.5 * dGroups[[dCols[ii]]]
       d2[[cols[ii]]] = dGroups[[meanCols[ii]]] + 0.5 * dGroups[[dCols[ii]]]}}

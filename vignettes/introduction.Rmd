@@ -45,7 +45,7 @@ kable(simData$abundData[1:3, 1:3])
 
 `sampleMetadata` is a `data.table` that contains the condition (`cond`) and time for each sample. Here we simulated one condition, so `cond` is 1 for all samples.
 ```{r}
-kable(simData$sampleMetadata[1:3,])
+kable(simData$sampleMetadata[1:3])
 ```
 
 `featureMetadata` is a `data.table` that contains the properties of each simulated gene in each condition. The `group` column corresponds to the row in `featureGroups` to which the gene belongs.
@@ -109,7 +109,7 @@ We can plot the distributions of p-values of rhythmicity for non-rhythmic and rh
 ```{r, fig.width = 3.5, fig.height = 3}
 ggplot(rhyLimma) +
   geom_jitter(aes(x = factor(amp0), y = P.Value), shape = 21, width = 0.2) +
-  labs(x = expression('Rhythm amplitude '*(log[2]~counts)), y = 'P-value of rhythmicity')
+  labs(x = expression('Rhythm amplitude ' * (log[2] ~ counts)), y = 'P-value of rhythmicity')
 ```
 
 Finally, we can summarize the ability to distinguish non-rhythmic and rhythmic genes using a receiver operating characteristic (ROC) curve (here we use the `precrec` package).

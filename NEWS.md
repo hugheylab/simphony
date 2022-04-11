@@ -1,4 +1,7 @@
 # simphony 1.0.0
+* Updated to match lab style standards.
+
+# simphony 1.0.0
 * Solidified the current version as official 1.0.0 release.
 
 # simphony 0.1.10

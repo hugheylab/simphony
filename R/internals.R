@@ -15,7 +15,7 @@ setDefaultFeatureGroups = function(
   featureGroups[, group := 1:.N]
 
   featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
-  for (i in 1:nrow(featureGroups)) {
+  for (i in seq_len(nrow(featureGroups))) {
     set(featureGroups, i, 'amp0', featureGroups$amp[[i]](0))}
 
   if (!'phase' %in% colnames(featureGroups)) {
@@ -47,7 +47,7 @@ setDefaultFeatureGroups = function(
   } else if (family == 'poisson') {
     featureGroups = setFuncs(featureGroups, 'base', defaultBasePoisson)}
 
-  for (i in 1:nrow(featureGroups)) {
+  for (i in seq_len(nrow(featureGroups))) {
     set(featureGroups, i, 'base0', featureGroups$base[[i]](0))}
 
   return(featureGroups)}
@@ -100,7 +100,7 @@ getSampleMetadata = function(times) {
   cond = NULL
   nSamplesPerCond = ncol(times)
   nSamples = prod(dim(times))
-  sm = foreach(cond = 1:nrow(times), .combine = rbind) %do% {
+  sm = foreach(cond = seq_len(nrow(times)), .combine = rbind) %do% {
     sampleIds = ((cond - 1) * nSamplesPerCond + 1):(nSamplesPerCond * cond)
     sampleNames = sprintf(sprintf('sample_%%0%dd', floor(log10(nSamples)) + 1),
                           sampleIds)
