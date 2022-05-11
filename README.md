@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/hugheylab/simphony/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/simphony)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ebfe10a6-7cd8-416b-969f-eb0160f665b2/deploy-status)](https://app.netlify.com/sites/hungry-johnson-e23843/deploys)
 [![CRAN Status](https://www.r-pkg.org/badges/version/simphony)](https://cran.r-project.org/package=simphony)
+[![drat version](https://raw.githubusercontent.com/hugheylab/drat/gh-pages/badges/simphony_drat_badge.svg)](https://github.com/hugheylab/drat/tree/gh-pages/src/contrib)
 
 `simphony` simulates large-scale, rhythmic data, including transcriptome data and behavioral activity data. For technical details on how we designed and validated `simphony`, check out the [paper](https://doi.org/10.7717/peerj.6985) and the [accompanying results](https://doi.org/10.6084/m9.figshare.7441355).
 
