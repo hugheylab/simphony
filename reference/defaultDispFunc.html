@@ -39,7 +39,7 @@ distribution, \(variance = mean + mean^2 * dispersion\)."><!-- mathjax --><scrip
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" aria-label="Hughey Lab">Hughey Lab</a>
+  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" target="_blank" aria-label="Hughey Lab">Hughey Lab</a>
 </li>
 <li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/hugheylab/simphony/" aria-label="github">
@@ -67,7 +67,7 @@ distribution, \(variance = mean + mean^2 * dispersion\).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">defaultDispFunc</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">defaultDispFunc</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -78,10 +78,13 @@ distribution, \(variance = mean + mean^2 * dispersion\).</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>Numeric vector of mean counts.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Numeric vector of dispersions.</p>
+    
+
+<p>Numeric vector of dispersions.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -90,9 +93,9 @@ distribution, \(variance = mean + mean^2 * dispersion\).</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">means</span> <span class="op">=</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="fl">6</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dispersions</span> <span class="op">=</span> <span class="fu">defaultDispFunc</span><span class="op">(</span><span class="va">means</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">means</span> <span class="op">=</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="fl">6</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dispersions</span> <span class="op">=</span> <span class="fu">defaultDispFunc</span><span class="op">(</span><span class="va">means</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -104,7 +107,7 @@ distribution, \(variance = mean + mean^2 * dispersion\).</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

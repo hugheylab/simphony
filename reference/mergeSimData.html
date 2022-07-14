@@ -39,7 +39,7 @@ ggplot2."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" aria-label="Hughey Lab">Hughey Lab</a>
+  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" target="_blank" aria-label="Hughey Lab">Hughey Lab</a>
 </li>
 <li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/hugheylab/simphony/" aria-label="github">
@@ -67,7 +67,7 @@ ggplot2.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">mergeSimData</span><span class="op">(</span><span class="va">simData</span>, features <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mergeSimData</span><span class="op">(</span><span class="va">simData</span>, features <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,13 +86,18 @@ colnames for samples.</p></dd>
 
 
 </dl></dd>
+
+
 <dt>features</dt>
 <dd><p>Character vector of features for which to get abundance data.
 If <code>NULL</code>, then all features.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>data.table</code>.</p>
+    
+
+<p><code>data.table</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -101,11 +106,11 @@ If <code>NULL</code>, then all features.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu"><a href="simphony.html">simphony</a></span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mergedSimData</span> <span class="op">=</span> <span class="fu">mergeSimData</span><span class="op">(</span><span class="va">simData</span>, <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">$</span><span class="va">feature</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu"><a href="simphony.html">simphony</a></span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mergedSimData</span> <span class="op">=</span> <span class="fu">mergeSimData</span><span class="op">(</span><span class="va">simData</span>, <span class="va">simData</span><span class="op">$</span><span class="va">featureMetadata</span><span class="op">$</span><span class="va">feature</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -117,7 +122,7 @@ If <code>NULL</code>, then all features.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

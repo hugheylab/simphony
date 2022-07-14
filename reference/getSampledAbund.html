@@ -39,7 +39,7 @@ called directly."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" aria-label="Hughey Lab">Hughey Lab</a>
+  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" target="_blank" aria-label="Hughey Lab">Hughey Lab</a>
 </li>
 <li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/hugheylab/simphony/" aria-label="github">
@@ -67,12 +67,12 @@ called directly.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getSampledAbund</span><span class="op">(</span>
-  <span class="va">abundDt</span>,
-  logOdds <span class="op">=</span> <span class="cn">FALSE</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"negbinom"</span>, <span class="st">"bernoulli"</span>, <span class="st">"poisson"</span><span class="op">)</span>,
-  inplace <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getSampledAbund</span><span class="op">(</span></span>
+<span>  <span class="va">abundDt</span>,</span>
+<span>  logOdds <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"negbinom"</span>, <span class="st">"bernoulli"</span>, <span class="st">"poisson"</span><span class="op">)</span>,</span>
+<span>  inplace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,22 +83,31 @@ required columns are <code>feature</code>, <code>sample</code>, <code>mu</code>,
 'negbinom', required columns are <code>feature</code>, <code>sample</code>, <code>mu</code>, <code>dispFunc</code>,
 <code>cond</code>, and <code>group</code>. If <code>family</code> is 'bernoulli' or 'poisson', required
 columns are <code>feature</code>, <code>sample</code>, and <code>mu</code>.</p></dd>
+
+
 <dt>logOdds</dt>
 <dd><p>Logical for whether <code>mu</code> corresponds to log-odds. Only used if
 <code>family</code> is 'bernoulli'.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>Character string for the family of distributions from which
 to sample the abundance values. <code>simphony</code> will give a warning if it tries
 to sample from a distribution outside the region in which the distribution
 is defined: \(\mu &lt; 0\) for negative binomial and Poisson, and
 \(\mu &lt; 0\) or \(\mu &gt; 1\) for Bernoulli.</p></dd>
+
+
 <dt>inplace</dt>
 <dd><p>Logical for whether to modify <code>abundDt</code> in-place, adding a
 column <code>abund</code> containing the abundance values.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Matrix of abundance values, where rows correspond to features and
+    
+
+<p>Matrix of abundance values, where rows correspond to features and
 columns correspond to samples.</p>
     </div>
     <div class="section level2">
@@ -108,12 +117,12 @@ columns correspond to samples.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">6022</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">abundDt</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="st">'feature_1'</span>, sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'sample_1'</span>, <span class="st">'sample_2'</span><span class="op">)</span>,</span>
-<span class="r-in">                    mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">abundMat</span> <span class="op">=</span> <span class="fu">getSampledAbund</span><span class="op">(</span><span class="va">abundDt</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">6022</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">abundDt</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="st">'feature_1'</span>, sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'sample_1'</span>, <span class="st">'sample_2'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">abundMat</span> <span class="op">=</span> <span class="fu">getSampledAbund</span><span class="op">(</span><span class="va">abundDt</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -125,7 +134,7 @@ columns correspond to samples.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

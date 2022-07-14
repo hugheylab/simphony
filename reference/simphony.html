@@ -37,7 +37,7 @@ features are measured at multiple timepoints in one or more conditions."><!-- ma
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" aria-label="Hughey Lab">Hughey Lab</a>
+  <a class="external-link nav-link" href="https://www.hugheylab.org/software/" target="_blank" aria-label="Hughey Lab">Hughey Lab</a>
 </li>
 <li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/hugheylab/simphony/" aria-label="github">
@@ -64,21 +64,21 @@ features are measured at multiple timepoints in one or more conditions.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">simphony</span><span class="op">(</span>
-  <span class="va">featureGroupsList</span>,
-  fracFeatures <span class="op">=</span> <span class="cn">NULL</span>,
-  nFeatures <span class="op">=</span> <span class="fl">10</span>,
-  timepointsType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"specified"</span>, <span class="st">"random"</span><span class="op">)</span>,
-  timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span><span class="op">)</span>,
-  interval <span class="op">=</span> <span class="fl">2</span>,
-  nReps <span class="op">=</span> <span class="fl">1</span>,
-  timepoints <span class="op">=</span> <span class="cn">NULL</span>,
-  nSamplesPerCond <span class="op">=</span> <span class="cn">NULL</span>,
-  rhyFunc <span class="op">=</span> <span class="va">sin</span>,
-  dispFunc <span class="op">=</span> <span class="cn">NULL</span>,
-  logOdds <span class="op">=</span> <span class="cn">FALSE</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"negbinom"</span>, <span class="st">"bernoulli"</span>, <span class="st">"poisson"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simphony</span><span class="op">(</span></span>
+<span>  <span class="va">featureGroupsList</span>,</span>
+<span>  fracFeatures <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nFeatures <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  timepointsType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"specified"</span>, <span class="st">"random"</span><span class="op">)</span>,</span>
+<span>  timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">48</span><span class="op">)</span>,</span>
+<span>  interval <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  nReps <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nSamplesPerCond <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rhyFunc <span class="op">=</span> <span class="va">sin</span>,</span>
+<span>  dispFunc <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logOdds <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"negbinom"</span>, <span class="st">"bernoulli"</span>, <span class="st">"poisson"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -126,55 +126,82 @@ values, given expected abundance in counts. Only used if <code>family</code> is
 
 
 </dl></dd>
+
+
 <dt>fracFeatures</dt>
 <dd><p>Fraction of simulated features to allocate to each group.
 Defaults to 1/(number of groups). Only used if the first
 <code>featureGroupsList</code> <code>data.frame</code> lacks a <code>fracFeatures</code> column.</p></dd>
+
+
 <dt>nFeatures</dt>
 <dd><p>Integer for the total number of features to simulate.</p></dd>
+
+
 <dt>timepointsType</dt>
 <dd><p>Character string for how to set the timepoints
 for the simulation. Must be 'auto' (default), 'specified', or 'random'.</p></dd>
+
+
 <dt>timeRange</dt>
 <dd><p>Numeric vector for the range of timepoints to use for the
 simulation. Defaults to c(0, 48). Only used if <code>timepointsType</code> is 'auto'
 or 'random'.</p></dd>
+
+
 <dt>interval</dt>
 <dd><p>Number for the amount of time between consecutive
 timepoints, in the same units as <code>period</code>. The first timepoint is 0. Only
 used if <code>timepointsType</code> is 'auto'.</p></dd>
+
+
 <dt>nReps</dt>
 <dd><p>Integer for the number of replicates per timepoint. Only used
 if <code>timepointsType</code> is 'auto'.</p></dd>
+
+
 <dt>timepoints</dt>
 <dd><p>Numeric vector of exact timepoints to simulate, including
 any replicates. Only used if <code>timepointsType</code> is 'specified'.</p></dd>
+
+
 <dt>nSamplesPerCond</dt>
 <dd><p>Integer for the number of samples per condition,
 which will be randomly uniformly spaced between 0 and <code>period</code> and
 different for each condition. Only used if timepointsType is 'random'.</p></dd>
+
+
 <dt>rhyFunc</dt>
 <dd><p>Function to generate rhythmic abundance. Must have a period
 of \(2\pi\). Defaults to <code>sin</code>. Only used if a <code>data.frame</code> in
 <code>featureGroupsList</code> lacks a <code>rhyFunc</code> column.</p></dd>
+
+
 <dt>dispFunc</dt>
 <dd><p>Function to calculate dispersion of sampled abundance
 values, given expected abundance in counts. Defaults to <code>defaultDispFunc</code>.
 Only used if <code>family</code> is 'negbinom' and a <code>data.frame</code> in
 <code>featureGroupsList</code> lacks a <code>dispFunc</code> column.</p></dd>
+
+
 <dt>logOdds</dt>
 <dd><p>Logical for whether the rhythmic function corresponds to
 log-odds. Only used if <code>family</code> is 'bernoulli'.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>Character string for the family of distributions from which to
 sample the abundance values. <code>simphony</code> will give a warning if it tries to
 sample from a distribution outside the region in which the distribution is
 defined: \(\mu &lt; 0\) for negative binomial and Poisson, and \(\mu &lt; 0\)
 or \(\mu &gt; 1\) for Bernoulli.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>List with the following elements:</p><dl><dt>abundData</dt>
+    
+
+<p>List with the following elements:</p><dl><dt>abundData</dt>
 <dd><p>Matrix of abundance values (counts, if <code>family</code> is
 'negbinom'), with features as rownames and samples as colnames.</p></dd>
 
@@ -200,68 +227,68 @@ abundance at time 0, respectively.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for features having one of three sets of rhythmic parameters.</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span>,</span>
-<span class="r-in">                           rhyFunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cos</span>, <span class="va">cos</span>, <span class="va">sin</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for an experiment with specified timepoints and replicates.</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timepointsType <span class="op">=</span> <span class="st">'specified'</span>,</span>
-<span class="r-in">                   timepoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">12</span>, <span class="fl">16</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for an experiment with random timepoints between 0 and 24.</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timepointsType <span class="op">=</span> <span class="st">'random'</span>,</span>
-<span class="r-in">                   timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">24</span><span class="op">)</span>, nSamplesPerCond <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data with time-dependent rhythm amplitude or baseline abundance</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="op">-</span><span class="va">x</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">                           base <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">/</span> <span class="fl">12</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for features whose rhythmicity varies between two conditions.</span></span>
-<span class="r-in"><span class="va">featureGroupsList</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fl">3</span>, <span class="fl">0</span><span class="op">)</span>, period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">24</span>, <span class="fl">22</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">0</span><span class="op">)</span>, period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">24</span>, <span class="fl">26</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroupsList</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data from a negative binomial distribution with a higher variance.</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fl">1</span>, base <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dispFunc</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="defaultDispFunc.html">defaultDispFunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, family <span class="op">=</span> <span class="st">'negbinom'</span>, dispFunc <span class="op">=</span> <span class="va">dispFunc</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data at high temporal resolution from a Poisson distribution that</span></span>
-<span class="r-in"><span class="co"># alternates between two states.</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fl">1</span>, base <span class="op">=</span> <span class="fl">0</span>,</span>
-<span class="r-in">                           rhyFunc <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">pi</span>, <span class="fl">0.5</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">24</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span>, interval <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span class="r-in">                   nReps <span class="op">=</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="st">'poisson'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for 100 features, half non-rhythmic and half rhythmic, with</span></span>
-<span class="r-in"><span class="co"># amplitudes for rhythmic features sampled from a log-normal distribution.</span></span>
-<span class="r-in"><span class="va">nFeatures</span> <span class="op">=</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">rhyFrac</span> <span class="op">=</span> <span class="fl">0.5</span></span>
-<span class="r-in"><span class="va">nRhyFeatures</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">rhyFrac</span> <span class="op">*</span> <span class="va">nFeatures</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rhyAmps</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nRhyFeatures</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fracFeatures</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">rhyFrac</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rhyFrac</span> <span class="op">/</span> <span class="va">nRhyFeatures</span>, <span class="va">nRhyFeatures</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">rhyAmps</span><span class="op">)</span>, fracFeatures <span class="op">=</span> <span class="va">fracFeatures</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="va">nFeatures</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simulate data for 100 rhythmic features, with baseline log2 expected counts</span></span>
-<span class="r-in"><span class="co"># and residual log dispersion sampled from distributions whose parameters</span></span>
-<span class="r-in"><span class="co"># were estimated, using DESeq2 and fitdistrplus, from circadian RNA-seq data</span></span>
-<span class="r-in"><span class="co"># from mouse liver (PRJNA297287).</span></span>
-<span class="r-in"><span class="va">nFeatures</span> <span class="op">=</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">baseLog2Counts</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nFeatures</span>, mean <span class="op">=</span> <span class="fl">8.63</span>, sd <span class="op">=</span> <span class="fl">2.73</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dispFactors</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nFeatures</span>, sd <span class="op">=</span> <span class="fl">0.819</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dispFuncs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">dispFactors</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="defaultDispFunc.html">defaultDispFunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="va">z</span><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>base <span class="op">=</span> <span class="va">baseLog2Counts</span>, dispFunc <span class="op">=</span> <span class="va">dispFuncs</span>, amp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="va">nFeatures</span>, family <span class="op">=</span> <span class="st">'negbinom'</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">'data.table'</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for features having one of three sets of rhythmic parameters.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           rhyFunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cos</span>, <span class="va">cos</span>, <span class="va">sin</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for an experiment with specified timepoints and replicates.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timepointsType <span class="op">=</span> <span class="st">'specified'</span>,</span></span>
+<span class="r-in"><span>                   timepoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">12</span>, <span class="fl">16</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for an experiment with random timepoints between 0 and 24.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timepointsType <span class="op">=</span> <span class="st">'random'</span>,</span></span>
+<span class="r-in"><span>                   timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">24</span><span class="op">)</span>, nSamplesPerCond <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data with time-dependent rhythm amplitude or baseline abundance</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="op">-</span><span class="va">x</span> <span class="op">/</span> <span class="fl">24</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           base <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">/</span> <span class="fl">12</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for features whose rhythmicity varies between two conditions.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroupsList</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fl">3</span>, <span class="fl">0</span><span class="op">)</span>, period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">24</span>, <span class="fl">22</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, phase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">0</span><span class="op">)</span>, period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">24</span>, <span class="fl">26</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroupsList</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data from a negative binomial distribution with a higher variance.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fl">1</span>, base <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dispFunc</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">3</span> <span class="op">*</span> <span class="fu"><a href="defaultDispFunc.html">defaultDispFunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, family <span class="op">=</span> <span class="st">'negbinom'</span>, dispFunc <span class="op">=</span> <span class="va">dispFunc</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data at high temporal resolution from a Poisson distribution that</span></span></span>
+<span class="r-in"><span><span class="co"># alternates between two states.</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fl">1</span>, base <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                           rhyFunc <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">pi</span>, <span class="fl">0.5</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, timeRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">24</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span>, interval <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>                   nReps <span class="op">=</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="st">'poisson'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for 100 features, half non-rhythmic and half rhythmic, with</span></span></span>
+<span class="r-in"><span><span class="co"># amplitudes for rhythmic features sampled from a log-normal distribution.</span></span></span>
+<span class="r-in"><span><span class="va">nFeatures</span> <span class="op">=</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">rhyFrac</span> <span class="op">=</span> <span class="fl">0.5</span></span></span>
+<span class="r-in"><span><span class="va">nRhyFeatures</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">rhyFrac</span> <span class="op">*</span> <span class="va">nFeatures</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rhyAmps</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nRhyFeatures</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fracFeatures</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">rhyFrac</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rhyFrac</span> <span class="op">/</span> <span class="va">nRhyFeatures</span>, <span class="va">nRhyFeatures</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>amp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">rhyAmps</span><span class="op">)</span>, fracFeatures <span class="op">=</span> <span class="va">fracFeatures</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="va">nFeatures</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulate data for 100 rhythmic features, with baseline log2 expected counts</span></span></span>
+<span class="r-in"><span><span class="co"># and residual log dispersion sampled from distributions whose parameters</span></span></span>
+<span class="r-in"><span><span class="co"># were estimated, using DESeq2 and fitdistrplus, from circadian RNA-seq data</span></span></span>
+<span class="r-in"><span><span class="co"># from mouse liver (PRJNA297287).</span></span></span>
+<span class="r-in"><span><span class="va">nFeatures</span> <span class="op">=</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">baseLog2Counts</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nFeatures</span>, mean <span class="op">=</span> <span class="fl">8.63</span>, sd <span class="op">=</span> <span class="fl">2.73</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dispFactors</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nFeatures</span>, sd <span class="op">=</span> <span class="fl">0.819</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dispFuncs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">dispFactors</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="defaultDispFunc.html">defaultDispFunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="va">z</span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">featureGroups</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>base <span class="op">=</span> <span class="va">baseLog2Counts</span>, dispFunc <span class="op">=</span> <span class="va">dispFuncs</span>, amp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simData</span> <span class="op">=</span> <span class="fu">simphony</span><span class="op">(</span><span class="va">featureGroups</span>, nFeatures <span class="op">=</span> <span class="va">nFeatures</span>, family <span class="op">=</span> <span class="st">'negbinom'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -273,7 +300,7 @@ abundance at time 0, respectively.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
