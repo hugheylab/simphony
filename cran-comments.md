@@ -8,25 +8,11 @@
 ### Online check
 `devtools::check_rhub()` result:
 
-  > checking CRAN incoming feasibility ... NOTE
-  Maintainer: 'Jake Hughey <jakejhughey@gmail.com>'
-
-  New submission
-
-  Possibly misspelled words in DESCRIPTION:
-    al (10:59)
-    et (10:56)
-    transcriptome (8:51)
-
-> checking for detritus in the temp directory ... NOTE
-  Found the following files/directories:
-    'lastMiKTeXException'
-
-0 errors ✓ | 0 warnings ✓ | 2 notes x
+0 errors ✓ | 0 warnings ✓ | 0 notes x
 
 Notes:
-  - This is the first time this package is being submitted to CRAN, and the words are correctly spelled, so ignore this.
-  - The second note only occurs on the Windows Server rhub environment, and from what I have seen about these types of notes they do not occur when building and checking on CRAN.
+  - We are submitting 1.0.1 with only minor updates to trigger a re-run on M1 mac check. We received notice that it was failing check on M1 but we have been unable to recreate.
+  - We believe the issue with M1 was a "one-off" issue since it appeared to be a floating point precision error that isn't able to be recreated, so we hope this run will re-trigger the flow and confirm that.
 
 You can also see the results of R CMD check on Windows, Linux, and MacOS by going to the GitHub Actions run labeled `check-deploy` [here](https://github.com/hugheylab/simphony/actions).
 
