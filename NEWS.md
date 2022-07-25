@@ -1,3 +1,6 @@
+# simphony 1.0.2
+* Simplified test of negative binomial.
+
 # simphony 1.0.1
 * Updated to match lab style standards.
 

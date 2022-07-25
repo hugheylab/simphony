@@ -2,9 +2,11 @@ context('Simphony Functional Tests')
 
 
 test_that('Abundances are sampled from the correct trend', {
-  featureGroups = data.table::data.table(amp = seq(1, 10, 1), base = 1:10, sd = 0)
+  featureGroups = data.table(amp = seq(1, 10, 1), base = 1:10, sd = 0)
   timepoints = seq(0, 22, 0.1)
-  simData = simphony(featureGroups, nFeatures = 10, timepoints = timepoints, timepointsType = 'specified')
+  simData = simphony(
+    featureGroups, nFeatures = 10, timepoints = timepoints,
+    timepointsType = 'specified')
 
   usedFeatureGroups = simData$experMetadata$featureGroupsList
   usedAmps = usedFeatureGroups[[1]][, amp]
@@ -15,8 +17,7 @@ test_that('Abundances are sampled from the correct trend', {
   expectedAbund = foreach(r = seq_len(nrow(simData$abundData)), .combine = rbind) %do% {
     usedAmps[[r]]((2 * pi) * timepoints / usedPeriod[r]) *
     usedRhyFunc[[r]]((2 * pi) * timepoints / usedPeriod[r]) +
-    usedBase[[r]]((2 * pi) * timepoints / usedPeriod[r])
-  }
+    usedBase[[r]]((2 * pi) * timepoints / usedPeriod[r])}
   diff = abs(simData$abundData - expectedAbund)
   expect_true(all(diff == 0))
 
@@ -28,12 +29,12 @@ test_that('Time-independent statistics from NBD are as expected', {
   base = c(3, 5, 7)
   expectedVariance = 2 ^ base + defaultDispFunc(2 ^ base) * ((2 ^ base) ^ 2)
 
-  featureGroups = data.table::data.table(base = base, amp = 0)
+  featureGroups = data.table(base = base, amp = 0)
   simData = simphony(featureGroups, nFeatures = 3, nReps = 500, family = 'negbinom')
 
-  abundData = data.table::data.table(abund = c(t(simData$abundData)),
-                                     feature = rep(rownames(simData$abundData),
-                                                   each = ncol(simData$abundData)))
+  abundData = data.table(
+    abund = c(t(simData$abundData)),
+    feature = rep(rownames(simData$abundData), each = ncol(simData$abundData)))
   expect_equal(abundData[, log2(mean(abund)), by = feature][, V1], base, tolerance = 1e-1)
   expect_equal(abundData[, var(abund), by = feature][, V1], expectedVariance, tolerance = 1e-1)
 
@@ -41,8 +42,9 @@ test_that('Time-independent statistics from NBD are as expected', {
 })
 
 test_that('Time-dependent statistics from NBD are as expected', {
-  featureGroups = data.table::data.table(amp = 3, base = 4:8)
-  simData = simphony(featureGroups, nFeatures = 5, nReps = 4000, family = 'negbinom')
+  featureGroups = data.table(amp = 3, base = seq(4, 8, 2))
+  simData = simphony(
+    featureGroups, nFeatures = 3, interval = 12, nReps = 1e4, family = 'negbinom')
 
   for (timeNow in unique(simData$sampleMetadata$time)) {
     samplesNow = simData$sample[, time == timeNow]
@@ -58,6 +60,7 @@ test_that('Time-dependent statistics from NBD are as expected', {
 
       meanObs = mean(simData$abundData[featuresNow, samplesNow])
       varObs = var(simData$abundData[featuresNow, samplesNow])
+      print((varObs - varExp) / varExp)
 
       expect_equal(meanExp, meanObs, tolerance = 0.1)
       expect_equal(varExp, varObs, tolerance = 0.1)
@@ -69,7 +72,7 @@ test_that('Time-dependent statistics from NBD are as expected', {
 })
 
 test_that('Amplitude and base can be passed as functions', {
-  featureGroups = data.table::data.table(amp  = function(t) 5 * 2 ^ (-t / 12),
-                                         base = function(t) 4 * 2 ^ (-t / 12))
+  featureGroups = data.table(
+    amp  = function(t) 5 * 2 ^ (-t / 12), base = function(t) 4 * 2 ^ (-t / 12))
   expect_silent(simphony(featureGroups))
 })
