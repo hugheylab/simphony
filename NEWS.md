@@ -1,3 +1,6 @@
+# simphony 1.0.3
+* Tweaked syntax for linter.
+
 # simphony 1.0.2
 * Simplified test of negative binomial.
 
