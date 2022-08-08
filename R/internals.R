@@ -60,7 +60,9 @@ setFuncs = function(featureGroups, varName, defaultValue) {
   } else {
     if (is.numeric(featureGroups[[varName]])) {
     # if (is.numeric(featureGroups[, get(varName)])) {
-      makefunc = function(x) {x; function(m) x}
+      makefunc = function(x) {
+        invisible(x)
+        function(m) x}
       if (nrow(featureGroups) == 1) {
         featureGroups[, (varName) := list(list(makefunc(featureGroups[[varName]][1L])))]
         # featureGroups[, (varName) := list(list(makefunc(featureGroups[1, get(varName)])))]
