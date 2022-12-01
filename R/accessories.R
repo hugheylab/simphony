@@ -58,7 +58,7 @@ getExpectedAbund = function(
   .N = time = mu = base = amp = rhyFunc = phase = period = NULL
 
   if (!is.null(times)) {
-    d = data.table(featureMetadata)[rep(1:.N, each = length(times))]
+    d = data.table(featureMetadata)[rep(seq_len(.N), each = length(times))]
     d[, time := rep(times, times = nrow(featureMetadata))]
   } else if (!is.null(sampleMetadata)) {
     d = merge(data.table(featureMetadata), sampleMetadata, by = 'cond',

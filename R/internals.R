@@ -12,7 +12,7 @@ setDefaultFeatureGroups = function(
     stop("featureGroups must not have a column named 'group'.")}
 
   featureGroups = data.table(featureGroups)
-  featureGroups[, group := 1:.N]
+  featureGroups[, group := seq_len(.N)]
 
   featureGroups = setFuncs(featureGroups, 'amp', defaultAmp)
   for (i in seq_len(nrow(featureGroups))) {
@@ -139,7 +139,7 @@ getFeatureMetadata = function(featureGroupsList, fracFeatures, nFeatures) {
   nConds = length(featureGroupsList)
 
   fm = foreach(featureGroups = featureGroupsList, cond = 1:nConds, .combine = rbind) %do% {
-    fmNow = featureGroups[rep(1:.N, times = nFeaturesPerGroup)]
+    fmNow = featureGroups[rep(seq_len(.N), times = nFeaturesPerGroup)]
     fmNow[, cond := sprintf(sprintf('cond_%%0%dd', floor(log10(nConds)) + 1), ..cond)]
     fmNow[, feature := features]
     data.table::setcolorder(fmNow, c('cond', 'group', 'feature'))
